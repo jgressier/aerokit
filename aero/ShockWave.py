@@ -2,7 +2,7 @@ import math
 import degree
 import CompressibleFlow
 import IterativeSolve
-import numpy
+import numpy as np
 
 # --- NORMAL SHOCK WAVE ---
 
@@ -27,9 +27,9 @@ def Pi_ratio(Mn, gamma=1.4):
 # --- LOCAL 2D SHOCK WAVE ---
 
 def deflection_Mach_sigma(Mach, sigma, gamma=1.4):
-    sigrad = math.radians(sigma)
-    Mn     = Mach*math.sin(sigrad)
-    return sigma-math.degrees(math.atan(math.tan(sigrad)/Rho_ratio(Mn, gamma)))
+    sigrad = np.radians(sigma)
+    Mn     = Mach*np.sin(sigrad)
+    return sigma-np.degrees(np.arctan2(np.tan(sigrad), Rho_ratio(Mn, gamma)))
 
 def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=1.4):
     return deflection_Mach_sigma(Mach, degree.asin(Mn_Ps_ratio(Pratio, gamma)/Mach), gamma)
@@ -41,7 +41,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=1.4):
     kd = (ka**2/3. - kb)/3.
     ke = 2.*ka**3/27. - ka*kb/3. + kc
     if ke**2 - 4.*kd**3 > 0:
-        print "pas de solution choc faible"
+        print "no weak shok wave solution"
         return degree.asin(1./Mach)
     else:
         phi = math.acos(-.5*ke/math.sqrt(kd**3))
@@ -55,7 +55,7 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=1.4):
     kd = (ka**2/3. - kb)/3.
     ke = 2.*ka**3/27. - ka*kb/3. + kc
     if ke**2 - 4.*kd**3 > 0:
-        print "pas de solution choc fort"
+        print "no strong shock wave solution"
         return 90.
     else:
         phi = math.acos(-.5*ke/math.sqrt(kd**3)) + 4*math.pi
