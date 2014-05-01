@@ -1,23 +1,23 @@
-import math
+import numpy as np
 
 def cos(a):
-    return math.cos(math.radians(a))
+    return np.cos(np.radians(a))
 
 def sin(a):
-    return math.sin(math.radians(a))
+    return np.sin(np.radians(a))
 
 def tan(a):
-    return math.tan(math.radians(a))
+    return np.tan(np.radians(a))
 
 def acos(a):
-    return math.degrees(math.acos(a))
+    return np.degrees(np.arccos(a))
 
 def asin(a):
-    return math.degrees(math.asin(a))
+    return np.degrees(np.arcsin(a))
 
 def atan(a):
-    return math.degrees(math.atan(a))
+    return np.degrees(np.arctan(a))
 
 def atan2(a, b):
-    return math.degrees(math.atan2(a, b))
+    return np.degrees(np.arctan2(a, b))
 
