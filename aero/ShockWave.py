@@ -1,8 +1,12 @@
+"""@package ShockWave
+  locla Rankine Hugoniot equations for shock waves
+"""
+
 import math
 import degree
-import CompressibleFlow
 import IterativeSolve
-import numpy as np
+import numpy      as np
+import Isentropic as Is
 
 # --- NORMAL SHOCK WAVE ---
 
@@ -22,7 +26,7 @@ def downstream_Mn(Mn, gamma=1.4):
     return math.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
 
 def Pi_ratio(Mn, gamma=1.4):
-    return Ps_ratio(Mn, gamma)*CompressibleFlow.PiPs_Mach(downstream_Mn(Mn, gamma))/CompressibleFlow.PiPs_Mach(Mn, gamma)
+    return Ps_ratio(Mn, gamma)*Is.PiPs_Mach(downstream_Mn(Mn, gamma))/Is.PiPs_Mach(Mn, gamma)
 
 # --- LOCAL 2D SHOCK WAVE ---
 
@@ -41,7 +45,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=1.4):
     kd = (ka**2/3. - kb)/3.
     ke = 2.*ka**3/27. - ka*kb/3. + kc
     if ke**2 - 4.*kd**3 > 0:
-        print "no weak shok wave solution"
+        print "no weak shock wave solution"
         return degree.asin(1./Mach)
     else:
         phi = math.acos(-.5*ke/math.sqrt(kd**3))
