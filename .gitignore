@@ -1,2 +1,4 @@
 # python compiled files
 *.pyc
+# doxygen output folder
+doc
