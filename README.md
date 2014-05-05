@@ -7,7 +7,10 @@ Python packages for compressible flow computations
 * Mach dependent functions for isentropic total pressure, temperature and mass flow
 * local Rankine-Hugoniot shock wave equations
 * conical shock waves
-* Fanno equations for momentum losses in a duct
+* real gaz thermo functions
+* kerozen  thermo functions
+* Fanno    equations for momentum losses in a duct
+* Rayleigh equations for heating/cooling in a duct
 * misc: degree based trigo functions, Newton iterative solve, ODE integration
 
 #### Installation & usage
