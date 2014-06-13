@@ -71,11 +71,19 @@ def sigma_Mach_deflection(Mach, deflection, gamma=1.4):
         return deflection_Mach_sigma(Mach, sig, gamma)
     return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 
-def sigmamax_Mach(Mach, gamma=1.4):
-    M2 = Mach*Mach
+def sigmaMax(Mach, gamma=1.4):
+    " computes the MAXIMUM shock angle (always subsonic downstream flow)
+    M2 = np.square(Mach)
     ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
     kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
-    return degree.atan(math.sqrt((kb+math.sqrt(kb**2+ka))/ka))
+    return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
+
+def sigmaSonic(Mach, gamma=1.4):
+    " computes the shock angle for a downstream SONIC Mach number
+    M2 = np.square(Mach)
+    ka = gamma-3+M2*(gamma+1)
+    kb = (gamma+1)*(np.square(M2-3)+gamma*np.square(M2+1))
+    return degree.asin(np.sqrt((ka+np.sqrt(kb))/(4*gamma*M2)))
 
 # --- CONICAL SHOCK WAVE ---
 
