@@ -53,3 +53,15 @@ def NormdS(Mach, gamma=1.4):
     m2 = np.square(Mach)
     return np.log(m2*((gamma+1)/(1+gamma*m2))**((gamma+1)/gamma))
 
+def SubMach_TiTicri(Tiratio, gamma=1.4):
+    """ computes Mach number from Ti/Ti_cri ratio (<1)
+    """
+    alpha = np.sqrt(1.-Tiratio)
+    return np.sqrt((1.-alpha)/(alpha*gamma+1))
+
+def SupMach_TiTicri(Tiratio, gamma=1.4):
+    """ computes Mach number from Ti/Ti_cri ratio (<1)
+    """
+    alpha = np.sqrt(1.-Tiratio)
+    return np.sqrt((1.+alpha)/(1.-alpha*gamma))
+

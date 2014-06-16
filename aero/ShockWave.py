@@ -72,14 +72,16 @@ def sigma_Mach_deflection(Mach, deflection, gamma=1.4):
     return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 
 def sigmaMax(Mach, gamma=1.4):
-    " computes the MAXIMUM shock angle (always subsonic downstream flow)
+    """ computes the MAXIMUM shock angle (always subsonic downstream flow)
+    """
     M2 = np.square(Mach)
     ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
     kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
     return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
 
 def sigmaSonic(Mach, gamma=1.4):
-    " computes the shock angle for a downstream SONIC Mach number
+    """ computes the shock angle for a downstream SONIC Mach number
+    """
     M2 = np.square(Mach)
     ka = gamma-3+M2*(gamma+1)
     kb = (gamma+1)*(np.square(M2-3)+gamma*np.square(M2+1))
