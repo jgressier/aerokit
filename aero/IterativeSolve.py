@@ -1,4 +1,5 @@
 import numpy as np
+import inspect
 
 @np.vectorize
 def secant_solve(f, y, x, tol=0.00001):
@@ -20,5 +21,9 @@ def secant_solve(f, y, x, tol=0.00001):
         new_x = next_x
         it += 1
     if it == itmax:
-        print "max number of iterations reached"
+        print "!!! max number of iterations (%2i) reached"%(it)
+        callseq = ''
+        for i in range(len(inspect.stack())):
+            callseq += '/'+inspect.stack()[i][3]
+        print '    from',callseq
     return new_x
