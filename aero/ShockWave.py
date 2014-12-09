@@ -28,6 +28,13 @@ def downstream_Mn(Mn, gamma=1.4):
 def Pi_ratio(Mn, gamma=1.4):
     return Ps_ratio(Mn, gamma)*Is.PiPs_Mach(downstream_Mn(Mn, gamma))/Is.PiPs_Mach(Mn, gamma)
 
+def Mn_Pi_ratio(piratio, gamma=1.4):
+    def piratio_of_mach(m):
+        return Pi_ratio(m, gamma)
+    if piratio > 1:
+        print "!!! cannot find Mn for Pi_ratio > 1"
+        return 1
+    return IterativeSolve.secant_solve(piratio_of_mach, piratio, 1.5)
 # --- LOCAL 2D SHOCK WAVE ---
 
 def deflection_Mach_sigma(Mach, sigma, gamma=1.4):
