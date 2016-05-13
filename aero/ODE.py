@@ -18,7 +18,6 @@ def RK4(F,x,y,xStop,h):
     while x < xStop:
         h = min(h,xStop - x)
         y = y + run_kut4(F,x,y,h)
-        259 7.3 RungeâKutta Methods
         x = x + h
         X.append(x)
         Y.append(y)
