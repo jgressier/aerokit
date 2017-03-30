@@ -56,8 +56,9 @@ import copy as _copy
 # CharlesX variables dico
 _cxNames = ['IC3', 'ic3', 'CharlesX', 'cx', 'charlesx']
 _cxDico = {
+    'P':   'P',
     'p':   'P',
-    'ps':  'P',
+    'Ps':  'P',
     'rho': 'RHO',
     'T':   'T',
     'V':  'U',
@@ -103,114 +104,75 @@ class _DicoVar(object):
     def __init__(self, software):
 
         # Internal variables definitions
-        dv = {}
-        softName = ''
+        self._dv = {}
+        self._softName = ''
 
         # Setting database
         softOK = False
         for soft in _dataBase:
             if software.lower() in soft[0]:
-                dv = _copy.deepcopy(soft[1])
-                softName = soft[0][0]
+                self._dv = _copy.deepcopy(soft[1])
+                self._softName = soft[0][0]
                 softOK = True
                 print '---- HADES::DicoVar ----'
-                print '--> Using {} variables denomination'.format(softName)
+                print '--> Using {} variables denomination'.format(self._softName)
         if not softOK:
             raise ValueError('Not variable denomination database for {}'
                              .format(software))
 
-        # Defining database internal methods
-        def get(var):
-            if var in dv:
-                return dv[var]
-            else:
-                raise ValueError('{} variable not in {} database dictionnary'
-                                 .format(var, softName))
-
-        def addVar(var, sVar):
-            if var not in dv:
-                dv[var] = sVar
-            else:
-                raise ValueError('{} variable already in {}'
-                                 .format(var, softName) +
-                                 'database dictionnary.\n' +
-                                 'Use setVar function instead')
-
-        def setVar(var, sVar):
-            if var in dv:
-                dv[var] = sVar
-                print '---- HADES::DicoVar ----'
-                print '--> Changing denomination of {} into {}'\
-                    .format(var, sVar)
-            else:
-                raise ValueError('{} variable not in {} database dictionnary'
-                                 .format(var, softName))
-
-        def printDatabase():
-            print '---- HADES::DicoVar ----'
-            print '--> Database dictionnary for {}'.format(softName)
-            for elt in dv:
-                print '      {} => {}'.format(elt, dv[elt])
-
-        # Setting database internal methods as class methods
-        get.__doc__ = self.get.__doc__
-        self.get = get
-        addVar.__doc__ = self.addVar.__doc__
-        self.addVar = addVar
-        setVar.__doc__ = self.setVar.__doc__
-        self.setVar = setVar
-        printDatabase.__doc__ = self.printDatabase.__doc__
-        self.printDatabase = printDatabase
-
     # Main class methods
+    def keys(self):
+        """
+        return list of keys in dictionnary
+        """
+        return self._dv.keys()            
+
     def get(self, var):
         """
-        Get the variable name with its denomination in the selected software
-        database
-
-        Parameters
-        ----------
-        var : String
-            The DaePy denomination of the variable
-
-        Returns
-        -------
-        varSoftware : string
-            The selected software denomination of the variable
+        Get the variable name with its denomination in the selected software database
+        Parameters:
+            var : String            The DaePy denomination of the variable
+        Returns:
+            varSoftware : string            The selected software denomination of the variable
         """
-        raise NotImplementedError()
+        if var in self._dv:
+            return self._dv[var]
+        else:
+            raise ValueError('{} variable not in {} database dictionnary'.format(var, self._softName))
 
     def addVar(self, var, sVar):
         """
-        Add a variable name with its denomination in the selected software
-        database
-
-        Parameters
-        ----------
-        var : String
-            The DaePy denomination of the variable (not in database)
-        sVar : String
-            The software denomination of the variable
+        Add a variable name with its denomination in the selected software database
+        Parameters :
+            var : String        The DaePy denomination of the variable (not in database)
+            sVar : string       The software denomination of the variable
         """
-        raise NotImplementedError()
-
+        if var not in self._dv:
+            self._dv[var] = sVar
+        else:
+            raise ValueError('{} variable already in {}'.format(var, self._softName) + 'database dictionnary.\n' +'Use setVar function instead')
+        
     def setVar(self, var, sVar):
         """
-        Set a variable name with a new denomination in the selected software
-        database
-
+        Set a variable name with a new denomination in the selected software database
         Parameters
         ----------
-        var : String
-            The DaePy denomination of the variable (already in database)
-        sVar : String
-            The new software denomination of the variable
+        var : String            The DaePy denomination of the variable (already in database)
+        sVar : String           The new software denomination of the variable
         """
-        raise NotImplementedError()
+        if var in self._dv:
+            self._dv[var] = sVar
+            print '---- HADES::DicoVar ----'
+            print '--> Changing denomination of {} into {}'.format(var, sVar)
+        else:
+            raise ValueError('{} variable not in {} database dictionnary'.format(var, self._softName))
 
     def printDatabase(self):
         """Print the variables denomination for the selected software"""
-        raise NotImplementedError()
+        print '---- HADES::DicoVar ----'
+        print '--> Database dictionnary for {}'.format(self._softName)
+        for elt in self._dv:
+            print '      {} => {}'.format(elt, self._dv[elt])
 
     # Definition of other ways to get a variable
     def __call__(self, var):
@@ -219,8 +181,8 @@ class _DicoVar(object):
     def __getitem__(self, var):
         return self.get(var)
 
-    __call__.__doc__ = get.__doc__
-    __getitem__.__doc__ = get.__doc__
+
+
 
 # The main _DicoVar variable
 dicoVar = _DicoVar(_default)
