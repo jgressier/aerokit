@@ -21,7 +21,7 @@ Examples
 When implementing a vtk file manipulation function
 
 >>> # Import dicovar module database
->>> from daepy.vtkpy.dicovar import dicoVar as dv
+>>> from hades.common.dicovar import dicoVar as dv
 >>> # test if the field U_AVG is present
 >>> if data_outVTK.GetPointData().HasArray(dv('u_avg')) != 1:
 >>>     raise ValueError("Error : field U_AVG not present")
@@ -35,7 +35,7 @@ When implementing a vtk file manipulation function
 When implementing a script associated to a given software
 
 >>> # Import dicovar module functions
->>> from daepy.vtkpy.dicovar import setDicoVar, printDicoVar
+>>> from hades.common.dicovar import setDicoVar, printDicoVar
 >>> # Setting CharlesX dicovar
 >>> setDicoVar('cx')
 >>> printDicoVar()
@@ -54,8 +54,16 @@ import copy as _copy
 # ---------------
 
 # CharlesX variables dico
-_cxNames = ['CharlesX', 'cx', 'charlesx', 'phoenix']
+_cxNames = ['IC3', 'ic3', 'CharlesX', 'cx', 'charlesx']
 _cxDico = {
+    'p':   'P',
+    'ps':  'P',
+    'rho': 'RHO',
+    'T':   'T',
+    'V':  'U',
+    'Vx': 'U_X',
+    'Vy': 'U_Y',
+    'Vz': 'U_Z',
     'u_avg': 'U_AVG',
     'rho_avg': 'RHO_AVG',
     'tauw_avg': 'TauWallAvg',
@@ -79,7 +87,7 @@ _ofDico = {
 _dataBase = [[_cxNames, _cxDico],
              [_ofNames, _ofDico]]
 
-_default = 'OpenFOAM'
+_default = 'IC3'
 
 
 # -----------------------------------------------------------------
@@ -105,7 +113,7 @@ class _DicoVar(object):
                 dv = _copy.deepcopy(soft[1])
                 softName = soft[0][0]
                 softOK = True
-                print '---- DAEPy::DicoVar ----'
+                print '---- HADES::DicoVar ----'
                 print '--> Using {} variables denomination'.format(softName)
         if not softOK:
             raise ValueError('Not variable denomination database for {}'
@@ -113,8 +121,8 @@ class _DicoVar(object):
 
         # Defining database internal methods
         def get(var):
-            if var.lower() in dv:
-                return dv[var.lower()]
+            if var in dv:
+                return dv[var]
             else:
                 raise ValueError('{} variable not in {} database dictionnary'
                                  .format(var, softName))
@@ -131,7 +139,7 @@ class _DicoVar(object):
         def setVar(var, sVar):
             if var in dv:
                 dv[var] = sVar
-                print '---- DAEPy::DicoVar ----'
+                print '---- HADES::DicoVar ----'
                 print '--> Changing denomination of {} into {}'\
                     .format(var, sVar)
             else:
@@ -139,7 +147,7 @@ class _DicoVar(object):
                                  .format(var, softName))
 
         def printDatabase():
-            print '---- DAEPy::DicoVar ----'
+            print '---- HADES::DicoVar ----'
             print '--> Database dictionnary for {}'.format(softName)
             for elt in dv:
                 print '      {} => {}'.format(elt, dv[elt])
@@ -233,3 +241,6 @@ def setDicoVar(software):
 def printDicoVar():
     """Print the variables denominations for the selected software"""
     dicoVar.printDatabase()
+
+# -----------------------------------------------------------------
+
