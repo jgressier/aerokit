@@ -2,9 +2,9 @@
   legacy package importing legacy functions
 """
 
-import Isentropic as ist
-import Supersonic as sup
-import MassFlow   as mfl
+from . import Isentropic as ist
+from . import Supersonic as sup
+from . import MassFlow   as mfl
 
 # -- isentropic functions --
 

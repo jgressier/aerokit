@@ -21,9 +21,9 @@ def secant_solve(f, y, x, tol=0.00001):
         new_x = next_x
         it += 1
     if it == itmax:
-        print "!!! max number of iterations (%2i) reached"%(it)
+        print("!!! max number of iterations (%2i) reached"%(it))
         callseq = ''
         for i in range(len(inspect.stack())):
             callseq += '/'+inspect.stack()[i][3]
-        print '    from',callseq
+        print('    from',callseq)
     return new_x

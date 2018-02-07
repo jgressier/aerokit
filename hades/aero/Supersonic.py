@@ -4,8 +4,8 @@
 
 import math
 import numpy as np
-import IterativeSolve
-import Isentropic as Is
+from . import IterativeSolve
+from . import Isentropic as Is
 
 # -- 2D supersonic invariants --
 
