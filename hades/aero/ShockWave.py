@@ -14,7 +14,7 @@ def Ps_ratio(Mn, gamma=1.4):
     return 1.+ (2.*gamma/(gamma+1.))*(Mn**2-1.)
 
 def Mn_Ps_ratio(Pratio, gamma=1.4):
-    return math.sqrt(1+(Pratio-1.)*(gamma+1.)/(2.*gamma)) 
+    return np.sqrt(1+(Pratio-1.)*(gamma+1.)/(2.*gamma)) 
 
 def Rho_ratio(Mn, gamma=1.4):
     return ((gamma+1.)*Mn**2)/(2.+(gamma-1.)*Mn**2)
@@ -23,7 +23,7 @@ def Ts_ratio(Mn, gamma=1.4):
     return Ps_ratio(Mn, gamma)/Rho_ratio(Mn, gamma)
 
 def downstream_Mn(Mn, gamma=1.4):
-    return math.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
+    return np.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
 
 def Pi_ratio(Mn, gamma=1.4):
     return Ps_ratio(Mn, gamma)*Is.PiPs_Mach(downstream_Mn(Mn, gamma))/Is.PiPs_Mach(Mn, gamma)
@@ -55,8 +55,8 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=1.4):
         print "no weak shock wave solution"
         return degree.asin(1./Mach)
     else:
-        phi = math.acos(-.5*ke/math.sqrt(kd**3))
-        kf  = 2.*math.sqrt(kd)*math.cos(phi/3.) - ka/3.
+        phi = np.acos(-.5*ke/np.sqrt(kd**3))
+        kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
         return degree.atan(1./kf)
 
 def strongsigma_Mach_deflection(Mach, deflection, gamma=1.4):
@@ -69,8 +69,8 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=1.4):
         print "no strong shock wave solution"
         return 90.
     else:
-        phi = math.acos(-.5*ke/math.sqrt(kd**3)) + 4*math.pi
-        kf  = 2.*math.sqrt(kd)*math.cos(phi/3.) - ka/3.
+        phi = np.acos(-.5*ke/np.sqrt(kd**3)) + 4*math.pi
+        kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
         return degree.atan(1./kf)
 
 def sigma_Mach_deflection(Mach, deflection, gamma=1.4):
@@ -117,7 +117,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=1.4, tol=1.0e-6):
             dy = dy + C[i]*K[i]
             E  = E + (C[i] - D[i])*K[i]
         # Compute RMS error e
-        e = math.sqrt(sum(E**2)/n)
+        e = np.sqrt(sum(E**2)/n)
         return dy, e
 
     def rhs(phi, data):
@@ -126,7 +126,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=1.4, tol=1.0e-6):
         k  = 1.-(ma*degree.sin(phi-th))**2
         rhs=numpy.zeros(2)
         rhs[0] = -degree.sin(th)*degree.cos(phi-th)/degree.sin(phi)/k
-        rhs[1] =  math.pi/180.*degree.sin(th)*degree.sin(phi-th)/degree.sin(phi)/k*ma*(1.+.5*(gamma-1)*ma*ma)
+        rhs[1] =  np.pi/180.*degree.sin(th)*degree.sin(phi-th)/degree.sin(phi)/k*ma*(1.+.5*(gamma-1)*ma*ma)
         return rhs
 
     th   = deflection_Mach_sigma(Mach, sigma, gamma)
