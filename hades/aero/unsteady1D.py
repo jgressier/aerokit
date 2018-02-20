@@ -33,13 +33,16 @@ class unsteady_state(model1D.state):
 	def copy(self):
 		return copy.deepcopy(self)
 
-	def _rankinehugoniot(self, ushock):
-	 	"""returns Rankine-Hugoniot state, given a shock velocity
-	 	   this function is made private because there is no test about upstream/downstream consistency
-	 	   nor the right ushock range (greater than u+a or lesser than u-a"""
+	def _rankinehugoniot_from_ushock(self, ushock):
+	 	"""
+	 		returns Rankine-Hugoniot state, given a shock velocity
+	 	   
+	 	   	..warning:: this function is made private because there is no test about upstream/downstream consistency
+	 	   	nor the right ushock range (greater than u+a or lesser than u-a
+	 	"""
 	 	loc_Mn    = (self.u-ushock)/self.asound()          # this Mach number is signed
 		rho_ratio = sw.Rho_ratio(loc_Mn, self._gamma)
-		return state(self.rho * rho_ratio,
+		return unsteady_state(self.rho * rho_ratio,
 	 	             ushock + (self.u-ushock)/rho_ratio,
 	 	             self.p * sw.Ps_ratio(loc_Mn, self._gamma),
 	 	             gamma=self._gamma)

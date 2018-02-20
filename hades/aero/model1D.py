@@ -36,10 +36,19 @@ class state():
 		"""returns speed of sound"""
 		return math.sqrt(self._gamma*self.p/self.rho)
 
-	def mach(self):
+	def Mach(self):
 		"""returns speed of sound"""
 		return self.u/self.asound()
 
 	def massflow(self):
 		"""returns massflow"""
 		return self.rho * self.u
+
+	def Ptot(self):
+		"""returns speed of sound"""
+		return self.p*(1.+.5*(self._gamma-1)*self.Mach()**2)**(self._gamma/(self._gamma-1.))
+
+	# def rTtot(self):
+	# 	"""returns speed of sound"""
+	# 	return self.u/self.asound()
+

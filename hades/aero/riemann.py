@@ -80,11 +80,23 @@ class riemann_pb():
 		return "(rho, u, p)_L : (%s, %s, %s)\n" % (self._qL.rho, self._qL.u, self._qL.p) + \
 			   "(rho, u, p)_R : (%s, %s, %s)"   % (self._qR.rho, self._qR.u, self._qR.p)
 
-	def left_fastest():
-		return
+	def left_fastest(self):
+		return self._waves[0]
 
-	def right_fastest():
-		return
+	def right_fastest(self):
+		return self._waves[4]
+
+	def ustar(self):
+		return self._ustar
+
+	def pstar(self):
+		return self._pstar
+
+	def qstarL(self):
+		return self._qstarL
+
+	def qstarR(self):
+		return self._qstarR
 
 	def _delta_uL(self, p):
 		"""left contribution to delta u in Riemann problem"""

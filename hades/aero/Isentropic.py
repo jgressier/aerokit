@@ -50,6 +50,25 @@ def TiTs_Mach(Mach, gamma=defg._gamma):
     return 1.+.5*(gamma-1)*Mach**2
 
 def PiPs_Mach(Mach, gamma=defg._gamma):
+    """
+    	Computes Pi/Ps ratio from Mach number
+
+		Long comment
+ 
+		:param Mach:  local Mach number
+        :param gamma: specific heat ratio, default from hades.common.defaultgas
+		:return:      result Pi/Ps ratio
+ 
+ 		:Example:
+
+		>>> PiPs_Mach(1.) # with default gamma 1.4
+		1.892929158737854
+		>>> PiPs_Mach(2., gamma=1.6)
+		8.187044460255244
+
+		.. seealso:: Mach_PiPs()
+		.. note:: available for scalar or array (numpy) computations
+    """	
     return (1.+.5*(gamma-1.)*Mach**2)**(gamma/(gamma-1.))
 
 def Mach_TiTs(TiTs, gamma=defg._gamma):
