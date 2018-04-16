@@ -84,6 +84,8 @@ def calculs(lambda_, pi_c, Tt4, m, taux_meca):
     T19 = Tt19 / (1 + ((gamma - 1)/2)*M19**2)
     A19 = np.sqrt(gamma * r * T19)
     V19 = M19 * A19
+    print "V9  inl", V9, M9
+    print "V19 inl", V19
     Ff = m_f * (V19 - V0)
     # Calculs performances
     F = Fc + Ff

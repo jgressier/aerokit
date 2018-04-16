@@ -11,7 +11,7 @@ Tt4=1620.
 g      = tfclass.Gaz()
 g_fuel = tfclass.Gaz(1.33,291.6,42800.e3)
 
-for opr in { 10., 20., 40. }:
+for opr in [ 10., 20., 40., 50. ]:
 	print "OPR: ",opr
 	#tf_fan = tfclass.cycle_taux_fan_fixe(6.1,32.8,1410.,180.,g,g_fuel,1.6)
 	tf_pow = tfclass.cycle_taux_fan_calcule(bpr, opr, Tt4, 230.,g,g_fuel,0.58)
