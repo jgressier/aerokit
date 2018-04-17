@@ -36,6 +36,14 @@ class state():
 		"""returns speed of sound"""
 		return math.sqrt(self._gamma*self.p/self.rho)
 
+	def left_acoustic(self):
+		"""returns left 'actual' speed of sound"""
+		return self.u-math.sqrt(self._gamma*self.p/self.rho)
+
+	def right_acoustic(self):
+		"""returns left 'actual' speed of sound"""
+		return self.u+math.sqrt(self._gamma*self.p/self.rho)
+
 	def Mach(self):
 		"""returns speed of sound"""
 		return self.u/self.asound()

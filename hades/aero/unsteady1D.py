@@ -33,6 +33,9 @@ class unsteady_state(model1D.state):
 	def copy(self):
 		return copy.deepcopy(self)
 
+	def copysymmetric(self):
+		return unsteady_state(self.rho, -self.u, self.p, self._gamma)
+
 	def _rankinehugoniot_from_ushock(self, ushock):
 	 	"""
 	 		returns Rankine-Hugoniot state, given a shock velocity
