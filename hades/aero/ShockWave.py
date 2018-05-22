@@ -7,45 +7,47 @@ import degree
 import IterativeSolve
 import numpy      as np
 import Isentropic as Is
+from hades.common import defaultgas as defg # relative import is deprecated by doctest
 
 # --- NORMAL SHOCK WAVE ---
 
-def Ps_ratio(Mn, gamma=1.4):
+def Ps_ratio(Mn, gamma=defg._gamma):
     return 1.+ (2.*gamma/(gamma+1.))*(Mn**2-1.)
 
-def Mn_Ps_ratio(Pratio, gamma=1.4):
+def Mn_Ps_ratio(Pratio, gamma=defg._gamma):
     return np.sqrt(1+(Pratio-1.)*(gamma+1.)/(2.*gamma)) 
 
-def Rho_ratio(Mn, gamma=1.4):
+def Rho_ratio(Mn, gamma=defg._gamma):
     return ((gamma+1.)*Mn**2)/(2.+(gamma-1.)*Mn**2)
 
-def Ts_ratio(Mn, gamma=1.4):
+def Ts_ratio(Mn, gamma=defg._gamma):
     return Ps_ratio(Mn, gamma)/Rho_ratio(Mn, gamma)
 
-def downstream_Mn(Mn, gamma=1.4):
+def downstream_Mn(Mn, gamma=defg._gamma):
     return np.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
 
-def Pi_ratio(Mn, gamma=1.4):
+def Pi_ratio(Mn, gamma=defg._gamma):
     return Ps_ratio(Mn, gamma)*Is.PiPs_Mach(downstream_Mn(Mn, gamma))/Is.PiPs_Mach(Mn, gamma)
 
-def Mn_Pi_ratio(piratio, gamma=1.4):
+def Mn_Pi_ratio(piratio, gamma=defg._gamma):
     def piratio_of_mach(m):
         return Pi_ratio(m, gamma)
     if piratio > 1:
         print "!!! cannot find Mn for Pi_ratio > 1"
         return 1
     return IterativeSolve.secant_solve(piratio_of_mach, piratio, 1.5)
+
 # --- LOCAL 2D SHOCK WAVE ---
 
-def deflection_Mach_sigma(Mach, sigma, gamma=1.4):
+def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
     sigrad = np.radians(sigma)
     Mn     = Mach*np.sin(sigrad)
     return sigma-np.degrees(np.arctan2(np.tan(sigrad), Rho_ratio(Mn, gamma)))
 
-def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=1.4):
+def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     return deflection_Mach_sigma(Mach, degree.asin(Mn_Ps_ratio(Pratio, gamma)/Mach), gamma)
 
-def weaksigma_Mach_deflection(Mach, deflection, gamma=1.4):
+def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     ka = (1. + .5*(gamma+1.)*Mach**2)*degree.tan(deflection)
     kb = 1. - Mach**2
     kc = (1. + .5*(gamma-1.)*Mach**2)*degree.tan(deflection)
@@ -59,7 +61,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=1.4):
         kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
         return degree.atan(1./kf)
 
-def strongsigma_Mach_deflection(Mach, deflection, gamma=1.4):
+def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     ka = (1. + .5*(gamma+1.)*Mach**2)*degree.tan(deflection)
     kb = 1. - Mach**2
     kc = (1. + .5*(gamma-1.)*Mach**2)*degree.tan(deflection)
@@ -73,20 +75,39 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=1.4):
         kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
         return degree.atan(1./kf)
 
-def sigma_Mach_deflection(Mach, deflection, gamma=1.4):
+def sigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
+    """
+    computes the shock angle from upwstream Mach number and deflection angle
+    """
     def local_f(sig):
         return deflection_Mach_sigma(Mach, sig, gamma)
     return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 
-def sigmaMax(Mach, gamma=1.4):
-    """ computes the MAXIMUM shock angle (always subsonic downstream flow)
+def dev_Max(Mach, gamma=defg._gamma):
+    """ computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
     """
     M2 = np.square(Mach)
     ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
     kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
     return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
 
-def sigmaSonic(Mach, gamma=1.4):
+def dev_Sonic(Mach, gamma=defg._gamma):
+    """ computes the shock angle for a downstream SONIC Mach number
+    """
+    M2 = np.square(Mach)
+    ka = gamma-3+M2*(gamma+1)
+    kb = (gamma+1)*(np.square(M2-3)+gamma*np.square(M2+1))
+    return degree.asin(np.sqrt((ka+np.sqrt(kb))/(4*gamma*M2)))
+
+def sigma_DevMax(Mach, gamma=defg._gamma):
+    """ computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
+    """
+    M2 = np.square(Mach)
+    ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
+    kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
+    return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
+
+def sigma_Sonic(Mach, gamma=defg._gamma):
     """ computes the shock angle for a downstream SONIC Mach number
     """
     M2 = np.square(Mach)
@@ -96,7 +117,7 @@ def sigmaSonic(Mach, gamma=1.4):
 
 # --- CONICAL SHOCK WAVE ---
 
-def conical_deflection_Mach_sigma(Mach, sigma, gamma=1.4, tol=1.0e-6):
+def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
     def rkf45(F, x, y, h):
         # Runge-Kutta-Fehlberg formulas
         C = [37./378, 0., 250./621, 125./594, 0., 512./1771]
@@ -153,7 +174,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=1.4, tol=1.0e-6):
     deflection = .5*(thma[0] + phi)
     return deflection
 
-def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=1.4):
+def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
     def local_f(sig):
         return conical_deflection_Mach_sigma(Mach, sig, gamma)
     return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
