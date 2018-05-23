@@ -84,28 +84,24 @@ def sigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 
 def dev_Max(Mach, gamma=defg._gamma):
-    """ computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
+    """ computes the maximum deviation (always subsonic downstream flow), separation of weak/strong shock
     """
-    M2 = np.square(Mach)
-    ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
-    kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
-    return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
+    return deflection_Mach_sigma(Mach, sigma_DevMax(Mach, gamma=gamma), gamma=gamma)
 
 def dev_Sonic(Mach, gamma=defg._gamma):
-    """ computes the shock angle for a downstream SONIC Mach number
+    """ computes the deviation angle for a downstream SONIC Mach number
     """
-    M2 = np.square(Mach)
-    ka = gamma-3+M2*(gamma+1)
-    kb = (gamma+1)*(np.square(M2-3)+gamma*np.square(M2+1))
-    return degree.asin(np.sqrt((ka+np.sqrt(kb))/(4*gamma*M2)))
+    return deflection_Mach_sigma(Mach, sigma_Sonic(Mach, gamma=gamma), gamma=gamma)
 
 def sigma_DevMax(Mach, gamma=defg._gamma):
     """ computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
     """
-    M2 = np.square(Mach)
-    ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
-    kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
-    return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
+    fogpu = 4./(gamma+1.)
+    M2    = np.square(Mach)
+    #ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
+    #kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
+    #return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
+    return degree.asin(np.sqrt(1./fogpu/gamma/M2*(M2-fogpu+np.sqrt(M2*M2+2*(gamma-1.)*fogpu*M2+4.*fogpu))))
 
 def sigma_Sonic(Mach, gamma=defg._gamma):
     """ computes the shock angle for a downstream SONIC Mach number
