@@ -1,5 +1,5 @@
 """@package MassFlow
-  Compressible flow functions
+  Massflow for compressible flow
 """
 
 import math

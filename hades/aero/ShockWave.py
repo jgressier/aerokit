@@ -47,6 +47,13 @@ def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
 def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     return deflection_Mach_sigma(Mach, degree.asin(Mn_Ps_ratio(Pratio, gamma)/Mach), gamma)
 
+def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
+    Mn0 = Mn_Ps_ratio(Pratio, gamma)
+    sig = degree.asin(Mn0/Mach)
+    dev = deflection_Mach_sigma(Mach, sig, gamma)
+    Mn1 = downstream_Mn(Mn0, gamma)
+    return Mn1/degree.sin(sig-dev)
+
 def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     ka = (1. + .5*(gamma+1.)*Mach**2)*degree.tan(deflection)
     kb = 1. - Mach**2
