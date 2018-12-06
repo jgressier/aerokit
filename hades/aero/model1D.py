@@ -6,7 +6,8 @@ import math
 import numpy     as np
 #import ShockWave as sw
 #import IterativeSolve
-from ..common import defaultgas as defg
+from ..common   import defaultgas as defg
+from hades.aero import Isentropic as Is
 
 # -- class --
 
@@ -32,6 +33,23 @@ class state():
 	def copy(self):
 		return state(self.rho, self.u, self.p, self._gamma)
 
+	def compute_from_pt_rtt_M(self, pt, rtt, M):
+		ps  = pt /Is.PiPs_Mach(M, self._gamma)
+		rts = rtt/Is.TiTs_Mach(M, self._gamma)
+		self.__init__(rho=ps/rts, u=M*np.sqrt(self._gamma*rts), p=ps)
+		
+	def compute_from_pt_rtt_u(self, pt, rtt, u):
+		gam   = self._gamma
+		gsgmu = gam/(gam-1.)
+		a2    = gam * rtt - .5*(gam-1.)*u**2
+		ps    = pt / ( 1. + .5*u**2 / (gsgmu*rtt - .5*u**2) )**gsgmu
+		self.__init__(rho=gam * ps / a2, u=u, p=ps)
+
+	def compute_from_pt_rtt_p(self, pt, rtt, p):
+		M   = Is.Mach_PiPs(pt/p, self._gamma)
+		rts = rtt/Is.TiTs_Mach(M, self._gamma)
+		self.__init__(rho=p/rts, u=M*np.sqrt(self._gamma*rts), p=p)
+		
 	def asound(self):
 		"""returns speed of sound"""
 		return math.sqrt(self._gamma*self.p/self.rho)
@@ -53,8 +71,12 @@ class state():
 		return self.rho * self.u
 
 	def Ptot(self):
-		"""returns speed of sound"""
-		return self.p*(1.+.5*(self._gamma-1)*self.Mach()**2)**(self._gamma/(self._gamma-1.))
+		"""returns Total pressure"""
+		return self.p*Is.PiPs_Mach(self.Mach(), self._gamma)
+
+	def rTtot(self):
+		"""returns Total temperature"""
+		return self._gamma/(self._gamma-1.)*self.p/self.rho + .5*self.u**2
 
 	# def rTtot(self):
 	# 	"""returns speed of sound"""
