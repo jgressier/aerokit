@@ -76,7 +76,7 @@ class state():
 
 	def rTtot(self):
 		"""returns Total temperature"""
-		return self._gamma/(self._gamma-1.)*self.p/self.rho + .5*self.u**2
+		return self.p/self.rho + .5*(self._gamma-1.)/self._gamma*self.u**2
 
 	# def rTtot(self):
 	# 	"""returns speed of sound"""
