@@ -10,7 +10,7 @@ from ..common import defaultgas as defg
 # -- Compressible flow functions  --
 
 def WeightMassFlow(Mach, r=287.1, gamma=defg._gamma):
-    return np.sqrt(gamma/r)*Mach*(1.+.5*(gamma-1)*Mach**2)**(-.5*(gamma+1.)/(gamma-1.))
+    return np.sqrt(gamma)*Mach*(1.+.5*(gamma-1)*Mach**2)**(-.5*(gamma+1.)/(gamma-1.))
 
 def Sigma_Mach(Mach, gamma=defg._gamma):
     return (2./(gamma+1.)*(1.+.5*(gamma-1)*Mach**2))**(.5*(gamma+1.)/(gamma-1.))/Mach
