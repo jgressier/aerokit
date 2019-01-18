@@ -63,7 +63,7 @@ class state():
 		return self.u+math.sqrt(self._gamma*self.p/self.rho)
 
 	def Mach(self):
-		"""returns speed of sound"""
+		"""returns Mach number"""
 		return self.u/self.asound()
 
 	def massflow(self):
