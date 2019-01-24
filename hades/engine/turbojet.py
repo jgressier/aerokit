@@ -82,6 +82,9 @@ class turbojet_opt(gg.base):
     def thermoprop_efficiency(self):
         return self.norm_thrust()*self.V0/self.Wsp_cc()
 
+    def Sfc(self):
+        return self.far/self.norm_thrust()
+
 # ===============================================================
 # automatic testing
 

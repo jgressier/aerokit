@@ -60,9 +60,9 @@ class turbofan_adapt(tj.turbojet_opt):
 
     def update(self):
         tj.turbojet_opt.update(self)
-        Wsp_mono = tj.turbojet_opt.Wsp_kinEn(self)
         gh  = self.gam_hot
         cph = gh*self.r_hot/(gh-1.)
+        Wsp_mono = (1.-(self.Pt45/self.P0*self.xi_nozzle)**(-(gh-1.)*self.etapolTBP/gh))*self.Tt45*cph*(1.+self.far)
         self.Tt5  = self.Tt45 - Wsp_mono*self.fanpower_ratio/cph/(1.+self.far)
         self.Pt5  = self.Pt45*(self.Tt5/self.Tt45)**(gh/((gh-1.)*self.etapolTBP))
         # core nozzle

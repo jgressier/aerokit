@@ -30,7 +30,7 @@ import hades.aero.Isentropic as Is
 
 class base():
     """
-    	Computes Ti/Ts ratio from Mach number
+    	virtual class for gas generator and other engine module
 
 		Long comment
  
