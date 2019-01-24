@@ -8,19 +8,7 @@ import hades.aero.degree      as deg
 import hades.aero.ShockWave   as sw
 
 import matplotlib.pyplot as plt
-import hades.aero.plot.defaultstyle as pltdef
-
-
-def figure_theta_sigma(**kwargs):
-	fig = plt.figure(**kwargs)
-	pltdef.set_grid()
-	return fig
-
-def figure_theta_pressure(**kwargs):
-	fig = plt.figure(**kwargs)
-	pltdef.set_grid()
-	plt.yscale('log')
-	return fig
+from hades.aero.plot.defaultstyle import *
 
 
 def plot_theta_sigma(mach, gamma=defg._gamma, npts=100, curve='both', devmax=False, sonic=False, color='k', linestyle='-', **kwargs):
