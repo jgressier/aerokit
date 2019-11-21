@@ -3,10 +3,10 @@
 """
 
 import math
-import degree
-import IterativeSolve
+import hades.aero.IterativeSolve as ITS
 import numpy      as np
-import Isentropic as Is
+import hades.aero.Isentropic as Is
+import hades.aero.degree as degree
 from hades.common import defaultgas as defg # relative import is deprecated by doctest
 
 # --- NORMAL SHOCK WAVE ---
@@ -33,9 +33,9 @@ def Mn_Pi_ratio(piratio, gamma=defg._gamma):
     def piratio_of_mach(m):
         return Pi_ratio(m, gamma)
     if piratio > 1:
-        print "!!! cannot find Mn for Pi_ratio > 1"
+        print("!!! cannot find Mn for Pi_ratio > 1")
         return 1
-    return IterativeSolve.secant_solve(piratio_of_mach, piratio, 1.5)
+    return ITS.secant_solve(piratio_of_mach, piratio, 1.5)
 
 # --- LOCAL 2D SHOCK WAVE ---
 
@@ -61,7 +61,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     kd = (ka**2/3. - kb)/3.
     ke = 2.*ka**3/27. - ka*kb/3. + kc
     if ke**2 - 4.*kd**3 > 0:
-        print "no weak shock wave solution"
+        print("no weak shock wave solution")
         return degree.asin(1./Mach)
     else:
         phi = np.acos(-.5*ke/np.sqrt(kd**3))
@@ -75,7 +75,7 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     kd = (ka**2/3. - kb)/3.
     ke = 2.*ka**3/27. - ka*kb/3. + kc
     if ke**2 - 4.*kd**3 > 0:
-        print "no strong shock wave solution"
+        print("no strong shock wave solution")
         return 90.
     else:
         phi = np.acos(-.5*ke/np.sqrt(kd**3)) + 4*math.pi
@@ -88,7 +88,7 @@ def sigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     """
     def local_f(sig):
         return deflection_Mach_sigma(Mach, sig, gamma)
-    return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
+    return ITS.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 
 def dev_Max(Mach, gamma=defg._gamma):
     """ computes the maximum deviation (always subsonic downstream flow), separation of weak/strong shock
@@ -169,10 +169,10 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
             else:
                 thma = thma + dthma
                 phi  = phi  + h
-                print phi, thma
+                print(phi, thma)
         else:
             h = 0.9*h*(tol/err)**0.2
-            print "new h ",h
+            print("new h ",h)
 
     deflection = .5*(thma[0] + phi)
     return deflection
@@ -180,5 +180,5 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
 def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
     def local_f(sig):
         return conical_deflection_Mach_sigma(Mach, sig, gamma)
-    return IterativeSolve.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
+    return ITS.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 

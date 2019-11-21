@@ -21,8 +21,8 @@
 import math
 import copy
 import numpy     as np
-from . import ShockWave as sw
-from . import model1D
+import hades.aero.ShockWave as sw
+import hades.aero.model1D   as model1D
 
 # -- class --
 
@@ -37,17 +37,17 @@ class unsteady_state(model1D.state):
 		return unsteady_state(self.rho, -self.u, self.p, self._gamma)
 
 	def _rankinehugoniot_from_ushock(self, ushock):
-	 	"""
-	 		returns Rankine-Hugoniot state, given a shock velocity
-	 	   
-	 	   	..warning:: this function is made private because there is no test about upstream/downstream consistency
-	 	   	nor the right ushock range (greater than u+a or lesser than u-a
-	 	"""
-	 	loc_Mn    = (self.u-ushock)/self.asound()          # this Mach number is signed
+		"""
+			returns Rankine-Hugoniot state, given a shock velocity
+		
+			..warning:: this function is made private because there is no test about upstream/downstream consistency
+			nor the right ushock range (greater than u+a or lesser than u-a
+		"""
+		loc_Mn    = (self.u-ushock)/self.asound()          # this Mach number is signed
 		rho_ratio = sw.Rho_ratio(loc_Mn, self._gamma)
 		return unsteady_state(self.rho * rho_ratio,
-	 	             ushock + (self.u-ushock)/rho_ratio,
-	 	             self.p * sw.Ps_ratio(loc_Mn, self._gamma),
+		             ushock + (self.u-ushock)/rho_ratio,
+		             self.p * sw.Ps_ratio(loc_Mn, self._gamma),
 	 	             gamma=self._gamma)
 
 	def delta_u_expansion(self, p):
