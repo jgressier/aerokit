@@ -4,7 +4,8 @@
 
 import math
 import numpy as np
-from . import IterativeSolve
+#from . import IterativeSolve
+from scipy.optimize import fsolve
 from ..common import defaultgas as defg
 
 # -- Compressible flow functions  --
@@ -17,21 +18,18 @@ def Sigma_Mach(Mach, gamma=defg._gamma):
 
 def Mach_Sigma(sigma, Mach=2., gamma=defg._gamma):
     def sigma_of_mach(m):
-        return Sigma_Mach(m, gamma)
-    return IterativeSolve.secant_solve(sigma_of_mach, sigma, Mach)
+        return Sigma_Mach(m, gamma)-sigma
+    return fsolve(sigma_of_mach, Mach)
 
 def MachSub_Sigma(sigma, gamma=defg._gamma):
 	# initial guess
 	Mach = (2./(gamma+1.))**(.5*(gamma+1.)/(gamma-1.))/sigma
-	def sigma_of_mach(m):
-		return Sigma_Mach(m, gamma)
-	return IterativeSolve.secant_solve(sigma_of_mach, sigma, Mach)
+	return Mach_Sigma(sigma, Mach, gamma)
 
 def MachSup_Sigma(sigma, gamma=defg._gamma):
 	# initial guess
-	cg = (gamma+1.)/(gamma-1.)
-	Mach = np.sqrt((sigma*cg**(.5*cg))**(2./(cg-1.))-cg)
-	def sigma_of_mach(m):
-		return Sigma_Mach(m, gamma)
-	return IterativeSolve.secant_solve(sigma_of_mach, sigma, Mach)
+	#cg = (gamma+1.)/(gamma-1.)
+	#Mach = np.sqrt((sigma*cg**(.5*cg))**(2./(cg-1.))-cg)
+	Mach = np.sqrt(1.+1./sigma)
+	return Mach_Sigma(sigma, Mach, gamma)
 
