@@ -128,6 +128,53 @@ def Madapt_from_AsAc_NPR(AsAc, NPR):
 
 
 
+class nozzle():
+
+	def __init__(self, x, section, AsoAc=None, gamma=1.4):
+
+		self.gamma   = gamma
+		self.x       = x
+		if AsoAc:
+			self.AsoAc = AsoAc
+		else:
+			self.AsoAc = section[-1] / np.min(section)
+		self.AxoAc   = section * self.AsoAc / section[-1]
+		self.ithroat = np.abs(self.AxoAc).argmin() # abs not necessary but ensure conversion to numpy array
+		self.NPR0, self.NPRsw, self.NPR1, self.Msub, self.Msh, self.Msup = _NPR_Ms_list(self.AsoAc)
+		#print self.NPR0, self.NPRsw, self.NPR1
+
+	def set_NPR(self, NPR):
+		self._Pt = np.ones_like(self.AxoAc)
+		if NPR < self.NPR0:
+			_Ms = Is.Mach_PiPs(NPR, gamma=self.gamma)
+			self._M  = mf.MachSub_Sigma(self.AxoAc/self.AsoAc*mf.Sigma_Mach(_Ms), gamma=self.gamma)
+			self._Ps = self._Pt/Is.PiPs_Mach(self._M, gamma=self.gamma)
+		else:
+			self._M = np.ones_like(self.AxoAc)
+			self._M[:self.ithroat+1]   = mf.MachSub_Sigma(self.AxoAc[:self.ithroat+1],   gamma=self.gamma)
+			self._M[self.ithroat+1:] = mf.MachSup_Sigma(self.AxoAc[self.ithroat+1:], gamma=self.gamma)
+			if NPR < self.NPRsw:
+				# analytical solution for Ms, losses and upstream Mach number of shock wave
+				Ms     = Ms_from_AsAc_NPR(self.AsoAc, NPR)
+				Ptloss = Is.PiPs_Mach(Ms)/NPR
+				Msh    = sw.Mn_Pi_ratio(Ptloss)
+				# redefine curves starting from 'ish' index (closest value of Msh in supersonic flow)
+				ish    = np.abs(self._M-Msh).argmin()
+				self._M[ish:] = mf.MachSub_Sigma(self.AxoAc[ish:]*mf.Sigma_Mach(Ms)/self.AsoAc)
+				self._Pt[ish:] = Ptloss
+			self._Ps = self._Pt/Is.PiPs_Mach(self._M)
+
+
+	def Mach(self):
+		return self._M
+
+	def Ps(self):
+		return self._Ps
+
+	def Ptot(self):
+		return self._Pt
+
+
 # ===============================================================
 # automatic testing
 
