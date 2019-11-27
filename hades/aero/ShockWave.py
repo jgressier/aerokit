@@ -88,7 +88,7 @@ def sigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     """
     def local_f(sig):
         return deflection_Mach_sigma(Mach, sig, gamma)
-    return ITS.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
+    return ITS.secant_solve(local_f, np.abs(deflection), degree.asin(1./Mach)+deflection)*np.sign(deflection)
 
 def dev_Max(Mach, gamma=defg._gamma):
     """ computes the maximum deviation (always subsonic downstream flow), separation of weak/strong shock
