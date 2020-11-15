@@ -42,39 +42,39 @@ class riemann_pb():
 
 	"""
 	def __init__(self, qL, qR):
-	 	self._qL    = qL.copy()
-	 	self._qR    = qR.copy()
-	 	self._waves = 5*[0]
-	 	# define _pstar
-	 	self._solve()
-	 	self._ustar    = self._ustar_from_pstar(self._pstar)
-	 	self._waves[2] = self._ustar
-	 	#
-	 	# finalize qstarL state
-	 	if (self._pstar > self._qL.p):
+		self._qL    = qL.copy()
+		self._qR    = qR.copy()
+		self._waves = 5*[0]
+		# define _pstar
+		self._solve()
+		self._ustar    = self._ustar_from_pstar(self._pstar)
+		self._waves[2] = self._ustar
+		#
+		# finalize qstarL state
+		if (self._pstar > self._qL.p):
 			_rho = self._qL.rho_through_shock(self._pstar)
 			_wsh = (self._qL.massflow()-_rho*self._ustar)/(self._qL.rho-_rho)
-		 	self._waves[0] = _wsh
-		 	self._waves[1] = _wsh
+			self._waves[0] = _wsh
+			self._waves[1] = _wsh
 			self._qstarL = uq.unsteady_state(rho=_rho, u=self._ustar, p=self._pstar, gamma=self._qL._gamma)
 		else:
 			_rho = self._qL.rho_through_isentropic(self._pstar)
 			self._qstarL = uq.unsteady_state(rho=_rho, u=self._ustar, p=self._pstar, gamma=self._qL._gamma)
-		 	self._waves[0] = self._qL.u  - self._qL.asound()
-		 	self._waves[1] = self._ustar - self._qstarL.asound()
-	 	#
-	 	# finalize qstarR state
-	 	if (self._pstar > self._qR.p):
+			self._waves[0] = self._qL.u  - self._qL.asound()
+			self._waves[1] = self._ustar - self._qstarL.asound()
+		#
+		# finalize qstarR state
+		if (self._pstar > self._qR.p):
 			_rho = self._qR.rho_through_shock(self._pstar)
 			_wsh = (self._qR.massflow()-_rho*self._ustar)/(self._qR.rho-_rho)
-		 	self._waves[3] = _wsh
-		 	self._waves[4] = _wsh
+			self._waves[3] = _wsh
+			self._waves[4] = _wsh
 			self._qstarR = uq.unsteady_state(rho=_rho, u=self._ustar, p=self._pstar, gamma=self._qR._gamma)
 		else:
 			_rho = self._qR.rho_through_isentropic(self._pstar)
 			self._qstarR = uq.unsteady_state(rho=_rho, u=self._ustar, p=self._pstar, gamma=self._qR._gamma)
-		 	self._waves[3] = self._qR.u  + self._qR.asound()
-		 	self._waves[4] = self._ustar + self._qstarR.asound()
+			self._waves[3] = self._qR.u  + self._qR.asound()
+			self._waves[4] = self._ustar + self._qstarR.asound()
 
 	def __repr__(self):
 		return "(rho, u, p)_L : (%s, %s, %s)\n" % (self._qL.rho, self._qL.u, self._qL.p) + \

@@ -20,4 +20,3 @@ def atan(a):
 
 def atan2(a, b):
     return np.degrees(np.arctan2(a, b))
-

@@ -93,7 +93,7 @@ class inflow_pb():
 		self._pstar  = fsolve(dpt, self._pstar_estimate_expansion(pt0), xtol=1e-10)
 		self._ustar  = self._qR.u + self._delta_uR(self._pstar)
 		# finalize qstarR state
-	 	if (self._pstar > self._qR.p):
+		if (self._pstar > self._qR.p):
 			_rho = self._qR.rho_through_shock(self._pstar)
 			self._qstarR = uq.unsteady_state(rho=_rho, u=self._ustar, p=self._pstar, gamma=self._qR._gamma)
 		else:

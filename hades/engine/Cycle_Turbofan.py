@@ -109,7 +109,7 @@ class cycle_1_to_4:
             self.Pt2 = self.Pt0 * self.xi_e
             self.current_stage_corps = 2
         else:
-            print "Il faut initialiser les valeurs d'entrées à l'aide de la méthode InitialValues"
+            print ("Il faut initialiser les valeurs d'entrées à l'aide de la méthode InitialValues")
         
     def stage_3(self):
         if self.current_stage_corps == 2:
@@ -228,12 +228,12 @@ class cycle_taux_fan_fixe(cycle_1_to_4):
             
     def show_perfo(self):
         if self.current_stage_fan == 19 and self.current_stage_corps == 9:
-            print "%s\t\t\t%.0f\t%s" % ("Poussée :", self.F, "N")
-            print "%s\t\t%.2f\t%s" % ("Poussée spécifique :", self.F_spe, "N.s/kg")
-            print "%s\t%.2f\t%s" % ("Consommation spécifique :", self.mk_spe, "g/kN/s")
-            print "%s\t\t%.3f\t%s" % ("Rendement thermique :", self.eta_th, "")
-            print "%s\t\t%.3f\t%s" % ("Rendement propulsif :", self.eta_prop, "")
-            print "%s\t\t%.3f\t%s" % ("Rendement global :", self.eta, "")
+            print("%s\t\t\t%.0f\t%s" % ("Poussée :", self.F, "N"))
+            print("%s\t\t%.2f\t%s" % ("Poussée spécifique :", self.F_spe, "N.s/kg"))
+            print("%s\t%.2f\t%s" % ("Consommation spécifique :", self.mk_spe, "g/kN/s"))
+            print("%s\t\t%.3f\t%s" % ("Rendement thermique :", self.eta_th, ""))
+            print("%s\t\t%.3f\t%s" % ("Rendement propulsif :", self.eta_prop, ""))
+            print("%s\t\t%.3f\t%s" % ("Rendement global :", self.eta, ""))
     
     def calculs_5_to_9(self):
         if self.current_stage_fan == 0:
@@ -303,7 +303,7 @@ class cycle_taux_fan_calcule(cycle_1_to_4):
             self.P9 = self.P0
             self.M9 = Is.Mach_PiPs(self.Pt9/self.P9, self.g_fuel.gamma)
             self.V9 = Is.Velocity_MachTi(self.M9, self.Tt9, self.g_fuel.r, self.g_fuel.gamma)
-            print "V9  cla", self.V9, self.M9
+            print("V9  cla", self.V9, self.M9)
             self.F_c = self.m_c * (self.V9 - self.V0)
             self.current_stage_corps = 9
             
@@ -322,7 +322,7 @@ class cycle_taux_fan_calcule(cycle_1_to_4):
             self.P19 = self.P0
             self.M19 = Is.Mach_PiPs(self.Pt19/self.P19, self.g.gamma)
             self.V19 = Is.Velocity_MachTi(self.M19, self.Tt19, self.g.r, self.g.gamma)
-            print "V19 cla", self.V19
+            print("V19 cla", self.V19)
             self.F_f = self.m_f * (self.V19 - self.V0)
             self.current_stage_fan = 19
             
@@ -340,12 +340,12 @@ class cycle_taux_fan_calcule(cycle_1_to_4):
             
     def show_perfo(self):
         if self.current_stage_fan == 19 and self.current_stage_corps == 9:
-            print "%s\t\t\t%.0f\t%s" % ("Poussée :", self.F, "N")
-            print "%s\t\t%.2f\t%s" % ("Poussée spécifique :", self.F_spe, "N.s/kg")
-            print "%s\t%.2f\t%s" % ("Consommation spécifique :", self.mk_spe, "g/kN/s")
-            print "%s\t\t%.3f\t%s" % ("Rendement thermique :", self.eta_th, "")
-            print "%s\t\t%.3f\t%s" % ("Rendement propulsif :", self.eta_prop, "")
-            print "%s\t\t%.3f\t%s" % ("Rendement global :", self.eta, "")
+            print("%s\t\t\t%.0f\t%s" % ("Poussée :", self.F, "N"))
+            print("%s\t\t%.2f\t%s" % ("Poussée spécifique :", self.F_spe, "N.s/kg"))
+            print("%s\t%.2f\t%s" % ("Consommation spécifique :", self.mk_spe, "g/kN/s"))
+            print("%s\t\t%.3f\t%s" % ("Rendement thermique :", self.eta_th, ""))
+            print("%s\t\t%.3f\t%s" % ("Rendement propulsif :", self.eta_prop, ""))
+            print("%s\t\t%.3f\t%s" % ("Rendement global :", self.eta, ""))
             
     
     def calculs_5_to_9(self):
@@ -389,7 +389,7 @@ class cycle_taux_fan_calcule(cycle_1_to_4):
 # c2 = cycle_taux_fan_calcule(11,41,1620.,230.,g,g_fuel,0.58)
 # c1.calculs_5_to_9()
 # c2.calculs_5_to_9()
-# print "CFM56 :"
+# print("CFM56 :")
 # c1.show_perfo()
 # print "LEAP 1A :"
 # c2.show_perfo()

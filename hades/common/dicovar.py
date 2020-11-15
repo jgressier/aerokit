@@ -114,8 +114,8 @@ class _DicoVar(object):
                 self._dv = _copy.deepcopy(soft[1])
                 self._softName = soft[0][0]
                 softOK = True
-                print '---- HADES::DicoVar ----'
-                print '--> Using {} variables denomination'.format(self._softName)
+                print('---- HADES::DicoVar ----')
+                print('--> Using {} variables denomination'.format(self._softName))
         if not softOK:
             raise ValueError('Not variable denomination database for {}'
                              .format(software))
@@ -162,17 +162,17 @@ class _DicoVar(object):
         """
         if var in self._dv:
             self._dv[var] = sVar
-            print '---- HADES::DicoVar ----'
-            print '--> Changing denomination of {} into {}'.format(var, sVar)
+            print('---- HADES::DicoVar ----')
+            print('--> Changing denomination of {} into {}'.format(var, sVar))
         else:
             raise ValueError('{} variable not in {} database dictionnary'.format(var, self._softName))
 
     def printDatabase(self):
         """Print the variables denomination for the selected software"""
-        print '---- HADES::DicoVar ----'
-        print '--> Database dictionnary for {}'.format(self._softName)
+        print('---- HADES::DicoVar ----')
+        print('--> Database dictionnary for {}'.format(self._softName))
         for elt in self._dv:
-            print '      {} => {}'.format(elt, self._dv[elt])
+            print('      {} => {}'.format(elt, self._dv[elt]))
 
     # Definition of other ways to get a variable
     def __call__(self, var):

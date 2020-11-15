@@ -1,6 +1,6 @@
 # from Numerical Methods in Engineering With Python
 
-from numpy import array,sum,zeros,Float64
+from numpy import array,sum,zeros,float64
 from math import sqrt
 
 def RK4(F,x,y,xStop,h):
@@ -18,7 +18,7 @@ def RK4(F,x,y,xStop,h):
     while x < xStop:
         h = min(h,xStop - x)
         y = y + run_kut4(F,x,y,h)
-        259 7.3 RungeâKutta Methods
+        # Runge-Kutta Methods
         x = x + h
         X.append(x)
         Y.append(y)
@@ -39,8 +39,8 @@ def RKF45(F, x, y, xStop, h, tol=1.0e-6):
         K[4] = h*F(x + h, y - 11./54*K[0] + 5./2*K[1] - 70./27*K[2] + 35./27*K[3])
         K[5] = h*F(x + 7./8*h, y + 1631./55296*K[0] + 175./512*K[1] + 575./13824*K[2] + 44275./110592*K[3] + 253./4096*K[4])
         # Initialize arrays {dy} and {E}
-        E  = numpy.zeros((n),type=Float64)
-        dy = numpy.zeros((n),type=Float64)
+        E  = numpy.zeros((n),type=float64)
+        dy = numpy.zeros((n),type=float64)
         # Compute solution increment {dy} and per-step error {E}
         for i in range(6):
             dy = dy + C[i]*K[i]
