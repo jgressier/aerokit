@@ -60,7 +60,8 @@ def Mach_PrandtlMeyer(omega, gamma=defg._gamma):
     def omega_of_mach(m):
         return PrandtlMeyer_Mach(m, gamma)-omega
     #return IterativeSolve.secant_solve(omega_of_mach, omega, 2.)
-    return fsolve(omega_of_mach, 2.+0.*omega)
+    result = fsolve(omega_of_mach, 2.+0.*omega)
+    return result if np.size(result)!=1 else np.asscalar(result)
 
 def Mach_PMFmmu(om_m_mun, gamma=defg._gamma):
     "return Mach number from omega-mu value (in degree)"

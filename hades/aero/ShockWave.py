@@ -64,7 +64,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
         print("no weak shock wave solution")
         return degree.asin(1./Mach)
     else:
-        phi = np.acos(-.5*ke/np.sqrt(kd**3))
+        phi = np.arccos(-.5*ke/np.sqrt(kd**3))
         kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
         return degree.atan(1./kf)
 
