@@ -1,10 +1,8 @@
-import unittest
-#import common.defaultgas
+#import unittest
+import hades.common.defaultgas
 import hades
 
-class test_defaultgas(unittest.TestCase):
-
-	def test_gamma(self):
-		"""test default value of gamma in defaultgas module"""
-		self.assertEqual(hades.common.defaultgas._gamma, 1.4)
+def test_default_gamma():
+	"""test default value of gamma in defaultgas module"""
+	assert hades.common.defaultgas._gamma == 1.4
 	
