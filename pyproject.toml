@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hades"
+name = "aerokit"
 version = "0.1.0"
 description = "Python tools for fluid mechanics computations"
 authors = ["j.gressier <jeremie.gressier@isae.fr>"]
