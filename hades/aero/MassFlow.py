@@ -26,6 +26,8 @@ def Sigma_Mach(Mach, gamma=defg._gamma):
 def Mach_Sigma(sigma, Mach=2., gamma=defg._gamma):
 	if np.size(Mach)!=1:
 		Minit = np.where(Mach<=1., __MachSub_sigma(sigma, gamma), __MachSup_sigma(sigma, gamma))
+	else:
+		Minit=Mach
 	def sigma_of_mach(m):
 		return Sigma_Mach(m, gamma)-sigma
 	result = newton(sigma_of_mach, Minit)

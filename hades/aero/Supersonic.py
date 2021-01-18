@@ -23,7 +23,7 @@ from hades.aero import IterativeSolve
 from hades.aero import Isentropic as Is
 from hades.aero import degree     as deg
 from hades.common import defaultgas as defg # relative import is deprecated by doctest
-from scipy.optimize import fsolve
+from scipy.optimize import newton
 
 # -- 2D supersonic invariants --
 
@@ -60,7 +60,7 @@ def Mach_PrandtlMeyer(omega, gamma=defg._gamma):
     def omega_of_mach(m):
         return PrandtlMeyer_Mach(m, gamma)-omega
     #return IterativeSolve.secant_solve(omega_of_mach, omega, 2.)
-    result = fsolve(omega_of_mach, 2.+0.*omega)
+    result = newton(omega_of_mach, 2.+0.*omega)
     return result if np.size(result)!=1 else np.asscalar(result)
 
 def Mach_PMFmmu(om_m_mun, gamma=defg._gamma):

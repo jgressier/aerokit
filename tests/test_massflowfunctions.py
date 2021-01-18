@@ -7,5 +7,5 @@ def test_sigma_scalar():
     assert mf.Sigma_Mach(1.) == 1.
     assert mf.Sigma_Mach(2.) == pytest.approx(1.687500)
 
-def test_sigma_numpy()
-    
+def test_sigma_numpy():
+    assert 1
