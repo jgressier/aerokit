@@ -1,5 +1,5 @@
 import numpy as np
-import hades.aero.Supersonic as sup
+import aerokit.aero.Supersonic as sup
 import matplotlib.pyplot as plt
 import time
 

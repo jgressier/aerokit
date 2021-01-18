@@ -1,7 +1,7 @@
 import numpy                 as np
-import hades.aero.Isentropic as Is
+import aerokit.aero.Isentropic as Is
 import matplotlib.pyplot     as plt
-import hades.engine.turbofan as tf
+import aerokit.engine.turbofan as tf
 #%matplotlib inline
 plt.rcParams['figure.figsize'] = (10, 6)
 

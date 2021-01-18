@@ -3,12 +3,12 @@
 """
 
 import numpy as np
-import hades.common.defaultgas as defg # relative import is deprecated by doctest
-import hades.aero.degree      as deg
-import hades.aero.ShockWave   as sw
+import aerokit.common.defaultgas as defg # relative import is deprecated by doctest
+import aerokit.aero.degree      as deg
+import aerokit.aero.ShockWave   as sw
 
 import matplotlib.pyplot as plt
-from hades.aero.plot.defaultstyle import *
+from aerokit.aero.plot.defaultstyle import *
 
 
 def plot_theta_sigma(mach, gamma=defg._gamma, npts=100, curve='both', devmax=False, sonic=False, color='k', linestyle='-', **kwargs):
@@ -18,7 +18,7 @@ def plot_theta_sigma(mach, gamma=defg._gamma, npts=100, curve='both', devmax=Fal
 		Long comment
  
 		:param mach:       upstream Mach number
-        :param gamma:      specific heat ratio, default from hades.common.defaultgas
+        :param gamma:      specific heat ratio, default from aerokit.common.defaultgas
         :param npts:       number of computed points, curve accuracy
         :param curve:      choose which curve to plot (left, right or both)
 		:return:     
@@ -52,7 +52,7 @@ def plot_theta_pressure(mach, gamma=defg._gamma, npts=100, thet_init=0., p_init=
 		Long comment
  
 		:param mach:       upstream Mach number
-        :param gamma:      specific heat ratio, default from hades.common.defaultgas
+        :param gamma:      specific heat ratio, default from aerokit.common.defaultgas
         :param npts:       number of computed points, curve accuracy
         :param thet_init:  upstream angle (shift the curve by this angle), default 0.
         :param p_init:     reference pressure (shift the curve by this ratio), default 1.

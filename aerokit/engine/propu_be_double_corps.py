@@ -4,7 +4,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import hades.aero.Isentropic as Is
+import aerokit.aero.Isentropic as Is
 
 # Grandeurs d'entrée
 P0 = 227.00e2

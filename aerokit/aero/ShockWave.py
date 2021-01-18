@@ -3,11 +3,11 @@
 """
 
 import math
-import hades.aero.IterativeSolve as ITS
+import aerokit.aero.IterativeSolve as ITS
 import numpy      as np
-import hades.aero.Isentropic as Is
-import hades.aero.degree as degree
-from hades.common import defaultgas as defg # relative import is deprecated by doctest
+import aerokit.aero.Isentropic as Is
+import aerokit.aero.degree as degree
+from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
 
 # --- NORMAL SHOCK WAVE ---
 

@@ -6,7 +6,7 @@
  
     :Example:
  
-    >>> import hades.aero.Supersonic as sup
+    >>> import aerokit.aero.Supersonic as sup
     >>> Is.TiTs_Mach(1.)
     1.2
     >>> Is.TiTs_Mach(2., gamma=1.6)
@@ -19,10 +19,10 @@
 
 import math
 import numpy as np
-from hades.aero import IterativeSolve
-from hades.aero import Isentropic as Is
-from hades.aero import degree     as deg
-from hades.common import defaultgas as defg # relative import is deprecated by doctest
+from aerokit.aero import IterativeSolve
+from aerokit.aero import Isentropic as Is
+from aerokit.aero import degree     as deg
+from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
 from scipy.optimize import newton
 
 # -- 2D supersonic invariants --
@@ -34,7 +34,7 @@ def PrandtlMeyer_Mach(Mach, gamma=defg._gamma):
         Long comment
  
         :param Mach:  local Mach number
-        :param gamma: specific heat ratio, default from hades.common.defaultgas
+        :param gamma: specific heat ratio, default from aerokit.common.defaultgas
         :return:      result omega (degree)
  
         :Example:

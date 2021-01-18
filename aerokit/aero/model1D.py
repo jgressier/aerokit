@@ -7,7 +7,7 @@ import numpy     as np
 #import ShockWave as sw
 #import IterativeSolve
 from ..common   import defaultgas as defg
-from hades.aero import Isentropic as Is
+from aerokit.aero import Isentropic as Is
 
 # -- class --
 

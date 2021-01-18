@@ -6,7 +6,7 @@
  
 	:Example:
  
-    >>> import hades.aero.Isentropic as Is
+    >>> import aerokit.aero.Isentropic as Is
     >>> Is.TiTs_Mach(1.)
     1.2
     >>> Is.TiTs_Mach(2., gamma=1.6)
@@ -21,8 +21,8 @@
 import math
 import copy
 import numpy     as np
-import hades.aero.ShockWave as sw
-import hades.aero.model1D   as model1D
+import aerokit.aero.ShockWave as sw
+import aerokit.aero.model1D   as model1D
 
 # -- class --
 

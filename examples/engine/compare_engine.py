@@ -1,8 +1,8 @@
 # test
 
 import numpy as np
-import hades.engine.propu_be_double_corps as tfinl
-import hades.engine.Cycle_Turbofan        as tfclass
+import aerokit.engine.propu_be_double_corps as tfinl
+import aerokit.engine.Cycle_Turbofan        as tfclass
 
 bpr=6.
 opr=41.

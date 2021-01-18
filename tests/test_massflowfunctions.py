@@ -1,4 +1,4 @@
-import hades.aero.MassFlow as mf
+import aerokit.aero.MassFlow as mf
 import numpy as np
 import pytest
 

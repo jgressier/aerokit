@@ -6,7 +6,7 @@
  
     :Example:
  
-    >>> import hades.aero.Isentropic as Is
+    >>> import aerokit.aero.Isentropic as Is
     >>> Is.TiTs_Mach(1.)
     1.2
     >>> Is.TiTs_Mach(2., gamma=1.6)
@@ -17,12 +17,12 @@
  
     Provides Ti/Ts Pi/Ps ratios from Mach number and reversed functions.
     Specific heat ratio `gamma` is optionnal and can be specified in the functions itself
-    or using hades.common.defaultgas module
+    or using aerokit.common.defaultgas module
  """
 
 import math
 import numpy as np
-from hades.common import defaultgas as defg # relative import is deprecated by doctest
+from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
 
 # ===============================================================
 # implemented functions
@@ -34,7 +34,7 @@ def TiTs_Mach(Mach, gamma=defg._gamma):
 		Long comment
  
 		:param Mach:  local Mach number
-        :param gamma: specific heat ratio, default from hades.common.defaultgas
+        :param gamma: specific heat ratio, default from aerokit.common.defaultgas
 		:return:      result Ti/Ts ratio
  
  		:Example:
@@ -56,7 +56,7 @@ def PiPs_Mach(Mach, gamma=defg._gamma):
 		Long comment
  
 		:param Mach:  local Mach number
-        :param gamma: specific heat ratio, default from hades.common.defaultgas
+        :param gamma: specific heat ratio, default from aerokit.common.defaultgas
 		:return:      result Pi/Ps ratio
  
  		:Example:

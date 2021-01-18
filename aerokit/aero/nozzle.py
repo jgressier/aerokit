@@ -7,7 +7,7 @@
  
     :Example:
  
-    >>> import hades.aero.nozzle as nz
+    >>> import aerokit.aero.nozzle as nz
     >>> Is.TiTs_Mach(1.)
     1.2
     >>> Is.TiTs_Mach(2., gamma=1.6)
@@ -16,16 +16,16 @@
     Available functions
     -------------------
  
-	.. note:: Specific heat ratio `gamma` is defined only using hades.common.defaultgas module
+	.. note:: Specific heat ratio `gamma` is defined only using aerokit.common.defaultgas module
 """
 
 
 import math
 import numpy as np
-from hades.common import defaultgas as defg # relative import is deprecated by doctest
-from hades.aero   import Isentropic as Is
-from hades.aero   import MassFlow   as mf
-from hades.aero   import ShockWave  as sw
+from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
+from aerokit.aero   import Isentropic as Is
+from aerokit.aero   import MassFlow   as mf
+from aerokit.aero   import ShockWave  as sw
 
 # === NPR computation from As/Ac definition of nozzle ===
 
@@ -51,7 +51,7 @@ def _NPR_Ms_list(AsAc):
  
  		:Example:
 
-		>>> import hades.aero.MassFlow as mf ; mf.Sigma_Mach(Is.Mach_PiPs(np.array(_NPR_Ms_list(2.)[:3:2])))
+		>>> import aerokit.aero.MassFlow as mf ; mf.Sigma_Mach(Is.Mach_PiPs(np.array(_NPR_Ms_list(2.)[:3:2])))
 		array([ 2.,  2.])
 
 		.. seealso:: NPR_choked_subsonic(), NPR_choked_supersonic(), NPR_shock_at_exit()

@@ -21,7 +21,7 @@ Examples
 When implementing a vtk file manipulation function
 
 >>> # Import dicovar module database
->>> from hades.common.dicovar import dicoVar as dv
+>>> from aerokit.common.dicovar import dicoVar as dv
 >>> # test if the field U_AVG is present
 >>> if data_outVTK.GetPointData().HasArray(dv('u_avg')) != 1:
 >>>     raise ValueError("Error : field U_AVG not present")
@@ -35,7 +35,7 @@ When implementing a vtk file manipulation function
 When implementing a script associated to a given software
 
 >>> # Import dicovar module functions
->>> from hades.common.dicovar import setDicoVar, printDicoVar
+>>> from aerokit.common.dicovar import setDicoVar, printDicoVar
 >>> # Setting CharlesX dicovar
 >>> setDicoVar('cx')
 >>> printDicoVar()

@@ -6,7 +6,7 @@
  
 	:Example:
  
-    >>> import hades.aero.Isentropic as Is
+    >>> import aerokit.aero.Isentropic as Is
     >>> Is.TiTs_Mach(1.)
     1.2
     >>> Is.TiTs_Mach(2., gamma=1.6)
@@ -22,8 +22,8 @@
 import math
 import numpy     as np
 from scipy.optimize import fsolve
-import hades.aero.ShockWave  as sw
-import hades.aero.unsteady1D as uq
+import aerokit.aero.ShockWave  as sw
+import aerokit.aero.unsteady1D as uq
 
 # ===============================================================
 # implementation of RIEMANN_PB class

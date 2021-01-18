@@ -10,7 +10,7 @@
 
 
 import numpy as np
-import hades.aero.Isentropic as Is
+import aerokit.aero.Isentropic as Is
 
 # get_ipython().magic(u'matplotlib inline')
 # get_ipython().magic(u'xmode verbose')

@@ -6,7 +6,7 @@ Plot of Fanno curves in several diagrams
 
 import numpy                 as np
 import matplotlib.pyplot     as plt
-import hades.aero.Fanno      as fanno
+import aerokit.aero.Fanno      as fanno
 
 plt.rcParams['font.size'] = 14 ; plt.rcParams['lines.linewidth'] = 1.5
 # for slides
