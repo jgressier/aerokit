@@ -20,5 +20,11 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# python CI
+dist
+
+# doc
+site
+
 # Jupyter Notebook
 .ipynb_checkpoints

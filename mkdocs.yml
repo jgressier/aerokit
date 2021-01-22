@@ -1,0 +1,11 @@
+site_name: AeroKit
+repo_name: aerokit
+repo_url: https://github.com/jgressier/aerokit
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search

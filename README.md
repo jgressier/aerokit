@@ -3,7 +3,13 @@ aero
 
 Python packages for compressible flow computations
 
-#### Features
+[![PyPi Version](https://img.shields.io/pypi/v/aerokit.svg?style=flat)](https://pypi.org/project/meshio)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/aerokit.svg?style=flat)](https://pypi.org/pypi/meshio/)
+[![GitHub stars](https://img.shields.io/github/stars/jgressier/aerokit.svg?style=flat&logo=github&label=Stars&logoColor=white)](https://github.com/jgressier/aerokit)
+[![PyPi downloads](https://img.shields.io/pypi/dm/aerokit.svg?style=flat)](https://pypistats.org/packages/aerokit)
+[![codecov](https://img.shields.io/codecov/c/github/jgressier/aerokit.svg?style=flat)](https://codecov.io/gh/jgressier/aerokit)
+### Features
+
 * Mach dependent functions for isentropic total pressure, temperature and mass flow
 * local Rankine-Hugoniot shock wave equations
 * conical shock waves
@@ -13,12 +19,11 @@ Python packages for compressible flow computations
 * Rayleigh equations for heating/cooling in a duct
 * misc: degree based trigo functions, Newton iterative solve, ODE integration
 
-#### Installation & useage
-* `aerokit` folder must be placed in a `PYTHONPATH` structure
-* or append `$PWD`to your `PYTHONPATH`
+### Installation & usage
 
-    PYTHONPATH=$PWD:$PYTHONPATH python examples/test.py
+
 
 ### Requirements
+
 * numpy
 * examples are plotted using [matplotlib](http://matplotlib.org)
