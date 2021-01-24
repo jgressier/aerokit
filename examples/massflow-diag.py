@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Plot of Fanno curves in several diagrams
 @author: j.gressier
 """
 

@@ -7,5 +7,10 @@ theme:
   icon:
     repo: fontawesome/brands/github
 
+nav:
+  - Home: index.md
+  - User Guide: userguide.md
+  - About: about.md
+
 plugins:
   - search
