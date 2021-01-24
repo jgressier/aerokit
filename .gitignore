@@ -29,3 +29,6 @@ site
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# VS code
+.vscode
