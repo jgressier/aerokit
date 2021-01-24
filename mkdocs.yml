@@ -1,11 +1,15 @@
 site_name: AeroKit
 repo_name: aerokit
 repo_url: https://github.com/jgressier/aerokit
+edit_uri: ''  #disables edit button
 
 theme:
   name: material
   icon:
     repo: fontawesome/brands/github
+  # language: en
+  # features:
+  #   - navigation.tabs
 
 nav:
   - Home: index.md
