@@ -14,7 +14,19 @@ theme:
 nav:
   - Home: index.md
   - User Guide: userguide.md
+  - Examples: 
+    - Examples: examples.md
+    - aero.Isentropic: examples/aero.Isentropic.ipynb
+  - Change log: changelog.md
   - About: about.md
 
 plugins:
   - search
+  - include-markdown
+  - mkdocs-jupyter:
+      execute: True
+      include_source: False
+  - exclude:
+      glob:
+        - "requirements.txt"
+        - "*/.ipynb_checkpoints"
