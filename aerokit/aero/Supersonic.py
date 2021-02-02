@@ -7,9 +7,9 @@
     :Example:
  
     >>> import aerokit.aero.Supersonic as sup
-    >>> Is.TiTs_Mach(1.)
+    >>> Is.TtTs_Mach(1.)
     1.2
-    >>> Is.TiTs_Mach(2., gamma=1.6)
+    >>> Is.TtTs_Mach(2., gamma=1.6)
     2.2
  
     Available functions
@@ -71,12 +71,12 @@ def Mach_PMFmmu(om_m_mun, gamma=defg._gamma):
     return np.sqrt((cg*deg.tan((om_m_mun + 90.)/cg))**2+1.)
 
 def deflection_Mach_IsentropicPsratio(Mach, Pratio, gamma=defg._gamma):
-    m2 = Is.Mach_PiPs(Is.PiPs_Mach(Mach, gamma)/Pratio, gamma)
+    m2 = Is.Mach_PtPs(Is.PtPs_Mach(Mach, gamma)/Pratio, gamma)
     return -PrandtlMeyer_Mach(Mach, gamma)+PrandtlMeyer_Mach(m2, gamma)
 
 def IsentropicPsratio_Mach_deflection(Mach, dev, gamma=defg._gamma):
     m2 = Mach_PrandtlMeyer(PrandtlMeyer_Mach(Mach, gamma)-dev, gamma)
-    return Is.PiPs_Mach(Mach, gamma)/Is.PiPs_Mach(m2, gamma)
+    return Is.PtPs_Mach(Mach, gamma)/Is.PtPs_Mach(m2, gamma)
 
 
 

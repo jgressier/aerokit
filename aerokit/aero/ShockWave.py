@@ -1,5 +1,5 @@
 """@package ShockWave
-  locla Rankine Hugoniot equations for shock waves
+  local Rankine Hugoniot equations for shock waves
 """
 
 import math
@@ -27,7 +27,7 @@ def downstream_Mn(Mn, gamma=defg._gamma):
     return np.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
 
 def Pi_ratio(Mn, gamma=defg._gamma):
-    return Ps_ratio(Mn, gamma)*Is.PiPs_Mach(downstream_Mn(Mn, gamma))/Is.PiPs_Mach(Mn, gamma)
+    return Ps_ratio(Mn, gamma)*Is.PtPs_Mach(downstream_Mn(Mn, gamma))/Is.PtPs_Mach(Mn, gamma)
 
 def Mn_Pi_ratio(piratio, gamma=defg._gamma):
     def piratio_of_mach(m):
@@ -126,7 +126,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
         C = [37./378, 0., 250./621, 125./594, 0., 512./1771]
         D = [2825./27648, 0., 18575./48384, 13525./55296, 277./14336, 1./4]
         n = len(y)
-        K = numpy.zeros((6,n))
+        K = np.zeros((6,n))
         K[0] = h*F(x,y)
         K[1] = h*F(x + 1./5*h, y + 1./5*K[0])
         K[2] = h*F(x + 3./10*h, y + 3./40*K[0] + 9./40*K[1])
@@ -134,8 +134,8 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
         K[4] = h*F(x + h, y - 11./54*K[0] + 5./2*K[1] - 70./27*K[2] + 35./27*K[3])
         K[5] = h*F(x + 7./8*h, y + 1631./55296*K[0] + 175./512*K[1] + 575./13824*K[2] + 44275./110592*K[3] + 253./4096*K[4])
         # Initialize arrays {dy} and {E}
-        E  = numpy.zeros((n))
-        dy = numpy.zeros((n))
+        E  = np.zeros((n))
+        dy = np.zeros((n))
         # Compute solution increment {dy} and per-step error {E}
         for i in range(6):
             dy = dy + C[i]*K[i]
@@ -148,7 +148,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
         th = data[0]
         ma = data[1]
         k  = 1.-(ma*degree.sin(phi-th))**2
-        rhs=numpy.zeros(2)
+        rhs=np.zeros(2)
         rhs[0] = -degree.sin(th)*degree.cos(phi-th)/degree.sin(phi)/k
         rhs[1] =  np.pi/180.*degree.sin(th)*degree.sin(phi-th)/degree.sin(phi)/k*ma*(1.+.5*(gamma-1)*ma*ma)
         return rhs
@@ -156,7 +156,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
     th   = deflection_Mach_sigma(Mach, sigma, gamma)
     ma   = downstream_Mn(Mach*degree.sin(sigma), gamma)/degree.sin(sigma-th)
     phi  = sigma
-    thma = numpy.array([th, ma])
+    thma = np.array([th, ma])
     h    = -phi/10.
     conv = phi
     while (abs(conv) >= tol):

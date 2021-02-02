@@ -8,9 +8,9 @@
     :Example:
  
     >>> import aerokit.aero.nozzle as nz
-    >>> Is.TiTs_Mach(1.)
+    >>> Is.TtTs_Mach(1.)
     1.2
-    >>> Is.TiTs_Mach(2., gamma=1.6)
+    >>> Is.TtTs_Mach(2., gamma=1.6)
     2.2
  
     Available functions
@@ -30,15 +30,15 @@ from aerokit.aero   import ShockWave  as sw
 # === NPR computation from As/Ac definition of nozzle ===
 
 def NPR_choked_subsonic(AsAc):
-	return Is.PiPs_Mach(mf.MachSub_Sigma(AsAc))
+	return Is.PtPs_Mach(mf.MachSub_Sigma(AsAc))
 
 def NPR_choked_supersonic(AsAc):
-	return Is.PiPs_Mach(mf.MachSup_Sigma(AsAc))
+	return Is.PtPs_Mach(mf.MachSup_Sigma(AsAc))
 
 def NPR_shock_at_exit(AsAc):
 	Msup  = mf.MachSup_Sigma(AsAc)
 	Msh   = sw.downstream_Mn(Msup)
-	return Is.PiPs_Mach(Msh) / sw.Pi_ratio(Msup)
+	return Is.PtPs_Mach(Msh) / sw.Pi_ratio(Msup)
 
 def _NPR_Ms_list(AsAc):
 	"""
@@ -51,18 +51,18 @@ def _NPR_Ms_list(AsAc):
  
  		:Example:
 
-		>>> import aerokit.aero.MassFlow as mf ; mf.Sigma_Mach(Is.Mach_PiPs(np.array(_NPR_Ms_list(2.)[:3:2])))
+		>>> import aerokit.aero.MassFlow as mf ; mf.Sigma_Mach(Is.Mach_PtPs(np.array(_NPR_Ms_list(2.)[:3:2])))
 		array([ 2.,  2.])
 
 		.. seealso:: NPR_choked_subsonic(), NPR_choked_supersonic(), NPR_shock_at_exit()
 		.. note:: available for scalar or array (numpy) computations
     """
 	Msub  = mf.MachSub_Sigma(AsAc)
-	NPR0  = Is.PiPs_Mach(Msub)
+	NPR0  = Is.PtPs_Mach(Msub)
 	Msup  = mf.MachSup_Sigma(AsAc)
 	Msh   = sw.downstream_Mn(Msup)
-	NPRsw = Is.PiPs_Mach(Msh) / sw.Pi_ratio(Msup)
-	NPR1  = Is.PiPs_Mach(Msup)
+	NPRsw = Is.PtPs_Mach(Msh) / sw.Pi_ratio(Msup)
+	NPR1  = Is.PtPs_Mach(Msup)
 	return NPR0, NPRsw, NPR1, Msub, Msh, Msup
 
 def Ms_from_AsAc_NPR(AsAc, NPR):
@@ -85,7 +85,7 @@ def Ms_from_AsAc_NPR(AsAc, NPR):
     """	
 	NPR0, NPRsw, NPR1, Msub, Msh, Msup = _NPR_Ms_list(AsAc)
 	if (NPR < NPR0):
-		Ms = Is.Mach_PiPs(NPR)
+		Ms = Is.Mach_PtPs(NPR)
 	elif (NPR > NPRsw): 
 		Ms = Msup
 	else:
@@ -115,9 +115,9 @@ def Madapt_from_AsAc_NPR(AsAc, NPR):
     """	
 	NPR0, NPRsw, NPR1, Msub, Msh, Msup = _NPR_Ms_list(AsAc)
 	if (NPR < NPR0):
-		Ms = Is.Mach_PiPs(NPR)
+		Ms = Is.Mach_PtPs(NPR)
 	elif (NPR > NPR1): # under expanded flow
-		Ms = Is.Mach_PiPs(NPR)
+		Ms = Is.Mach_PtPs(NPR)
 	elif (NPR > NPRsw): # shock wave in jet
 		Ms = sw.downstreamMach_Mach_ShockPsratio(Msup, NPR1/NPR)
 	else:
@@ -146,9 +146,9 @@ class nozzle():
 	def set_NPR(self, NPR):
 		self._Pt = np.ones_like(self.AxoAc)
 		if NPR < self.NPR0:
-			_Ms = Is.Mach_PiPs(NPR, gamma=self.gamma)
+			_Ms = Is.Mach_PtPs(NPR, gamma=self.gamma)
 			self._M  = mf.MachSub_Sigma(self.AxoAc/self.AsoAc*mf.Sigma_Mach(_Ms), gamma=self.gamma)
-			self._Ps = self._Pt/Is.PiPs_Mach(self._M, gamma=self.gamma)
+			self._Ps = self._Pt/Is.PtPs_Mach(self._M, gamma=self.gamma)
 		else:
 			self._M = np.ones_like(self.AxoAc)
 			self._M[:self.ithroat+1]   = mf.MachSub_Sigma(self.AxoAc[:self.ithroat+1],   gamma=self.gamma)
@@ -156,13 +156,13 @@ class nozzle():
 			if NPR < self.NPRsw:
 				# analytical solution for Ms, losses and upstream Mach number of shock wave
 				Ms     = Ms_from_AsAc_NPR(self.AsoAc, NPR)
-				Ptloss = Is.PiPs_Mach(Ms)/NPR
+				Ptloss = Is.PtPs_Mach(Ms)/NPR
 				Msh    = sw.Mn_Pi_ratio(Ptloss)
 				# redefine curves starting from 'ish' index (closest value of Msh in supersonic flow)
 				ish    = np.abs(self._M-Msh).argmin()
 				self._M[ish:] = mf.MachSub_Sigma(self.AxoAc[ish:]*mf.Sigma_Mach(Ms)/self.AsoAc)
 				self._Pt[ish:] = Ptloss
-			self._Ps = self._Pt/Is.PiPs_Mach(self._M)
+			self._Ps = self._Pt/Is.PtPs_Mach(self._M)
 
 
 	def Mach(self):

@@ -98,8 +98,8 @@ class cycle_1_to_4:
                 print("%s = %r" % (attr, getattr(self, attr)))
     
     def InitialValues(self):
-        self.Pt0 = self.P0 * Is.PiPs_Mach(Mach=self.M0, gamma=self.g.gamma)
-        self.Tt0 = self.T0 * Is.TiTs_Mach(Mach=self.M0, gamma=self.g.gamma)
+        self.Pt0 = self.P0 * Is.PtPs_Mach(Mach=self.M0, gamma=self.g.gamma)
+        self.Tt0 = self.T0 * Is.TtTs_Mach(Mach=self.M0, gamma=self.g.gamma)
         self.V0 = self.M0 * np.sqrt(self.g.gamma * self.g.r * self.T0)
         self.current_stage_corps = 1
         
@@ -193,7 +193,7 @@ class cycle_taux_fan_fixe(cycle_1_to_4):
             self.Pt19 = self.Pt13 * self.xi_tuy
             self.Tt19 = self.Tt13
             self.P19 = self.P0
-            self.M19 = Is.Mach_PiPs(self.Pt19/self.P19, self.g.gamma)
+            self.M19 = Is.Mach_PtPs(self.Pt19/self.P19, self.g.gamma)
             self.V19 = Is.Velocity_MachTi(self.M19, self.Tt19, self.g.r, self.g.gamma)
             self.F_f = self.m_f * (self.V19 - self.V0)
             self.current_stage_fan = 19
@@ -210,7 +210,7 @@ class cycle_taux_fan_fixe(cycle_1_to_4):
             self.Tt9 = self.Tt5
             self.Pt9 = self.Pt5 * self.xi_tuy
             self.P9 = self.P0
-            self.M9 = Is.Mach_PiPs(self.Pt9/self.P9, self.g_fuel.gamma)
+            self.M9 = Is.Mach_PtPs(self.Pt9/self.P9, self.g_fuel.gamma)
             self.V9 = Is.Velocity_MachTi(self.M9, self.Tt9, self.g_fuel.r, self.g_fuel.gamma)
             self.F_c = self.m_c * (self.V9 - self.V0)
             self.current_stage_corps = 9
@@ -301,7 +301,7 @@ class cycle_taux_fan_calcule(cycle_1_to_4):
             self.Tt9 = self.Tt5
             self.Pt9 = self.Pt5 * self.xi_tuy
             self.P9 = self.P0
-            self.M9 = Is.Mach_PiPs(self.Pt9/self.P9, self.g_fuel.gamma)
+            self.M9 = Is.Mach_PtPs(self.Pt9/self.P9, self.g_fuel.gamma)
             self.V9 = Is.Velocity_MachTi(self.M9, self.Tt9, self.g_fuel.r, self.g_fuel.gamma)
             print("V9  cla", self.V9, self.M9)
             self.F_c = self.m_c * (self.V9 - self.V0)
@@ -320,7 +320,7 @@ class cycle_taux_fan_calcule(cycle_1_to_4):
             self.Pt19 = self.Pt13 * self.xi_tuy
             self.Tt19 = self.Tt13
             self.P19 = self.P0
-            self.M19 = Is.Mach_PiPs(self.Pt19/self.P19, self.g.gamma)
+            self.M19 = Is.Mach_PtPs(self.Pt19/self.P19, self.g.gamma)
             self.V19 = Is.Velocity_MachTi(self.M19, self.Tt19, self.g.r, self.g.gamma)
             print("V19 cla", self.V19)
             self.F_f = self.m_f * (self.V19 - self.V0)

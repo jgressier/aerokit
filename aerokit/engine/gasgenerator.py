@@ -7,9 +7,9 @@
     :Example:
  
     >>> import aerokit.aero.Isentropic as Is
-    >>> Is.TiTs_Mach(1.)
+    >>> Is.TtTs_Mach(1.)
     1.2
-    >>> Is.TiTs_Mach(2., gamma=1.6)
+    >>> Is.TtTs_Mach(2., gamma=1.6)
     2.2
  
     Available functions
@@ -40,7 +40,7 @@ class base():
  
  		:Example:
 
-		>>> TiTs_Mach(1.) # with default gamma 1.4
+		>>> TtTs_Mach(1.) # with default gamma 1.4
 		1.2
 
 		.. seealso:: 
@@ -70,8 +70,8 @@ class base():
     def update(self):
         gc  = self.gam_cold
         cpc = gc*self.r_cold/(gc-1.)
-        self.Tt0 = self.T0*Is.TiTs_Mach(self.M0, gamma=self.gam_cold)
-        self.Pt0 = self.P0*Is.PiPs_Mach(self.M0, gamma=self.gam_cold)
+        self.Tt0 = self.T0*Is.TtTs_Mach(self.M0, gamma=self.gam_cold)
+        self.Pt0 = self.P0*Is.PtPs_Mach(self.M0, gamma=self.gam_cold)
         self.V0  = self.M0*np.sqrt(gc*self.r_cold*self.T0)
         self.Pt2 = self.Pt0*self.xi_inlet
         self.Tt2 = self.Tt0

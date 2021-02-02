@@ -7,9 +7,9 @@
     :Example:
  
     >>> import aerokit.aero.Isentropic as Is
-    >>> Is.TiTs_Mach(1.)
+    >>> Is.TtTs_Mach(1.)
     1.2
-    >>> Is.TiTs_Mach(2., gamma=1.6)
+    >>> Is.TtTs_Mach(2., gamma=1.6)
     2.2
  
     Available functions
@@ -41,7 +41,7 @@ class turbojet_opt(gg.base):
  
  		:Example:
 
-		>>> TiTs_Mach(1.) # with default gamma 1.4
+		>>> TtTs_Mach(1.) # with default gamma 1.4
 		1.2
 
 		.. seealso:: 
@@ -61,7 +61,7 @@ class turbojet_opt(gg.base):
         gh  = self.gam_hot
         cph = gh*self.r_hot/(gh-1.)
         self.Pt9 = np.maximum(self.Pt45 * self.xi_nozzle, self.P0)
-        self.M9  = Is.Mach_PiPs(self.Pt9/self.P0, gamma=self.gam_hot)
+        self.M9  = Is.Mach_PtPs(self.Pt9/self.P0, gamma=self.gam_hot)
         self.V9  = Is.Velocity_MachTi(self.M9, self.Tt45, r=self.r_hot, gamma=self.gam_hot)
 
     def Wsp_kinEn(self):       

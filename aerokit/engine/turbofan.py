@@ -7,9 +7,9 @@
     :Example:
  
     >>> import aerokit.aero.Isentropic as Is
-    >>> Is.TiTs_Mach(1.)
+    >>> Is.TtTs_Mach(1.)
     1.2
-    >>> Is.TiTs_Mach(2., gamma=1.6)
+    >>> Is.TtTs_Mach(2., gamma=1.6)
     2.2
  
     Available functions
@@ -41,7 +41,7 @@ class turbofan_adapt(tj.turbojet_opt):
  
  		:Example:
 
-		>>> TiTs_Mach(1.) # with default gamma 1.4
+		>>> TtTs_Mach(1.) # with default gamma 1.4
 		1.2
 
 		.. seealso:: 
@@ -67,7 +67,7 @@ class turbofan_adapt(tj.turbojet_opt):
         self.Pt5  = self.Pt45*(self.Tt5/self.Tt45)**(gh/((gh-1.)*self.etapolTBP))
         # core nozzle
         self.Pt9 = self.Pt5 * self.xi_nozzle
-        self.M9  = Is.Mach_PiPs(self.Pt9/self.P0, gamma=self.gam_hot)
+        self.M9  = Is.Mach_PtPs(self.Pt9/self.P0, gamma=self.gam_hot)
         self.V9  = Is.Velocity_MachTi(self.M9, self.Tt5, r=self.r_hot, gamma=self.gam_hot)
         # fan
         gc  = self.gam_cold
@@ -78,7 +78,7 @@ class turbofan_adapt(tj.turbojet_opt):
         # bypass nozzle    
         self.Tt19 = self.Tt17
         self.Pt19 = self.Pt17*self.xi_nozzle
-        self.M19  = Is.Mach_PiPs(self.Pt19/self.P0, gamma=gc)
+        self.M19  = Is.Mach_PtPs(self.Pt19/self.P0, gamma=gc)
         self.V19  = Is.Velocity_MachTi(self.M19, self.Tt19, r=self.r_cold, gamma=gc)
 
     def Wsp_kinEn(self):       

@@ -34,8 +34,8 @@ class state():
 		return state(self.rho, self.u, self.p, self._gamma)
 
 	def compute_from_pt_rtt_M(self, pt, rtt, M):
-		ps  = pt /Is.PiPs_Mach(M, self._gamma)
-		rts = rtt/Is.TiTs_Mach(M, self._gamma)
+		ps  = pt /Is.PtPs_Mach(M, self._gamma)
+		rts = rtt/Is.TtTs_Mach(M, self._gamma)
 		self.__init__(rho=ps/rts, u=M*np.sqrt(self._gamma*rts), p=ps)
 		
 	def compute_from_pt_rtt_u(self, pt, rtt, u):
@@ -46,8 +46,8 @@ class state():
 		self.__init__(rho=gam * ps / a2, u=u, p=ps)
 
 	def compute_from_pt_rtt_p(self, pt, rtt, p):
-		M   = Is.Mach_PiPs(pt/p, self._gamma)
-		rts = rtt/Is.TiTs_Mach(M, self._gamma)
+		M   = Is.Mach_PtPs(pt/p, self._gamma)
+		rts = rtt/Is.TtTs_Mach(M, self._gamma)
 		self.__init__(rho=p/rts, u=M*np.sqrt(self._gamma*rts), p=p)
 		
 	def asound(self):
@@ -72,7 +72,7 @@ class state():
 
 	def Ptot(self):
 		"""returns Total pressure"""
-		return self.p*Is.PiPs_Mach(self.Mach(), self._gamma)
+		return self.p*Is.PtPs_Mach(self.Mach(), self._gamma)
 
 	def rTtot(self):
 		"""returns Total temperature"""

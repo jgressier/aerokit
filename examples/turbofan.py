@@ -10,7 +10,7 @@ T0=200.
 P0=200e2
 #
 Ttmax = 1600.
-Tt0   = T0*Is.TiTs_Mach(M0)
+Tt0   = T0*Is.TtTs_Mach(M0)
 Tt3 = np.arange(1.2*Tt0, 0.5*Ttmax, 50.)
 Opr = (Tt3/Tt0)**3.2
 Bpr = np.arange(0.2, 10., .2)

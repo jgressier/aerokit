@@ -8,25 +8,25 @@ from . import MassFlow   as mfl
 
 # -- isentropic functions --
 
-def TiTs_Mach(Mach, gamma=1.4):
+def TtTs_Mach(Mach, gamma=1.4):
     """ legacy interface to same function in Isentropic
     """
-    return ist.TiTs_Mach(Mach, gamma)
+    return ist.TtTs_Mach(Mach, gamma)
 
-def PiPs_Mach(Mach, gamma=1.4):
+def PtPs_Mach(Mach, gamma=1.4):
     """ legacy interface to same function in Isentropic
     """
-    return ist.PiPs_Mach(Mach, gamma)
+    return ist.PtPs_Mach(Mach, gamma)
 
-def Mach_TiTs(TiTs, gamma=1.4):
+def Mach_TtTs(TtTs, gamma=1.4):
     """ legacy interface to same function in Isentropic
     """
-    return ist.Mach_TiTs(TiTs, gamma)
+    return ist.Mach_TtTs(TtTs, gamma)
 
-def Mach_PiPs(PiPs, gamma=1.4):
+def Mach_PtPs(PtPs, gamma=1.4):
     """ legacy interface to same function in Isentropic
     """
-    return ist.Mach_PiPs(PiPs, gamma)
+    return ist.Mach_PtPs(PtPs, gamma)
 
 def Velocity_MachTi(Mach, Ti, r=287.1, gamma=1.4):
     """ legacy interface to same function in Isentropic
