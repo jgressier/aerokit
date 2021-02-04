@@ -1,5 +1,6 @@
 mkdocs-material
 mkdocs-include-markdown-plugin
 mkdocs-exclude
+ipykernel
 mkdocs-jupyter
 mkdocstrings
