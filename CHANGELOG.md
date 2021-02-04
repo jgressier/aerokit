@@ -20,6 +20,8 @@ pip show aerokit
 
 #### changed
 
+- changed total/stagnation notation Ti,Pi to Tt,Pt (backward compatibility handled)
+- moved `nozzle` and `riemann` to `instance.*` submodule 
 
 #### fixed
 

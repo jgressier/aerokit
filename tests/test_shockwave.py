@@ -41,3 +41,24 @@ def test_shockwave_Mn1():
 def test_shockwave_Mn1_involutive_numpy():
     m = np.linspace(1., 10., 30)
     np.testing.assert_allclose(m, sw.downstream_Mn(sw.downstream_Mn(m)))
+
+@pytest.mark.parametrize("M0, dev", [(1.5,5.), (3.,10.), (4.,30.)])
+def test_polar_iterative_vs_cubic_weak(M0, dev):
+    sig_it  = sw.sigma_Mach_deflection(M0, dev) # default is weak shock
+    sig_cub = sw.weaksigma_Mach_deflection(M0, dev)
+    assert sig_it == pytest.approx(sig_cub)
+
+@pytest.mark.parametrize("M0, dev", [(1.5,5.), (3.,10.), (4.,30.)])
+def test_polar_iterative_vs_cubic_strong(M0, dev):
+    sig_it  = sw.sigma_Mach_deflection(M0, dev, init=80.) 
+    sig_cub = sw.strongsigma_Mach_deflection(M0, dev)
+    assert sig_it == pytest.approx(sig_cub)
+
+def test_conical_shock_deflection():
+    dev = sw.conical_deflection_Mach_sigma(2., 35.)
+    assert dev == pytest.approx(16.5322)
+
+def test_conical_shock_sigma():
+    sig = sw.conical_sigma_Mach_walldeflection(2., 30.)
+    assert sig == pytest.approx(48.079078)
+

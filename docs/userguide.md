@@ -4,16 +4,19 @@ The `aerokit` package mainly consists in `aerokit.aero` module for various gas f
 
 Most implemented functions use normalized properties.
 
-# `aerokit.aero` module
+## `aerokit.aero` module
 
 - `Isentropic`
 - `MassFlow`
 - `Supersonic`
 - `ShockWave`
 - `Propulsion`
-- `nozzle`
 - `Fanno`
 - `Rayleigh`
 - `model1D`
 - `unsteady1D`
+
+## `aerokit.aero` module
+
 - `riemann`
+- `nozzle`

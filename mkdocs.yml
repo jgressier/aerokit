@@ -13,10 +13,14 @@ theme:
 
 nav:
   - Home: index.md
-  - User Guide: userguide.md
+  - User Guide:
+    - User Guide: userguide.md
+    - aero.Isentropic: userguide/aero.Isentropic.md
+    - aero.ShockWave:  userguide/aero.ShockWave.md
   - Examples: 
     - Examples: examples.md
     - aero.Isentropic: examples/aero.Isentropic.ipynb
+    - instance.riemann: examples/instance.riemann.ipynb
   - Change log: changelog.md
   - About: about.md
 
@@ -30,3 +34,17 @@ plugins:
       glob:
         - "requirements.txt"
         - "*/.ipynb_checkpoints"
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          rendering:
+            show_root_heading: false
+            show_source: true
+            show_category_heading: true
+          selection:
+            #docstring_style: "restructured-text" # default is "google"
+            filters:
+              - "!^_"  # exlude all members starting with _
+      watch:
+        - aerokit

@@ -1,5 +1,4 @@
-aero
-----
+# aerokit
 
 Python packages for compressible flow computations
 
@@ -22,9 +21,10 @@ Python packages for compressible flow computations
 
 ### Installation & usage
 
-
+    pip install aerokit
 
 ### Requirements
 
-* numpy
-* examples are plotted using [matplotlib](http://matplotlib.org)
+* `numpy`
+* `scipy`
+* examples are plotted using [`matplotlib`](http://matplotlib.org)
