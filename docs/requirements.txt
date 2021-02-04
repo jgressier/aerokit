@@ -1,7 +1,7 @@
 mkdocs-material
 mkdocs-include-markdown-plugin
 mkdocs-exclude
-aerokit
+aerokit >= 1.1
 ipykernel
 mkdocs-jupyter
 mkdocstrings
