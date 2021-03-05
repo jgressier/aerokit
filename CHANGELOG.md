@@ -16,6 +16,18 @@ pip show aerokit
 
 ## Versions
 
+### [1.1.x](https://pypi.org/project/aerokit/) (2021-xx-xx)
+
+#### changed
+
+- save and restore default in `common.defaultgas`
+- change Pi to Pt in `ShockWave` functions (backward compatibility handled)
+
+#### fixed
+
+- `instance.nozzle` is now using prescribed gamma
+- improve test coverage
+
 ### [1.1.0](https://pypi.org/project/aerokit/) (2021-02-05)
 
 #### changed
@@ -23,11 +35,13 @@ pip show aerokit
 - changed total/stagnation notation Ti,Pi to Tt,Pt (backward compatibility handled)
 - moved `nozzle` and `riemann` to `instance.*` submodule 
 
-#### fixed
-
 
 
 ### [1.0.0](https://pypi.org/project/aerokit/) (2021-01-20)
 
-- bla
-- bla
+- `aero.Isentropic` submodule: classical compressible isentropic flow functions
+- `aero.ShockWave` submodule: local (2D) and conical shock functions (shock angle and deviation)
+- `aero.Supersonic` submodule: supersonic 2D invariants, Busemann/Prandtl meyer functions
+- `aero.Massflow` submodule: 1D massflow functions
+- `aero.Fanno` submodule: theoretical solution of Fanno 1D flow (momentum source)
+- `aero.Rayleigh` submodule: theoretical solution of Rayleigh 1D flow (energy source)

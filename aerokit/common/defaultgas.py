@@ -15,3 +15,13 @@ def set_r_ideal(r):
 
 def r_ideal():
 	return _r
+
+def save_default():
+	global _saved_r, _saved_gamma
+	_saved_r     = _r
+	_saved_gamma = _gamma
+
+def restore_default():
+	global _saved_r, _saved_gamma
+	_r     = _saved_r
+	_gamma = _saved_gamma

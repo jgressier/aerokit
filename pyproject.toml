@@ -21,6 +21,7 @@ matplotlib = "^3.3.3"
 
 [tool.poetry.dev-dependencies]
 jupyter=""
+pytest=""
 mkdocs-material = "^6.2.5"
 mkdocs-jupyter = "^0.15"
 #markdown-include = "^0.6.0"

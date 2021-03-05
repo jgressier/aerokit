@@ -28,6 +28,7 @@ cover/
 dist
 
 # doc
+gallery
 site
 
 # Jupyter Notebook

@@ -42,6 +42,10 @@ def test_shockwave_Mn1_involutive_numpy():
     m = np.linspace(1., 10., 30)
     np.testing.assert_allclose(m, sw.downstream_Mn(sw.downstream_Mn(m)))
 
+def test_Mn_Ps():
+    assert sw.Ps_ratio(2.) == pytest.approx(4.5)
+    assert sw.Mn_Ps_ratio(sw.Ps_ratio(3.)) == pytest.approx(3.)
+
 @pytest.mark.parametrize("M0, dev", [(1.5,5.), (3.,10.), (4.,30.)])
 def test_polar_iterative_vs_cubic_weak(M0, dev):
     sig_it  = sw.sigma_Mach_deflection(M0, dev) # default is weak shock
