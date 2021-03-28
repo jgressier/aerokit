@@ -169,12 +169,7 @@ class cycle_1_to_4:
 class cycle_taux_fan_fixe(cycle_1_to_4):
     
     def __init__(self, lambda_, pi_c, Tt4, m, g, g_fuel, pi_f):
-        self.lambda_ = lambda_
-        self.pi_c = pi_c
-        self.Tt4 = Tt4
-        self.m = m
-        self.g = g
-        self.g_fuel = g_fuel
+        cycle_1_to_4.__init__(self, lambda_, pi_c, Tt4, m, g, g_fuel)
         self.pi_f = pi_f
         self.current_stage_corps = 0
         self.current_stage_fan = 0
@@ -267,12 +262,7 @@ class cycle_taux_fan_fixe(cycle_1_to_4):
 class cycle_taux_fan_calcule(cycle_1_to_4):
     
     def __init__(self, lambda_, pi_c, Tt4, m, g, g_fuel, taux_meca=.5):
-        self.lambda_ = lambda_
-        self.pi_c = pi_c
-        self.Tt4 = Tt4
-        self.m = m
-        self.g = g
-        self.g_fuel = g_fuel
+        cycle_1_to_4.__init__(self, lambda_, pi_c, Tt4, m, g, g_fuel)
         self.taux_meca = taux_meca
         self.current_stage_corps = 0
         self.current_stage_fan = 0

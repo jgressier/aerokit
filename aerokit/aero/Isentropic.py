@@ -20,7 +20,6 @@
     or using aerokit.common.defaultgas module
  """
 
-import math
 import numpy as np
 from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
 

@@ -18,10 +18,9 @@
     Blabla
   
 """
-import math
 import copy
 import numpy     as np
-import aerokit.aero.ShockWave as sw
+#import aerokit.aero.ShockWave as sw
 import aerokit.aero.model1D   as model1D
 
 # -- class --

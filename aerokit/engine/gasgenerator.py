@@ -20,7 +20,6 @@
     or using aerokit.common.defaultgas module
  """
 
-import math
 import numpy as np
 from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
 import aerokit.aero.Isentropic as Is
@@ -90,7 +89,7 @@ class base():
         return self.far * self.Pci
 
     def Wsp_TBP_ideal(self, P19=None):
-        if P19==None: P19=self.P0
+        if P19 is None: P19=self.P0
         gogm1 = self.gam_hot/(self.gam_hot-1.)
         return (1.+self.far)*gogm1*self.r_hot/(self.gam_hot-1.)*self.Tt45*((P19/self.Pt45)**(1./gogm1)-1.)
 

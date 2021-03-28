@@ -217,7 +217,7 @@ def sigma_Mach_deflection(Mach, deflection, init=None, gamma=defg._gamma):
     Returns:
 
     """
-    if init==None:
+    if init is None:
         sig0 = degree.asin(1./Mach)+deflection
     else:
         sig0 = init

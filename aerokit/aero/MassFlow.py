@@ -2,7 +2,6 @@
   Massflow for compressible flow
 """
 
-import math
 import numpy as np
 #from . import IterativeSolve
 from scipy.optimize import fsolve, newton
