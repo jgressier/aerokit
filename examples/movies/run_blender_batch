@@ -1,5 +1,0 @@
-export bl=BLENDERPATH
-
-
-$bl -b -t 2 -P render_blender-0.py -- some/path $qval $framenum $index >> blender.log.$jobid.$SLURM_JOBID &
-#"some/path $qval $framenum $index" are the blender arguments here

@@ -12,25 +12,27 @@ from aerokit.common import defaultgas as defg # relative import is deprecated by
 # --- NORMAL SHOCK WAVE ---
 
 def Ps_ratio(Mn, gamma=defg._gamma):
-    """
+    """ Computes static pressure ratio across a shockwave
 
     Args:
-      Mn:  (Default value = defg._gamma)
+      Mn: upstream normal Mach number in shock reference frame
       gamma:  (Default value = defg._gamma)
 
     Returns:
+        static pressure ratio
 
     """
     return 1.+ (2.*gamma/(gamma+1.))*(Mn**2-1.)
 
-def Mn_Ps_ratio(Pratio, gamma=defg._gamma):
-    """
+def Mn_Ps_ratio(Pratio: float, gamma=defg._gamma):
+    """ Computes normal Mach number from static pressure ratio across a shockwave
 
     Args:
-      Pratio: param gamma:  (Default value = defg._gamma)
+      Pratio: static pressure ratio
       gamma:  (Default value = defg._gamma)
 
     Returns:
+        normal Mach number in shock reference frame
 
     """
     return np.sqrt(1+(Pratio-1.)*(gamma+1.)/(2.*gamma)) 
@@ -39,7 +41,7 @@ def Rho_ratio(Mn, gamma=defg._gamma):
     """
 
     Args:
-      Mn: param gamma:  (Default value = defg._gamma)
+      Mn: normal Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:
@@ -51,7 +53,7 @@ def Ts_ratio(Mn, gamma=defg._gamma):
     """
 
     Args:
-      Mn: param gamma:  (Default value = defg._gamma)
+      Mn: normal Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:
@@ -71,11 +73,11 @@ def downstream_Mn(Mn, gamma=defg._gamma):
     """
     return np.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
 
-def Pi_ratio(Mn, gamma=defg._gamma):
-    """
+def Pt_ratio(Mn, gamma=defg._gamma):
+    """Total pressure ration through shock wave
 
     Args:
-      Mn: param gamma:  (Default value = defg._gamma)
+      Mn: upstream relative normal Mach number to param 
       gamma:  (Default value = defg._gamma)
 
     Returns:
@@ -83,17 +85,17 @@ def Pi_ratio(Mn, gamma=defg._gamma):
     """
     return Ps_ratio(Mn, gamma)*Is.PtPs_Mach(downstream_Mn(Mn, gamma))/Is.PtPs_Mach(Mn, gamma)
 
-def Mn_Pi_ratio(piratio, gamma=defg._gamma):
+def Mn_Pt_ratio(ptratio, gamma=defg._gamma):
     """
 
     Args:
-      piratio: param gamma:  (Default value = defg._gamma)
+      ptratio: 
       gamma:  (Default value = defg._gamma)
 
     Returns:
 
     """
-    def piratio_of_mach(m):
+    def ptratio_of_mach(m):
         """
 
         Args:
@@ -102,11 +104,11 @@ def Mn_Pi_ratio(piratio, gamma=defg._gamma):
         Returns:
 
         """
-        return Pi_ratio(m, gamma)
-    if piratio > 1:
-        print("!!! cannot find Mn for Pi_ratio > 1")
+        return Pt_ratio(m, gamma)
+    if ptratio > 1:
+        print("!!! cannot find Mn for Pt_ratio > 1")
         return 1
-    return ITS.secant_solve(piratio_of_mach, piratio, 1.5)
+    return ITS.secant_solve(ptratio_of_mach, ptratio, 1.5)
 
 # --- LOCAL 2D SHOCK WAVE ---
 
@@ -215,7 +217,7 @@ def sigma_Mach_deflection(Mach, deflection, init=None, gamma=defg._gamma):
     Returns:
 
     """
-    if init==None:
+    if init is None:
         sig0 = degree.asin(1./Mach)+deflection
     else:
         sig0 = init
@@ -400,3 +402,6 @@ def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
         return conical_deflection_Mach_sigma(Mach, sig, gamma)
     return ITS.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
 
+# backward compatibility
+Pi_ratio = Pt_ratio
+Mn_Pi_ratio = Mn_Pt_ratio

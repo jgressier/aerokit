@@ -15,3 +15,16 @@ def test_sigma_def_massflow(m):
 def test_sigma_reverse_numpy():
     m = np.linspace(.01, 2., 30)
     np.testing.assert_allclose(m, mf.Mach_Sigma(mf.Sigma_Mach(m), m))
+
+@pytest.mark.parametrize("AsAc", [1.1, 2., 5., 10.])
+def test_MachSub_Sigma(AsAc):
+    mach = mf.MachSub_Sigma(AsAc)
+    assert (mach < 1)
+    assert mf.Sigma_Mach(mach) == pytest.approx(AsAc, rel=1.e-6)
+
+@pytest.mark.parametrize("AsAc", [1.1, 2., 5., 10.])
+def test_MachSup_Sigma(AsAc):
+    mach = mf.MachSup_Sigma(AsAc)
+    assert (mach > 1)
+    assert mf.Sigma_Mach(mach) == pytest.approx(AsAc, rel=1.e-6)
+

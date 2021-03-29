@@ -14,43 +14,40 @@ all sections are normalized by A0, section of upstream flow
 
 import numpy                 as np
 import matplotlib.pyplot     as plt
-import aero.Isentropic       as isent
-import aero.MassFlow         as mf
-import aero.ShockWave        as sw
-import aero.Rayleigh         as ray
+#import aerokit.aero.Isentropic       as isent
+import aerokit.aero.MassFlow         as mf
+import aerokit.aero.ShockWave        as sw
+import aerokit.aero.Rayleigh         as ray
 
 gam  = 1.4   # assumed constant
 npts = 50
 M0   = 2.8
 M2   = 1.5
 A2A0 = mf.Sigma_Mach(M2, gam)/mf.Sigma_Mach(M0, gam)
-print "A0/A2 for isentropic compression from Mach %4.2f to %4.2f : %6.3f"%(M0, M2, 1./A2A0)
+print("A0/A2 for isentropic compression from Mach %4.2f to %4.2f : %6.3f"%(M0, M2, 1./A2A0))
 A3A2 = 1./A2A0*0.9
 A8A2 = .8*A3A2
 
-fig=plt.figure(1, figsize=(10,12))
+fig, ax = plt.subplots(3, 1, figsize=(10,16))
 fig.suptitle('Flow features on RAMJET, $M_0=%.2f$, $M_2=%.2f$, $A_8/A_2=%.2f$, $\gamma = %.1f$'
     %(M0, M2, A8A2, gam), fontsize=12, y=0.93)
 
-plt.subplot(311)
-plt.ylabel('$p_{i3}/p_{i0}$', fontsize=10)
-plt.grid(which='major', linestyle=':', alpha=0.5)
+ax[0].set_ylabel('$p_{i3}/p_{i0}$', fontsize=10)
+ax[0].grid(which='major', linestyle=':', alpha=0.5)
 
-plt.subplot(312)
-plt.ylabel('$p_{i4}/p_{i0}$', fontsize=10)
-plt.grid(which='major', linestyle=':', alpha=0.5)
+ax[1].set_ylabel('$p_{i4}/p_{i0}$', fontsize=10)
+ax[1].grid(which='major', linestyle=':', alpha=0.5)
 
-plt.subplot(313)
-plt.ylabel('$T_{i4}/T_{i3}$', fontsize=10)
-plt.ylabel('$M_{3}$', fontsize=10)
-plt.grid(which='major', linestyle=':', alpha=0.5)
+ax[2].set_xlabel('$T_{i4}/T_{i3}$', fontsize=10)
+ax[2].set_ylabel('$M_{3}$', fontsize=10)
+ax[2].grid(which='major', linestyle=':', alpha=0.5)
 
 # --- (FS) fully supersonic flow (not expected on design)
 
 M3sup    = mf.Mach_Sigma(A3A2*mf.Sigma_Mach(M2, gam), gam)
 M4max    = mf.Mach_Sigma(A3A2/A8A2, 2., gam)  # look for supersonic value
 alphamax = ray.Ti_Ticri(M4max, gam)/ray.Ti_Ticri(M3sup, gam)
-print "unchoking of fully supersonic flow for Ti4/Ti0 = %6.3f"%(alphamax)
+print("unchoking of fully supersonic flow for Ti4/Ti0 = %6.3f"%(alphamax))
 
 FSalpha = np.log10(np.logspace(1., alphamax, npts+1))
 FSm4    = ray.SupMach_TiTicri(FSalpha/alphamax*ray.Ti_Ticri(M4max, gam), gam)
@@ -58,12 +55,9 @@ FSpi4   = ray.Pi_Picri(FSm4, gam)/ray.Pi_Picri(M3sup, gam)
 FSpi3   = np.ones(npts+1)
 FSm3    = M3sup*np.ones(npts+1)
 
-plt.subplot(311)
-plt.plot(FSalpha, FSpi3, '-', color='#ff0000')
-plt.subplot(312)
-plt.plot(FSalpha, FSpi4, '-', color='#ff0000')
-plt.subplot(313)
-plt.plot(FSalpha, FSm3, '-', color='#ff0000')
+ax[0].plot(FSalpha, FSpi3, '-', color='#ff0000')
+ax[1].plot(FSalpha, FSpi4, '-', color='#ff0000')
+ax[2].plot(FSalpha, FSm3, '-', color='#ff0000')
 
 # --- (CW) conventional working state
 
@@ -74,8 +68,8 @@ CWm3low  = sw.downstream_Mn(M3sup, gam)
 alphamin = ray.Ti_Ticri(CWm4, gam)/ray.Ti_Ticri(CWm3low, gam)
 CWm3high = mf.Mach_Sigma(A3A2*mf.Sigma_Mach(sw.downstream_Mn(M2, gam), gam), .1, gam)
 alphamax = ray.Ti_Ticri(CWm4, gam)/ray.Ti_Ticri(CWm3high, gam)
-print "           unstart of inlet throat for Ti4/Ti0 = %6.3f"%(alphamax)
-print "             fully supersonic flow for Ti4/Ti0 = %6.3f"%(alphamin)
+print("           unstart of inlet throat for Ti4/Ti0 = %6.3f"%(alphamax))
+print("             fully supersonic flow for Ti4/Ti0 = %6.3f"%(alphamin))
 
 CWalpha = np.log10(np.logspace(alphamin, alphamax, npts+1))
 CWm3    = ray.SubMach_TiTicri(ray.Ti_Ticri(CWm4, gam)/CWalpha, gam)
@@ -83,12 +77,9 @@ CWpi3   = mf.Sigma_Mach(CWm3, gam)/mf.Sigma_Mach(M2, gam)/A3A2
 CWpi4   = CWpi3*ray.Pi_Picri(CWm4, gam)/ray.Pi_Picri(CWm3, gam)
 CWm4    = np.ones(npts+1)*CWm4
 
-plt.subplot(311)
-plt.plot(CWalpha, CWpi3, '-', color='#bb0000')
-plt.subplot(312)
-plt.plot(CWalpha, CWpi4, '-', color='#bb0000')
-plt.subplot(313)
-plt.plot(CWalpha, CWm3, '-', color='#bb0000')
+ax[0].plot(CWalpha, CWpi3, '-', color='#bb0000')
+ax[1].plot(CWalpha, CWpi4, '-', color='#bb0000')
+ax[2].plot(CWalpha, CWm3, '-', color='#bb0000')
 
 # --- (UC) unstarted channel (A8 is sonic)
 
@@ -97,10 +88,10 @@ alphamax = 1.1*alphamax
 UCm4     = mf.Mach_Sigma(A3A2/A8A2, .1, gam)  # look for subsonic value
 UCm3low  = mf.Mach_Sigma(A3A2, .1, gam)       # look for subsonic value
 alphamin = ray.Ti_Ticri(UCm4, gam)/ray.Ti_Ticri(UCm3low, gam)
-print "           (restart) choked throat for Ti4/Ti0 = %6.3f"%(alphamin)
+print("           (restart) choked throat for Ti4/Ti0 = %6.3f"%(alphamin))
 A1A2 = mf.Sigma_Mach(sw.downstream_Mn(M0, gam), gam)
-print "  critical flow for unstart condition if A1/A2 = %6.3f"%(A1A2)
-print "                                         A1/A0 = %6.3f"%(A1A2*A2A0)
+print("  critical flow for unstart condition if A1/A2 = %6.3f"%(A1A2))
+print("                                         A1/A0 = %6.3f"%(A1A2*A2A0))
 
 UCalpha = np.log10(np.logspace(alphamin, alphamax, npts+1))
 UCpi0   = sw.Pi_ratio(M0)
@@ -109,12 +100,9 @@ UCpi3   = UCpi0*np.ones(npts+1)
 UCpi4   = UCpi3*ray.Pi_Picri(UCm4, gam)/ray.Pi_Picri(UCm3, gam)
 UCm4    = np.ones(npts+1)*UCm4
 
-plt.subplot(311)
-plt.plot(UCalpha, UCpi3, '-', color='#990000')
-plt.subplot(312)
-plt.plot(UCalpha, UCpi4, '-', color='#990000')
-plt.subplot(313)
-plt.plot(UCalpha, UCm3, '-', color='#990000')
+ax[0].plot(UCalpha, UCpi3, '-', color='#990000')
+ax[1].plot(UCalpha, UCpi4, '-', color='#990000')
+ax[2].plot(UCalpha, UCm3, '-', color='#990000')
 
 # --- (RC) unstarted but choked channel (A2 and A8 are sonic)
 
@@ -130,17 +118,13 @@ RCpi3   = RCpi0*mf.Sigma_Mach(RCm3, gam)/A3A2
 RCpi4   = RCpi3*ray.Pi_Picri(RCm4, gam)/ray.Pi_Picri(RCm3, gam)
 RCm4    = np.ones(npts+1)*RCm4
 
-plt.subplot(311)
-plt.plot(RCalpha, RCpi3, '--', color='#000000')
-plt.subplot(312)
-plt.plot(RCalpha, RCpi4, '--', color='#000000')
-plt.subplot(313)
-plt.plot(RCalpha, RCm3, '--', color='#000000')
-
-#
+ax[0].plot(RCalpha, RCpi3, '--', color='#000000')
+ax[1].plot(RCalpha, RCpi4, '--', color='#000000')
+ax[2].plot(RCalpha, RCm3, '--', color='#000000')
 
 #plt.minorticks_on()
-plt.grid(which='major', linestyle=':', alpha=0.5)
+#plt.grid(which='major', linestyle=':', alpha=0.5)
 #plt.grid(which='minor', linestyle=':', alpha=0.5)
-fig.savefig('Ramjet-Working.pdf', bbox_inches='tight')
-plt.show
+#fig.tight_layout()
+#fig.savefig('Ramjet-Working.pdf', bbox_inches='tight')
+plt.show()

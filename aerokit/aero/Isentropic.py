@@ -20,7 +20,6 @@
     or using aerokit.common.defaultgas module
  """
 
-import math
 import numpy as np
 from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
 
@@ -86,6 +85,7 @@ def Mach_PtPs(PtPs, gamma=defg._gamma):
       gamma:  (Default value = defg._gamma)
 
     Returns:
+        Mach number
 
     """
     return np.sqrt((PtPs**((gamma-1.)/gamma)-1.)*2./(gamma-1.))
