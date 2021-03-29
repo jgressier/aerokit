@@ -22,6 +22,6 @@ def save_default():
 	_saved_gamma = _gamma
 
 def restore_default():
-	global _saved_r, _saved_gamma
+	global _saved_r, _saved_gamma, _r, _gamma
 	_r     = _saved_r
 	_gamma = _saved_gamma
