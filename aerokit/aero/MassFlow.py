@@ -7,12 +7,12 @@ import numpy as np
 from scipy.optimize import fsolve, newton
 from ..common import defaultgas as defg
 
-# internal initialization Mach for sigma computations
+# internal initialization (estimated) Mach for Sigma->Mach computations
 def __MachSub_sigma(sigma, gamma):
-	return (2./(gamma+1.))**(.5*(gamma+1.)/(gamma-1.))/sigma
+	return 1.-np.sqrt((1.-1./sigma)*(4.*(gamma-1.)/(3.-gamma))) #(2./(gamma+1.))**(.5*(gamma+1.)/(gamma-1.))/sigma
 
 def __MachSup_sigma(sigma, gamma):
-	return np.sqrt(1.+1./sigma)
+	return 1.+np.sqrt((sigma-1.)*(4.*(gamma-1.)/(3.-gamma)))
 
 # -- Compressible flow functions  --
 

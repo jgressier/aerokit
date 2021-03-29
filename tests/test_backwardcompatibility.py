@@ -15,7 +15,7 @@ def test_stagnation_i2t():
     assert Is.Mach_TiTs(3.) == Is.Mach_TtTs(3.)
     assert Is.Velocity_MachTi(.8, 300.) == Is.Velocity_MachTt(.8, 300.)
 
-def test_Ptshock()
+def test_Ptshock():
     assert sw.Pt_ratio(2.) == sw.Pi_ratio(2.)
     
 def test_riemann():

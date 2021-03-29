@@ -124,19 +124,17 @@ def Madapt_from_AsAc_NPR(AsAc, NPR):
 		Ms  = np.sqrt((np.sqrt(1.+2.*gmu*K*K)-1.)/gmu)
 	return Ms
 
-
-
 class nozzle():
-    """ Define a nozzle
+	""" Define a nozzle
 
-    :param x: coordinate for section, not really used for now
-    :param section: array of section law
-    :param AsoAc: force AsoAc instead of computing from section law
-    :param gamma: ratio of specific heats
+	:param x: coordinate for section, not really used for now
+	:param section: array of section law
+	:param AsoAc: force AsoAc instead of computing from section law
+	:param gamma: ratio of specific heats
 	:param NPR: NPR value (>1); if None (default), can be set with nozzle.set_NPR(NPR)
-    :param ref_rttot: additional definition of r*Ttot to complete state (default 1.)
-    :param scale_ps: arbitrary scaling of static (and associated total) pressure (default 1. at the outlet)
-    """
+	:param ref_rttot: additional definition of r*Ttot to complete state (default 1.)
+	:param scale_ps: arbitrary scaling of static (and associated total) pressure (default 1. at the outlet)
+	"""
 
 	def __init__(self, x, section, AsoAc=None, gamma=1.4, NPR=None, ref_rttot=1., scale_ps=1.):
 
@@ -150,19 +148,19 @@ class nozzle():
 		self.ithroat = np.abs(self.AxoAc).argmin() # abs not necessary but ensure conversion to numpy array
 		defg.save_default()
 		self.NPR0, self.NPRsw, self.NPR1, self.Msub, self.Msh, self.Msup = _NPR_Ms_list(self.AsoAc)
-        self._ref_rttot = ref_rttot
-        self._scale_ps  = scale_ps
-        if NPR:
-            self.set_NPR(NPR)
+		self._ref_rttot = ref_rttot
+		self._scale_ps  = scale_ps
+		if NPR:
+			self.set_NPR(NPR)
 		defg.restore_default()
 		return
 
 	def set_NPR(self, NPR):
-        """ Define Nozzle Pressure Ratio (inlet Ptot over outlet Ps) for this case
+		""" Define Nozzle Pressure Ratio (inlet Ptot over outlet Ps) for this case
 		Define Nozzle pressure ratio and compute Mach number, Ptot and Ps according to nozzle regime
         :param NPR: NPR value (>1)
 
-        """
+		"""
 		self._Pt = np.ones_like(self.AxoAc)
 		if NPR < self.NPR0:
 			_Ms = Is.Mach_PtPs(NPR, gamma=self.gamma)

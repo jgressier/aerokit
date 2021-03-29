@@ -19,6 +19,7 @@
   
 """
 
+import math
 import numpy     as np
 from scipy.optimize import fsolve
 import aerokit.aero.unsteady1D as uq

@@ -18,6 +18,7 @@
     Blabla
   
 """
+import math
 import copy
 import numpy     as np
 #import aerokit.aero.ShockWave as sw
