@@ -14,7 +14,7 @@ all sections are normalized by A0, section of upstream flow
 
 import numpy                 as np
 import matplotlib.pyplot     as plt
-import aerokit.aero.Isentropic       as isent
+#import aerokit.aero.Isentropic       as isent
 import aerokit.aero.MassFlow         as mf
 import aerokit.aero.ShockWave        as sw
 import aerokit.aero.Rayleigh         as ray

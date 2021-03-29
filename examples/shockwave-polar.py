@@ -5,7 +5,7 @@ Plot of local Rankine-Hugoniot equations (2D shock waves)
 """
 
 import aero.degree           as deg
-import aero.CompressibleFlow as aerof
+#import aero.CompressibleFlow as aerof
 import aero.ShockWave        as aerosw
 import numpy                 as np
 import matplotlib.pyplot     as plt

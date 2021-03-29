@@ -8,7 +8,7 @@ import aerokit.aero.degree      as deg
 import aerokit.aero.ShockWave   as sw
 
 import matplotlib.pyplot as plt
-from aerokit.aero.plot.defaultstyle import *
+from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma
 
 
 def plot_theta_sigma(mach, gamma=defg._gamma, npts=100, curve='both', devmax=False, sonic=False, color='k', linestyle='-', **kwargs):
