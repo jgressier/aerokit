@@ -16,17 +16,19 @@ Python packages for compressible flow computations
 ### Features
 
 * Mach dependent functions for isentropic total pressure, temperature and mass flow
-* local Rankine-Hugoniot shock wave equations
+* local Rankine-Hugoniot shock wave equations (or 2d planar shocks)
 * conical shock waves
-* real gaz thermo functions
-* kerozen  thermo functions
 * Fanno    equations for momentum losses in a duct
 * Rayleigh equations for heating/cooling in a duct
+* unsteady compressible 1D flows
+* applications: nozzle flows and (Riemann) shock tube
 * misc: degree based trigo functions, Newton iterative solve, ODE integration
 
 ### Installation & usage
 
     pip install aerokit
+
+Documentation is available on [readthedocs](https://aerokit.readthedocs.io/en/latest/). More examples are available in the repository.
 
 ### Requirements
 

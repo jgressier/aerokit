@@ -16,7 +16,7 @@ pip show aerokit
 
 ## Versions
 
-### [1.1.x](https://pypi.org/project/aerokit/) (2021-xx-xx)
+### [1.1.1](https://pypi.org/project/aerokit/) (2021-03-29)
 
 #### changed
 
@@ -25,7 +25,9 @@ pip show aerokit
 
 #### fixed
 
+- improve `aero.MassFlow` initialization for Sigma to Mach computations
 - `instance.nozzle` is now using prescribed gamma
+- some recommended fixes by LGTM code analysis
 - improve test coverage
 
 ### [1.1.0](https://pypi.org/project/aerokit/) (2021-02-05)
