@@ -60,9 +60,14 @@ def test_polar_iterative_vs_cubic_strong(M0, dev):
 
 def test_conical_shock_deflection():
     dev = sw.conical_deflection_Mach_sigma(2., 35.)
-    assert dev == pytest.approx(16.5322)
+    assert dev == pytest.approx(16.5322, rel=1.e-4)  # solution of iterative process
 
 def test_conical_shock_sigma():
     sig = sw.conical_sigma_Mach_walldeflection(2., 30.)
-    assert sig == pytest.approx(48.079078)
+    assert sig == pytest.approx(48.079078, rel=1.e-4)  # solution of iterative process
+
+def test_conical_shock_mach():
+    mach = sw.conical_Mach_walldeflection_sigma(30., 45.)
+    assert mach == pytest.approx(2.2376, rel=1.e-4)  # solution of iterative process
+
 

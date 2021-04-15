@@ -2,7 +2,7 @@
 
 Python packages for compressible flow computations
 
-[![PyPi Version](https://img.shields.io/pypi/v/aerokit.svg?style=flat)](https://pypi.org/project/meaerokitshio)
+[![PyPi Version](https://img.shields.io/pypi/v/aerokit.svg?style=flat)](https://pypi.org/project/aerokit)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/aerokit.svg?style=flat)](https://pypi.org/pypi/aerokit/)
 [![Doc](https://readthedocs.org/projects/aerokit/badge/?version=latest)](https://readthedocs.org/projects/aerokit/)
 [![Slack](https://img.shields.io/static/v1?logo=slack&label=slack&message=contact&style=flat)](https://join.slack.com/t/isae-opendev/shared_invite/zt-obqywf6r-UUuHR4_hc5iTzyL5bFCwpw

@@ -16,6 +16,13 @@ pip show aerokit
 
 ## Versions
 
+### [1.1.2](https://pypi.org/project/aerokit/) (2021-04-15)
+
+#### fixed
+
+- remove debug print in `aero.ShockWave` conical functions
+- add reverse function `conical_Mach_walldeflection_sigma` (upstream Mach number from conical wall deflection and shock angle)
+
 ### [1.1.1](https://pypi.org/project/aerokit/) (2021-03-29)
 
 #### changed

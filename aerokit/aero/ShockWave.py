@@ -371,16 +371,16 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
             else:
                 thma = thma + dthma
                 phi  = phi  + h
-                print(phi, thma)
+                #print(Mach, sigma, phi, thma)
         else:
             h = 0.9*h*(tol/err)**0.2
-            print("new h ",h)
+            #print("new h ",h)
 
     deflection = .5*(thma[0] + phi)
     return deflection
 
 def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
-    """
+    """computes shock angle sigma from upstream Mach number and wall deflection
 
     Args:
       Mach: param deflection:
@@ -390,17 +390,30 @@ def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
     Returns:
 
     """
-    def local_f(sig):
-        """
-
-        Args:
-          sig: 
-
-        Returns:
-
+    def local_def(sig):
+        """internal wrapping function to iterative solve
         """
         return conical_deflection_Mach_sigma(Mach, sig, gamma)
-    return ITS.secant_solve(local_f, deflection, degree.asin(1./Mach)+deflection)
+    return ITS.secant_solve(local_def, deflection, degree.asin(1./Mach)+deflection)
+
+def conical_Mach_walldeflection_sigma(deflection, sigma, gamma=defg._gamma):
+    """computes upstream Mach number from wall deflection and shock angle sigma 
+
+    Args:
+      Mach: param deflection:
+      gamma: Default value = defg._gamma)
+      deflection: 
+
+    Returns:
+
+    """
+    assert sigma > deflection
+    def local_def(mach):
+        """internal wrapping function to iterative solve
+        """
+        #print("local mach sigma", mach, sigma)
+        return conical_deflection_Mach_sigma(mach, sigma, gamma)
+    return ITS.secant_solve(local_def, deflection, 1./degree.sin(sigma-.5*deflection))
 
 # backward compatibility
 Pi_ratio = Pt_ratio
