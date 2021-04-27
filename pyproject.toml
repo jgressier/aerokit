@@ -17,7 +17,7 @@ exclude = [ "notebooks", "gallery" ]
 python = "^3.7"
 numpy = "^1.19.4"
 scipy = "^1.5.4"
-matplotlib = "^3.3.3"
+matplotlib = "^3.2"
 
 [tool.poetry.dev-dependencies]
 jupyter=""
