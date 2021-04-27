@@ -23,6 +23,7 @@ nav:
   - Examples: 
     - Examples: examples.md
     - aero.Isentropic: examples/aero.Isentropic.ipynb
+    - aero.ShockWave: examples/aero.ShockWave.ipynb
     - instance.riemann: examples/instance.riemann.ipynb
   - Change log: changelog.md
   - About: about.md
