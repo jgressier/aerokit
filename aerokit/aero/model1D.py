@@ -46,6 +46,13 @@ class state():
 		self.__init__(rho=gam * ps / a2, u=u, p=ps)
 
 	def compute_from_pt_rtt_p(self, pt, rtt, p):
+		"""Init state from Ptot r.Ttot and Ps (velocity sign is arbitrary and positive)
+
+		Args:
+			pt ([float]): [description]
+			rtt ([float]): [description]
+			p ([float]): [description]
+		"""
 		M   = Is.Mach_PtPs(pt/p, self._gamma)
 		rts = rtt/Is.TtTs_Mach(M, self._gamma)
 		self.__init__(rho=p/rts, u=M*np.sqrt(self._gamma*rts), p=p)
