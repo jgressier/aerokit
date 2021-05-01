@@ -2,7 +2,7 @@
   representation of 1D flows
 """
 
-import math
+#import math
 import numpy     as np
 #import ShockWave as sw
 #import IterativeSolve
@@ -59,15 +59,15 @@ class state():
 		
 	def asound(self):
 		"""returns speed of sound"""
-		return math.sqrt(self._gamma*self.p/self.rho)
+		return np.sqrt(self._gamma*self.p/self.rho)
 
 	def left_acoustic(self):
 		"""returns left 'actual' speed of sound"""
-		return self.u-math.sqrt(self._gamma*self.p/self.rho)
+		return self.u-np.sqrt(self._gamma*self.p/self.rho)
 
 	def right_acoustic(self):
 		"""returns left 'actual' speed of sound"""
-		return self.u+math.sqrt(self._gamma*self.p/self.rho)
+		return self.u+np.sqrt(self._gamma*self.p/self.rho)
 
 	def Mach(self):
 		"""returns Mach number"""

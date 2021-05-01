@@ -17,7 +17,7 @@
 
 import math
 import numpy     as np
-from scipy.optimize import fsolve
+from scipy.optimize import newton
 import aerokit.aero.unsteady1D as uq
 
 # ===============================================================
@@ -170,5 +170,5 @@ class riemann_pb():
 	def _solve(self):
 		def du(p):
 			return self._delta_uL(p) + self._delta_uR(p) + self._qR.u - self._qL.u
-		self._pstar = fsolve(du, self._pstar_estimate_expansion(), xtol=1e-10)
+		self._pstar = newton(du, self._pstar_estimate_expansion(), rtol=1e-10)
 		return
