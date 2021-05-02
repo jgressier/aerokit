@@ -23,7 +23,7 @@ Python packages for compressible flow computations
 * Rayleigh equations for heating/cooling in a duct
 * unsteady compressible 1D flows
 * applications: nozzle flows and (Riemann) shock tube
-* misc: degree based trigo functions, Newton iterative solve, ODE integration
+* misc: degree based trigo functions
 
 ### Installation & usage
 

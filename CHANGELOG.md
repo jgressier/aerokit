@@ -16,6 +16,12 @@ pip show aerokit
 
 ## Versions
 
+### [1.x.x](https://pypi.org/project/aerokit/) (2021-xx-xx)
+
+#### fixed
+
+-  `instance.riemann`: fix wave speeds for right wave if it is an expansion
+
 ### [1.1.2](https://pypi.org/project/aerokit/) (2021-04-15)
 
 #### fixed

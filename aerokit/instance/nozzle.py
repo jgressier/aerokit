@@ -8,10 +8,6 @@
     :Example:
  
     >>> import aerokit.aero.nozzle as nz
-    >>> Is.TtTs_Mach(1.)
-    1.2
-    >>> Is.TtTs_Mach(2., gamma=1.6)
-    2.2
  
     Available functions
     -------------------
@@ -28,12 +24,33 @@ from aerokit.aero   import ShockWave  as sw
 # === NPR computation from As/Ac definition of nozzle ===
 
 def NPR_choked_subsonic(AsAc):
+	"""Compute Nozzle Pressure Ratio to get a choked but subsonic regime in a nozzle with As/Ac diffuser
+
+	Args:
+		AsAc ([real]): ratio of exit over throat surfaces 
+	Returns:
+		[real]: Nozzle Pressure ratio (inlet total pressure over exit static pressure)
+	"""
 	return Is.PtPs_Mach(mf.MachSub_Sigma(AsAc))
 
 def NPR_choked_supersonic(AsAc):
+	"""Compute Nozzle Pressure Ratio to get a choked supersonic regime in a nozzle with As/Ac diffuser
+
+	Args:
+		AsAc ([real]): ratio of exit over throat surfaces 
+	Returns:
+		[real]: Nozzle Pressure ratio (inlet total pressure over exit static pressure)
+	"""
 	return Is.PtPs_Mach(mf.MachSup_Sigma(AsAc))
 
 def NPR_shock_at_exit(AsAc):
+	"""Compute Nozzle Pressure Ratio to get a choked, supersonic regime but shock at exit in a nozzle with As/Ac diffuser
+
+	Args:
+		AsAc ([real]): ratio of exit over throat surfaces 
+	Returns:
+		[real]: Nozzle Pressure ratio (inlet total pressure over exit static pressure)
+	"""
 	Msup  = mf.MachSup_Sigma(AsAc)
 	Msh   = sw.downstream_Mn(Msup)
 	return Is.PtPs_Mach(Msh) / sw.Pi_ratio(Msup)

@@ -6,11 +6,7 @@
  
 	:Example:
  
-    >>> import aerokit.aero.Isentropic as Is
-    >>> Is.TtTs_Mach(1.)
-    1.2
-    >>> Is.TtTs_Mach(2., gamma=1.6)
-    2.2
+    >>> import aerokit.instance.riemann as riem
  
     Available functions
     -------------------
@@ -21,7 +17,7 @@
 
 import math
 import numpy     as np
-from scipy.optimize import fsolve
+from scipy.optimize import newton
 import aerokit.aero.unsteady1D as uq
 
 # ===============================================================
@@ -72,8 +68,8 @@ class riemann_pb():
 		else:
 			_rho = self._qR.rho_through_isentropic(self._pstar)
 			self._qstarR = uq.unsteady_state(rho=_rho, u=self._ustar, p=self._pstar, gamma=self._qR._gamma)
-			self._waves[3] = self._qR.u  + self._qR.asound()
-			self._waves[4] = self._ustar + self._qstarR.asound()
+			self._waves[3] = self._ustar + self._qstarR.asound()
+			self._waves[4] = self._qR.u  + self._qR.asound()
 
 	def __repr__(self):
 		return "(rho, u, p)_L : (%s, %s, %s)\n" % (self._qL.rho, self._qL.u, self._qL.p) + \
@@ -174,5 +170,5 @@ class riemann_pb():
 	def _solve(self):
 		def du(p):
 			return self._delta_uL(p) + self._delta_uR(p) + self._qR.u - self._qL.u
-		self._pstar = fsolve(du, self._pstar_estimate_expansion(), xtol=1e-10)
+		self._pstar = newton(du, self._pstar_estimate_expansion(), rtol=1e-10)
 		return

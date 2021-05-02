@@ -18,7 +18,7 @@
     Blabla
   
 """
-import math
+#import math
 import copy
 import numpy     as np
 import aerokit.aero.ShockWave as sw
@@ -78,7 +78,7 @@ class unsteady_state(model1D.state):
 
 			..warning:: There is no consistent test that (arg) p is greater than self.p
 		"""
-		return (p-self.p)*math.sqrt(2./self.rho/((self._gamma+1.)*p + (self._gamma-1.)*self.p))
+		return (p-self.p)*np.sqrt(2./self.rho/((self._gamma+1.)*p + (self._gamma-1.)*self.p))
 
 	def rho_through_shock(self, p):
 		"""

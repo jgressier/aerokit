@@ -8,6 +8,7 @@ import numpy      as np
 import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as degree
 from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
+from aerokit.common._ode import _rkf45
 
 # --- NORMAL SHOCK WAVE ---
 
@@ -303,49 +304,14 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
     Returns:
 
     """
-    def rkf45(F, x, y, h):
-        """
-
-        Args:
-          F: param x:
-          y: param h:
-          x: 
-          h: 
-
-        Returns:
-
-        """
-        # Runge-Kutta-Fehlberg formulas
-        C = [37./378, 0., 250./621, 125./594, 0., 512./1771]
-        D = [2825./27648, 0., 18575./48384, 13525./55296, 277./14336, 1./4]
-        n = len(y)
-        K = np.zeros((6,n))
-        K[0] = h*F(x,y)
-        K[1] = h*F(x + 1./5*h, y + 1./5*K[0])
-        K[2] = h*F(x + 3./10*h, y + 3./40*K[0] + 9./40*K[1])
-        K[3] = h*F(x + 3./5*h, y + 3./10*K[0]- 9./10*K[1] + 6./5*K[2])
-        K[4] = h*F(x + h, y - 11./54*K[0] + 5./2*K[1] - 70./27*K[2] + 35./27*K[3])
-        K[5] = h*F(x + 7./8*h, y + 1631./55296*K[0] + 175./512*K[1] + 575./13824*K[2] + 44275./110592*K[3] + 253./4096*K[4])
-        # Initialize arrays {dy} and {E}
-        E  = np.zeros((n))
-        dy = np.zeros((n))
-        # Compute solution increment {dy} and per-step error {E}
-        for i in range(6):
-            dy = dy + C[i]*K[i]
-            E  = E + (C[i] - D[i])*K[i]
-        # Compute RMS error e
-        e = np.sqrt(sum(E**2)/n)
-        return dy, e
-
     def rhs(phi, data):
-        """
+        """RHS for conical equations (2 equations)
 
         Args:
-          phi: param data:
-          data: 
+          phi: angle (coordinate of the ODE)
+          data: theta (flow angle) and Mach number
 
-        Returns:
-
+        Returns: theta/mach variation rate (RHS)
         """
         th = data[0]
         ma = data[1]
@@ -355,6 +321,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
         rhs[1] =  np.pi/180.*degree.sin(th)*degree.sin(phi-th)/degree.sin(phi)/k*ma*(1.+.5*(gamma-1)*ma*ma)
         return rhs
 
+    # initial data for integration from downstream shock to wall
     th   = deflection_Mach_sigma(Mach, sigma, gamma)
     ma   = downstream_Mn(Mach*degree.sin(sigma), gamma)/degree.sin(sigma-th)
     phi  = sigma
@@ -362,7 +329,7 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
     h    = -phi/10.
     conv = phi
     while (abs(conv) >= tol):
-        dthma, err = rkf45(rhs, phi, thma, h)
+        dthma, err = _rkf45(rhs, phi, thma, h)
         # Accept integration step if error e is within tolerance
         if err <= tol:
             conv = thma[0] - phi
