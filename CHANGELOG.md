@@ -16,7 +16,7 @@ pip show aerokit
 
 ## Versions
 
-### [1.x.x](https://pypi.org/project/aerokit/) (2021-xx-xx)
+### [1.1.3](https://pypi.org/project/aerokit/) (2021-06-02)
 
 #### fixed
 
