@@ -22,7 +22,7 @@ def RK4(F,x,y,xStop,h):
         x = x + h
         X.append(x)
         Y.append(y)
-    return array(X),array(Y)
+    return np.array(X),np.array(Y)
 
 def _rkf45(F, x, y, h):
     # Runge-Kutta-Fehlberg formulas
@@ -44,7 +44,7 @@ def _rkf45(F, x, y, h):
         dy = dy + C[i]*K[i]
         E  = E + (C[i] - D[i])*K[i]
     # Compute RMS error e
-    e = sqrt(sum(E**2)/n)
+    e = np.sqrt(np.sum(E**2)/n)
     return dy,e
 
 
@@ -74,4 +74,4 @@ def RKF45(F, x, y, xStop, h, tol=1.0e-6):
             hNext = xStop - x
             stopper = 1
         h = hNext
-    return array(X),array(Y)
+    return np.array(X),np.array(Y)
