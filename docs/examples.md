@@ -7,4 +7,4 @@
 
 ## Specific flow case and solution
 
-- [`instance.riemann`](instance.riemann): unsteady shock tube and interface interaction
+- [`instance.Riemann`](instance.Riemann): unsteady shock tube and interface interaction
