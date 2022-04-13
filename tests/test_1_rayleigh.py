@@ -1,10 +1,7 @@
 import aerokit.aero.Rayleigh as ray
 
-import numpy as np
 import pytest
 
-
-#@pytest.mark.parametrize("m", [.1, .2, .5, 1.2, 2., 20.])
 def test_maxTiratio_Mach():
     assert ray.maxTiratio_Mach(.1, 1.4) == pytest.approx(21.377994011976046)
     assert ray.maxTiratio_Mach(.2, 1.4) == pytest.approx(5.761904761904761)
@@ -14,12 +11,16 @@ def test_maxTiratio_Mach():
     assert ray.maxTiratio_Mach(2, 1.3) == pytest.approx(1.2604166666666667)
 
 def test_SubMach_TiTicri():
-    assert ray.SubMach_TiTicri(1/21.3779940119) == pytest.approx(.1)
-    assert ray.SubMach_TiTicri(1.52380952/5.76190476) == pytest.approx(0.2543448)
+    assert ray.SubMach_TiTicri(0.04677707) == pytest.approx(.1)
+    assert ray.SubMach_TiTicri(0.264462809, 1.4) == pytest.approx(0.2543448)
+    assert ray.SubMach_TiTicri(0.04677707, 1.5) == pytest.approx(0.09799919)
+    assert ray.SubMach_TiTicri(0.04677707, .5) == pytest.approx(0.12611333)
 
 def test_SupMach_TiTicri():
-    assert ray.SupMach_TiTicri(1/1.97232142857) == pytest.approx(10)
-    assert ray.SupMach_TiTicri(1.09509796/1.86452687) == pytest.approx(4.03950381)
+    assert ray.SupMach_TiTicri(0.50701675) == pytest.approx(10)
+    assert ray.SupMach_TiTicri(0.58733289, 1.4) == pytest.approx(4.03950381)
+    assert ray.SupMach_TiTicri(0.50701675, .5) == pytest.approx(1.61955266)
+    assert ray.SupMach_TiTicri(0.50701675, 1) == pytest.approx(2.39045722)
 
 def test_Ps_Pscri():
     assert ray.Ps_Pscri(1, 1.4) == pytest.approx(1.0)
