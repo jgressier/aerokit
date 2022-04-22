@@ -19,6 +19,7 @@ nav:
   - User Guide:
     - User Guide: userguide.md
     - aero.Isentropic: userguide/aero.Isentropic.md
+    - aero.MassFlow: userguide/aero.MassFlow.md
     - aero.ShockWave:  userguide/aero.ShockWave.md
   - Examples: 
     - Examples: examples.md
