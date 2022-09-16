@@ -4,4 +4,3 @@
     selection:
         filters:
             - "!.*Pi_ratio.*"
-
