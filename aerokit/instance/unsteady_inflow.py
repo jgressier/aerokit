@@ -40,7 +40,7 @@ class inflow_pb():
 			_qstarR : q state between q*L and qR
 	"""
 	def __init__(self, qinit):
-	 	self._qR    = qinit.copy()
+		self._qR  = qinit.copy()
 
 	def __repr__(self):
 		return "(rho, u, p)*_L : (%s, %s, %s)\n" % (self._qstarL.rho, self._qstarL.u, self._qstarL.p) + \

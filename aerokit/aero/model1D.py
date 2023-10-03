@@ -6,7 +6,7 @@
 import numpy     as np
 #import ShockWave as sw
 #import IterativeSolve
-from ..common   import defaultgas as defg
+from aerokit.common import defaultgas as defg
 from aerokit.aero import Isentropic as Is
 
 # -- class --
@@ -22,10 +22,10 @@ class state():
 		p
 	"""
 	def __init__(self, rho, u, p, gamma=defg._gamma):
-	 	self._gamma = gamma
-	 	self.rho    = rho
-	 	self.u      = u
-	 	self.p      = p
+		self._gamma = gamma
+		self.rho    = rho
+		self.u      = u
+		self.p      = p
 
 	def __repr__(self):
 		return "state (rho, u, p) : (%s, %s, %s)" % (self.rho, self.u, self.p)
@@ -56,7 +56,7 @@ class state():
 		M   = Is.Mach_PtPs(pt/p, self._gamma)
 		rts = rtt/Is.TtTs_Mach(M, self._gamma)
 		self.__init__(rho=p/rts, u=M*np.sqrt(self._gamma*rts), p=p)
-		
+
 	def asound(self):
 		"""returns speed of sound"""
 		return np.sqrt(self._gamma*self.p/self.rho)
