@@ -21,7 +21,7 @@ class state():
 		u
 		p
 	"""
-	def __init__(self, rho, u, p, gamma=defg._gamma):
+	def __init__(self, rho = None, u = None, p = None, gamma=defg._gamma):
 		self._gamma = gamma
 		self.rho    = rho
 		self.u      = u
@@ -29,6 +29,10 @@ class state():
 
 	def __repr__(self):
 		return "state (rho, u, p) : (%s, %s, %s)" % (self.rho, self.u, self.p)
+
+	@property
+	def size(self): 
+		return self.rho.size if isinstance(self.rho, np.ndarray) else 1
 
 	def copy(self):
 		return state(self.rho, self.u, self.p, self._gamma)
