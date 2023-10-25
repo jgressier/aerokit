@@ -2,29 +2,33 @@
 
 """
 import numpy as np
-
-import numpy as np
 from scipy.linalg import toeplitz
 import matplotlib.pyplot as plt
+from aerokit.common._dev import lazyprop
+
 
 class ChebCollocation():
     """Chebyshev collocation
     """
-    def __init__(self, npts: int):
+    def __init__(self, npts: int, xmin = None, xmax = None):
         self._npts = npts
         self._max_Dorder = 0
-        self._x = None
+        # default is -1 to 1 (reverse original xi distribution)
+        self._xmin = -1. if xmin is None else xmin
+        self._xmax = 1. if xmax is None else xmax
 
     @property
     def npts(self):
         return self._npts
 
-    @property
+    @lazyprop
+    def xi(self):
+        th = np.arange(self.npts) * np.pi / (self.npts - 1)
+        return np.cos(th)
+
+    @lazyprop
     def x(self):
-        if self._x is None:
-            th = np.arange(self.npts) * np.pi / (self.npts - 1)
-            self._x = np.cos(th)
-        return self._x
+        return self._xmin + (self.xi-1.)/(-2.)*(self._xmax - self._xmin)
 
     def extrapol(self, fk, x):
         """
@@ -110,7 +114,6 @@ class ChebCollocation():
             D = (ell + 1) * Z * (C * D.diagonal()[:, np.newaxis] - D)
             # D[L] = -D.sum(axis=1)
             np.fill_diagonal(D, -D.sum(axis=1))
-            DM[:, :, ell] = D
-        self._x = x
+            DM[:, :, ell] = D * ((self._xmax-self._xmin)/(-2.))**(ell+1)
         self._matder = DM
         self._max_Dorder = maxorder
