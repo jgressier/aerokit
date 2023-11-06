@@ -24,8 +24,8 @@ import aerokit.aero.ShockWave as sw
 
 class Euler1D(LinOperator):
 
-    def __init__(self, n, basestate: m1d.state = None) -> None:
-        super().__init__(n)
+    def __init__(self, n, xmin=None, xmax=None, basestate: m1d.state = None) -> None:
+        super().__init__(n, xmin, xmax)
         if basestate is not None:
             self.set_basestate(basestate)
 
@@ -47,11 +47,10 @@ class Euler1D(LinOperator):
         # order is rho, u, p
         self._At = np.eye(N)
         # Bx
-        self._Bx = np.diag(np.tile(q.u, self.nvar))
-        self._Bx[0:n,n:2*n] = np.diag(q.rho)
-        self._Bx[n:2*n,2*n:] = np.diag(1./q.rho)
-        self._Bx[2*n:,n:2*n] = np.diag(q._gamma * q.p)
-        self._Bx = self._Bx @ np.kron(np.eye(self.nvar), D)
+        self._Bx = np.diag(np.tile(q.u, self.nvar)) @ np.kron(np.eye(self.nvar), D)
+        self._Bx[0:n,n:2*n] = np.diag(q.rho) @ D
+        self._Bx[n:2*n,2*n:] = np.diag(1./q.rho) @ D
+        self._Bx[2*n:,n:2*n] = np.diag(q._gamma * q.p) @ D
         # derivatives of basestate
         dq = m1d.state(rho = D @ q.rho, u = D @ q.u, p= D @ q.p)
         # B0
@@ -61,7 +60,7 @@ class Euler1D(LinOperator):
         self._B0[:n:,n:2*n] = np.diag(dq.rho)
         self._B0[n:2*n:,:n] = np.diag(-dq.p/q.rho**2)
         self._B0[2*n:,n:2*n] = np.diag(dq.p)
-        self._B = self._Bx + self._B0
+        self._B = -self._Bx - self._B0
 
     def setBC(self, Ltype: str, Rtype: str):
         n = self.size
@@ -82,7 +81,7 @@ class Euler1D(LinOperator):
         # drho = 0
         self._B[i0,:n] = D[istate,:]
         # u = 0
-        self._B[i0+n,istate] = 1.
+        self._B[i0+n,n+istate] = 1.
         # dp = 0
         self._B[i0+2*n,2*n:] = D[istate,:]
 

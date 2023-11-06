@@ -16,6 +16,12 @@ pip show aerokit
 
 ## Versions
 
+### [1.x.x](https://pypi.org/project/aerokit/) (2022-xx-xx)
+
+#### fixed
+
+- 
+
 ### [1.1.3](https://pypi.org/project/aerokit/) (2021-06-02)
 
 #### fixed
@@ -49,8 +55,6 @@ pip show aerokit
 
 - changed total/stagnation notation Ti,Pi to Tt,Pt (backward compatibility handled)
 - moved `nozzle` and `riemann` to `instance.*` submodule 
-
-
 
 ### [1.0.0](https://pypi.org/project/aerokit/) (2021-01-20)
 
