@@ -27,9 +27,79 @@
 """
 
 import numpy as np
-import aerokit.common.numspectral as ns
+from aerokit.stability import LinOperator
 
-# def resol(alpha, omega, reynolds, DiffOp):
+
+class OrrSommerfeldModel(LinOperator):
+
+    def __init__(self, n, xmin=None, xmax=None, basestate = None) -> None:
+        """Initialization of OrrSommerfeld model
+
+        Args:
+            n (_type_): _description_
+            xmin (_type_, optional): _description_. Defaults to None.
+            xmax (_type_, optional): _description_. Defaults to None.
+            basestate (_type_, optional): _description_. Defaults to None.
+        """
+        super().__init__(n, xmin, xmax)
+        if basestate is not None:
+            self.set_basestate(basestate)
+
+    def set_basestate(self, state: dict):
+        """set basestate for Orr-Sommerfeld model"""
+        for k in ['alpha', 'Reynolds', 'uprofile']:
+            assert k in state.keys(), f"key {k} missing in params"
+        # must check u profile ?
+        super().set_basestate(state)
+
+    def compute_operators(self):
+        """compute operators for linearized
+          given primitive variables P, linearized operator is
+          At dv/dt = B v
+        """
+        assert self.check_basestate()
+        alpha = self._basestate['alpha']
+        Rey = self._basestate['Reynolds']
+        D4 = self._diffop.matder(4)
+        D2 = self._diffop.matder(2)
+        n = self.dim
+        # compute u and ddu
+        u = self._basestate['uprofile'](self.x)
+        ddu = D2 @ u
+        # At = alpha**2 * I - D**2
+        self._At = alpha**2 * np.eye(n) - D2
+        # B = 1/Re * [ D**4 - 2*alpha**2 * D**2 + alpha**4 * I ] + 
+        #   + alpha*j* [ u*(alpha**2-D**2) ]
+        self._B = np.diag(1j*alpha*u) @ self._At + np.diag(1j*alpha*ddu) 
+        self._B += (D4 - (2*alpha**2) * D2 + alpha**4 * np.eye(n))/Rey
+
+    def setBC(self, Ltype: str, Rtype: str):
+        n = self.dim
+        BCfunc = { 'wall': self.setBC_wall }
+        BCfunc[Ltype](0, 0)
+        BCfunc[Rtype](n-1, n-2) # caution: function must write 2 BC at n-2 and n-1
+
+    def setBC_wall(self, istate, irow):
+        n = self.dim
+        i0 = istate if irow is None else irow
+        D = self._diffop.matder(1)
+        for i in (i0, i0+1):
+            self._At[i,:] = 0.
+            self._B[i,:] = 0.
+        # v = 0
+        self._B[i0,istate] = 1.
+        # dv = 0
+        self._B[i0+1,:n] = D[istate,:]
+
+
+# ===============================================================
+# automatic testing
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+
+# def resol(alpha, omega, Rey, DiffOp):
 #     """
 #     We write the Orr-Sommerfeld problem
 #     in the following form:    mat.X = b
@@ -51,9 +121,9 @@ import aerokit.common.numspectral as ns
 #       for j in range(npts):
 #         mat[i,j] = alpha * (-u[i] * DiffOp.matder(2)[i,j] + (u[i] * alpha**2 + ddu[i]) * id_mat[i,j])
 
-#     z1 = 1 / (ci * reynolds)
-#     z2 = -2 * alpha**2 / (ci * reynolds) + omega
-#     z3 = alpha**4 / (ci * reynolds) - omega * alpha**2
+#     z1 = 1 / (ci * Rey)
+#     z2 = -2 * alpha**2 / (ci * Rey) + omega
+#     z3 = alpha**4 / (ci * Rey) - omega * alpha**2
 #     mat = mat + z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_mat
 
 #     mat[0,:] = DiffOp.matder(2)[0,:]
@@ -68,7 +138,7 @@ import aerokit.common.numspectral as ns
 #     csol = sol_v[0]
 #     return csol, sol_v
 
-# def spectre(alpha, reynolds, DiffOp, plot=True):
+# def spectre(alpha, Rey, DiffOp, plot=True):
 #     n = DiffOp.npts
 #     mat1 = np.zeros((n, n), dtype=complex)
 #     mat2 = np.zeros((n, n), dtype=complex)
@@ -83,9 +153,9 @@ import aerokit.common.numspectral as ns
 #       for j in range(n):
 #         mat1[i, j] = alpha * (-u[i] * DiffOp.matder(2)[i, j] + (u[i] * alpha**2 + ddu[i]) * id_matrix[i, j])
 
-#     z1 = 1 / (ci * reynolds)
-#     z2 = -2 * alpha**2 / (ci * reynolds)
-#     z3 = alpha**4 / (ci * reynolds)
+#     z1 = 1 / (ci * Rey)
+#     z2 = -2 * alpha**2 / (ci * Rey)
+#     z3 = alpha**4 / (ci * Rey)
 #     mat1 += z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_matrix
 
 #     z2 = -1
@@ -111,7 +181,7 @@ import aerokit.common.numspectral as ns
 
 #     if plot:
 #         import matplotlib.pyplot as plt
-#         plt.plot(l.real, l.imag, 'ob', markersize=6)
+#         plt.plot(l.real, l.imag, 'ob', markerdim=6)
 #         plt.hlines(y=0.0, xmin=-2, xmax=2, color='k', linestyle='--')
 #         plt.xlabel('$\omega_r$')
 #         plt.ylabel('$\omega_i$')

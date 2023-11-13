@@ -9,6 +9,7 @@ class LinOperator():
 
     def __init__(self, n=100, xmin=None, xmax=None) -> None:
         self._diffop = ns.ChebCollocation(n, xmin, xmax)
+        self._basestate = None
 
     @property
     def dim(self):
@@ -22,6 +23,9 @@ class LinOperator():
         """set base state as it will be used by derived class"""
         self._basestate = state
 
+    def check_basestate(self):
+        return self._basestate is not None
+    
     def get_RHS_time_matrices(self):
         return self._B, self._At
     

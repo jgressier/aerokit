@@ -16,7 +16,6 @@
 """
 
 import numpy as np
-import aerokit.common.numspectral as ns
 from aerokit.stability import LinOperator
 import aerokit.aero.model1D as m1d 
 import aerokit.aero.ShockWave as sw
@@ -31,8 +30,6 @@ class Euler1D(LinOperator):
 
     def set_basestate(self, state):
         super().set_basestate(state)
-        assert state.size == self.dim
-        self.size = self.dim
         self.nvar = 3
 
     def compute_operators(self):
@@ -41,8 +38,8 @@ class Euler1D(LinOperator):
           At dP/dt + Bx dP/dt + B0 P = 0
         """
         D = self._diffop.matder(1)
-        n = self.size
-        N = self.size * self.nvar
+        n = self.dim
+        N = self.dim * self.nvar
         q = self._basestate
         # order is rho, u, p
         self._At = np.eye(N)
@@ -63,7 +60,7 @@ class Euler1D(LinOperator):
         self._B = -self._Bx - self._B0
 
     def setBC(self, Ltype: str, Rtype: str):
-        n = self.size
+        n = self.dim
         if Ltype == 'per':
             assert Rtype == 'per'
             self.setBC_per()
@@ -72,7 +69,7 @@ class Euler1D(LinOperator):
         BCfunc[Rtype](n-1, n-1)
 
     def setBC_sym(self, istate, irow):
-        n = self.size
+        n = self.dim
         i0 = istate if irow is None else irow
         D = self._diffop.matder(1)
         for i in (0, n, 2*n):
@@ -86,7 +83,7 @@ class Euler1D(LinOperator):
         self._B[i0+2*n,2*n:] = D[istate,:]
 
     def setBC_per(self):
-        n = self.size
+        n = self.dim
         D = self._diffop.matder(1)
         for i in (0, n-1, n, 2*n-1, 2*n, 3*n-1):
             self._At[i,:] = 0.
@@ -112,7 +109,7 @@ class Euler1D(LinOperator):
             istate (int): downstream state of RH equations
             irow (int): local row corresponding of where equation is written
         """
-        n = self.size
+        n = self.dim
         D = self._diffop.matder(1)
         q = self._basestate
         dq = m1d.state(rho = D @ q.rho, u = D @ q.u, p= D @ q.p) 
