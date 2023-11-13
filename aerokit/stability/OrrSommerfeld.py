@@ -1,4 +1,3 @@
-
 """
     The ``OrrSommerfeld`` module
     =========================
@@ -42,6 +41,7 @@ class OrrSommerfeldModel(LinOperator):
             basestate (_type_, optional): _description_. Defaults to None.
         """
         super().__init__(n, xmin, xmax)
+        self._BC_dict = { 'wall': self.setBC_wall }
         if basestate is not None:
             self.set_basestate(basestate)
 
@@ -72,12 +72,12 @@ class OrrSommerfeldModel(LinOperator):
         #   + alpha*j* [ u*(alpha**2-D**2) ]
         self._B = np.diag(1j*alpha*u) @ self._At + np.diag(1j*alpha*ddu) 
         self._B += (D4 - (2*alpha**2) * D2 + alpha**4 * np.eye(n))/Rey
+        self.compute_BC()
 
-    def setBC(self, Ltype: str, Rtype: str):
+    def compute_BC(self):
         n = self.dim
-        BCfunc = { 'wall': self.setBC_wall }
-        BCfunc[Ltype](0, 0)
-        BCfunc[Rtype](n-1, n-2) # caution: function must write 2 BC at n-2 and n-1
+        self._BC_dict[self._BC_type[0]](0, 0)
+        self._BC_dict[self._BC_type[0]](n-1, n-2) # caution: function must write 2 BC at n-2 and n-1
 
     def setBC_wall(self, istate, irow):
         n = self.dim
@@ -90,6 +90,17 @@ class OrrSommerfeldModel(LinOperator):
         self._B[i0,istate] = 1.
         # dv = 0
         self._B[i0+1,:n] = D[istate,:]
+
+
+class Poiseuille(OrrSommerfeldModel):
+    def __init__(self, n, alpha, Reynolds) -> None:
+        super().__init__(n, xmin=-1., xmax=1.)
+        self.set_basestate({
+            'Reynolds' : Reynolds,
+            'alpha': alpha,
+            'uprofile': lambda x: 1-x**2
+        })
+        self.set_BC('wall', 'wall')
 
 
 # ===============================================================
