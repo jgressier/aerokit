@@ -113,6 +113,6 @@ class ChebCollocation():
             D = (ell + 1) * Z * (C * D.diagonal()[:, np.newaxis] - D)
             # D[L] = -D.sum(axis=1)
             np.fill_diagonal(D, -D.sum(axis=1))
-            DM[:, :, ell] = D * ((self._xmax-self._xmin)/(-2.))**(ell+1)
+            DM[:, :, ell] = D * (-2./(self._xmax-self._xmin))**(ell+1)
         self._matder = DM
         self._max_Dorder = maxorder
