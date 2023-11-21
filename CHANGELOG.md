@@ -16,11 +16,14 @@ pip show aerokit
 
 ## Versions
 
-### [1.x.x](https://pypi.org/project/aerokit/) (2022-xx-xx)
+### [1.2.0](https://pypi.org/project/aerokit/) (2023-11-22)
 
-#### fixed
+#### new
 
-- 
+- `common.numspectral` subpackage with Chebyshev derivation operator
+- `stability.OrrSommerfeld` with new Orr-Sommerfeld model
+- `stability.Euler` with new Linearized Euler model
+- eigenvalue problem, solver, sorting functions, convergence with Rayleigh method
 
 ### [1.1.3](https://pypi.org/project/aerokit/) (2021-06-02)
 
