@@ -13,6 +13,7 @@ class LinOperator():
         self._diffop = ns.ChebCollocation(n, xmin, xmax)
         self._basestate = None
         self._B = None
+        self._BC_type = None
 
     @property
     def dim(self):
@@ -26,10 +27,12 @@ class LinOperator():
         """set base state as it will be used by derived class"""
         self._basestate = state
 
-    def set_BC(self, Ltype: str, Rtype: str):
+    def set_BC(self, Ltype: dict, Rtype: dict):
+        """BC should be a dict with at least a 'type' key"""
         self._BC_type = [Ltype, Rtype]
         for bc in self._BC_type:
-            assert bc in self._BC_dict.keys()
+            if bc['type'] not in self._BC_dict.keys():
+                raise ValueError(f"{bc['type']} key not found in available BC keys: {self._BC_dict.keys()}")
 
     def check_basestate(self):
         return self._basestate is not None
@@ -47,7 +50,7 @@ class LinOperator():
     
     def solve_eig(self):
         B, Id = self.get_RHS_time_matrices()
-        self._vals, self._vects = scilin.eig(B, -self._harmonic_time_coef*Id)
+        self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef*Id)
 
     def select_and_sort(self, realmin=0., realmax=1.e99, imagmin=-1e10, imagmax=1e10, sort='real'):
         """select and sort"""
@@ -73,7 +76,7 @@ class LinOperator():
             eigenmode (_type_): _description_
         """
         B, M = self.get_RHS_time_matrices()
-        M *= self._harmonic_time_coef
+        M = self._harmonic_time_coef * M # must use explicit multiplication instead of *= (kind exception)
         new_eigm = eigenmode/nplin.norm(eigenmode)
         #print(omega, np.vdot(new_eigm, B @ new_eigm)/np.vdot(new_eigm, M @ new_eigm))
         new_omega = omega
@@ -84,7 +87,7 @@ class LinOperator():
                 w = nplin.solve(B-new_omega*M, new_eigm)
                 new_eigm = w / nplin.norm(w)
                 new_omega = np.vdot(new_eigm, B @ new_eigm)/np.vdot(new_eigm, M @ new_eigm)
-                print(i, nplin.norm((B-new_omega*M)@ new_eigm), new_omega, new_eigm)
+                #print(i, nplin.norm((B-new_omega*M)@ new_eigm), new_omega)
             except nplin.LinAlgError as err:
                 if 'Singular matrix' in str(err):
                     exit

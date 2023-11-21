@@ -22,7 +22,7 @@
     Available functions
     -------------------
  
-	.. note:: 
+	.. note::
 """
 
 import numpy as np
@@ -67,17 +67,17 @@ class OrrSommerfeldModel(LinOperator):
         u = self._basestate['uprofile'](self.x)
         ddu = D2 @ u
         # At = alpha**2 * I - D**2
-        self._At = alpha**2 * np.eye(n) - D2
+        self._At = D2 - alpha**2 * np.eye(n)
         # B = 1/Re * [ D**4 - 2*alpha**2 * D**2 + alpha**4 * I ] + 
-        #   + alpha*j* [ u*(alpha**2-D**2) ]
-        self._B = np.diag(1j*alpha*u) @ self._At + np.diag(1j*alpha*ddu) 
+        #   + alpha*j* [ u*(alpha**2-D**2) + ddu*I ]
+        self._B = np.diag(-1j*alpha*u) @ self._At + np.diag(1j*alpha*ddu) 
         self._B += (D4 - (2*alpha**2) * D2 + alpha**4 * np.eye(n))/Rey
         self.compute_BC()
 
     def compute_BC(self):
         n = self.dim
-        self._BC_dict[self._BC_type[0]](0, 0)
-        self._BC_dict[self._BC_type[0]](n-1, n-2) # caution: function must write 2 BC at n-2 and n-1
+        self._BC_dict[self._BC_type[0]['type']](0, 0)
+        self._BC_dict[self._BC_type[1]['type']](n-1, n-2) # caution: function must write 2 BC at n-2 and n-1
 
     def setBC_wall(self, istate, irow):
         n = self.dim
@@ -100,7 +100,7 @@ class Poiseuille(OrrSommerfeldModel):
             'alpha': alpha,
             'uprofile': lambda x: 1-x**2
         })
-        self.set_BC('wall', 'wall')
+        self.set_BC({'type': 'wall'}, {'type': 'wall'})
 
 
 # ===============================================================

@@ -25,6 +25,11 @@ class Euler1D(LinOperator):
 
     def __init__(self, n, xmin=None, xmax=None, basestate: m1d.state = None) -> None:
         super().__init__(n, xmin, xmax)
+        self._BC_dict = { 
+            'sym': self.setBC_sym,
+            'per': self.setBC_per,
+            'RH': self.setBC_RH,
+            }
         if basestate is not None:
             self.set_basestate(basestate)
 
@@ -58,15 +63,18 @@ class Euler1D(LinOperator):
         self._B0[n:2*n:,:n] = np.diag(-dq.p/q.rho**2)
         self._B0[2*n:,n:2*n] = np.diag(dq.p)
         self._B = -self._Bx - self._B0
+        self.compute_BC()
 
-    def setBC(self, Ltype: str, Rtype: str):
+    def compute_BC(self):
         n = self.dim
-        if Ltype == 'per':
-            assert Rtype == 'per'
+        if self._BC_type is None:
+            raise ValueError("BC have not been set: use self.set_BC(Ltype, Rtype)")
+        if self._BC_type[0] == 'per':
+            assert self._BC_type[1] == 'per'
             self.setBC_per()
-        BCfunc = { 'sym': self.setBC_sym, 'RH': self.setBC_RH}
-        BCfunc[Ltype](0, 0)
-        BCfunc[Rtype](n-1, n-1)
+        else:
+            self._BC_dict[self._BC_type[0]](0, 0)
+            self._BC_dict[self._BC_type[1]](n-1, n-1) 
 
     def setBC_sym(self, istate, irow):
         n = self.dim

@@ -4,7 +4,7 @@ import aerokit.stability.OrrSommerfeld as OS
 
 # --- MAIN ---
 
-n = 101
+n = 81
 
 model = OS.Poiseuille(n, 1., 6000.)
 model.solve_eig()
@@ -22,8 +22,8 @@ print(vals[order][:20])
 
 #--- PLOT ---
 import matplotlib.pyplot as plt
-plt.plot(vals0.real, vals0.imag, 'or', markersize=3, alpha=.9)
-plt.plot(vals.real, vals.imag, 'ob', markersize=5, alpha=.3)
+plt.plot(vals0.real, vals0.imag, 'ob', markersize=5, alpha=.3)
+plt.plot(vals.real, vals.imag, 'or', markersize=3, alpha=.9)
 for i,v in enumerate(vals[order[:20]]):
     plt.text(v.real, v.imag, str(i))
 plt.xlabel('$\omega_r$')
