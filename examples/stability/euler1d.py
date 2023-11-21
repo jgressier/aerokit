@@ -17,7 +17,7 @@ class Tube(Euler1D):
 np.set_printoptions(formatter={'float_kind':"{:.4f}".format})
 
 n = 101
-model = Tube(n, Mach=.6)
+model = Tube(n, Mach=.55)
 model.solve_eig()
 Aomega, Avects, order = model.select_and_sort(0.01, 5000., -1., 1.)
 
@@ -58,7 +58,7 @@ for i in range(nvec):
     #shift = np.vdot(v0,v1)/np.vdot(v0,v0)
     phase = np.average(np.mod(np.angle(v1)-np.angle(v0), 2*np.pi), weights=np.abs(v1))
     shift = np.exp(1j*phase)
-    print(i, np.angle(shift, deg=True))
+    print(f"mode {i}, phase change {np.angle(shift, deg=True):.2f}°")
     for j in range(model.nvar):
         ax[i,j].plot(model.x, (shift*v0[j*n:(j+1)*n]).real, 'b')
         ax[i,j].plot(model.x, v1[j*n:(j+1)*n].real, 'r')

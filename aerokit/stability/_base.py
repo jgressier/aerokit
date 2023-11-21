@@ -27,12 +27,15 @@ class LinOperator():
         """set base state as it will be used by derived class"""
         self._basestate = state
 
-    def set_BC(self, Ltype: dict, Rtype: dict):
+    def _check_BC(self, bc):
         """BC should be a dict with at least a 'type' key"""
-        self._BC_type = [Ltype, Rtype]
-        for bc in self._BC_type:
-            if bc['type'] not in self._BC_dict.keys():
-                raise ValueError(f"{bc['type']} key not found in available BC keys: {self._BC_dict.keys()}")
+        xbc = { 'type': bc} if isinstance(bc, str) else bc
+        if xbc['type'] not in self._BC_dict.keys():
+            raise ValueError(f"{xbc['type']} key not found in available BC keys: {self._BC_dict.keys()}")
+        return xbc
+    
+    def set_BC(self, Ltype: dict, Rtype: dict):
+        self._BC_type = [self._check_BC(Ltype), self._check_BC(Rtype)]
 
     def check_basestate(self):
         return self._basestate is not None
@@ -51,6 +54,7 @@ class LinOperator():
     def solve_eig(self):
         B, Id = self.get_RHS_time_matrices()
         self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef*Id)
+        return self._vals, self._vects
 
     def select_and_sort(self, realmin=0., realmax=1.e99, imagmin=-1e10, imagmax=1e10, sort='real'):
         """select and sort"""

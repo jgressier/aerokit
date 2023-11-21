@@ -69,12 +69,12 @@ class Euler1D(LinOperator):
         n = self.dim
         if self._BC_type is None:
             raise ValueError("BC have not been set: use self.set_BC(Ltype, Rtype)")
-        if self._BC_type[0] == 'per':
-            assert self._BC_type[1] == 'per'
+        if self._BC_type[0]['type'] == 'per':
+            assert self._BC_type[1]['type'] == 'per'
             self.setBC_per()
         else:
-            self._BC_dict[self._BC_type[0]](0, 0)
-            self._BC_dict[self._BC_type[1]](n-1, n-1) 
+            self._BC_dict[self._BC_type[0]['type']](0, 0)
+            self._BC_dict[self._BC_type[1]['type']](n-1, n-1) 
 
     def setBC_sym(self, istate, irow):
         n = self.dim
