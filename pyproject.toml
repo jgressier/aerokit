@@ -1,39 +1,55 @@
-[tool.poetry]
+[project]
 name = "aerokit"
-version = "1.1.3"
+version = "1.2.0"
 description = "Python tools for basic fluid mechanics computations"
-authors = ["j.gressier <jeremie.gressier@isae-supaero.fr>"]
-repository = "https://github.com/jgressier/aerokit"
-documentation = "https://aerokit.readthedocs.io/en/latest/"
-license = "MIT"
+authors = [{name="J. Gressier", email="jeremie.gressier@isae-supaero.fr"}]
+readme = "README.md"
+license = { file = "LICENSE" }
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Software Development :: Libraries :: Python Modules" ]
+requires-python = ">=3.7"
+dependencies = [
+    "numpy >= 1.19.4",
+    "scipy >= 1.5.4",
+    "matplotlib >= 3.2" ]
+
+[project.urls]
+Homepage = "https://github.com/jgressier/aerokit"
+Documentation = "https://aerokit.readthedocs.io/en/latest/"
+
+[tool.setuptools.packages.find] # to help find aerokit folder as a package
+include = ["aerokit*"]
 exclude = [ "notebooks", "gallery" ]
 
-[tool.poetry.dependencies]
-python = "^3.7"
-numpy = "^1.19.4"
-scipy = "^1.5.4"
-matplotlib = "^3.2"
-
-[tool.poetry.dev-dependencies]
-jupyter=""
-pytest=""
-pytest-cov=""
-coverage=""
-mkdocs-material = "^6.2.5"
-mkdocs-jupyter = "^0.15"
-#markdown-include = "^0.6.0"
-mkdocs-include-markdown-plugin = ""
-mkdocs-exclude = ""
-mkdocstrings = ""
+[project.optional-dependencies]
+dev = [ 
+    "pytest >= 6.0", 
+    "pytest-cov >= 2.11.1",
+    "pylint >= 2.6.0" ]
+doc = [ 
+    "mkdocs >= 1.1",
+    "mkdocs-material >= 6.2.5", 
+    "mkdocs-jupyter >= 0.15",
+    "markdown-include >= 0.6.0",
+    "mkdocs-include-markdown-plugin",
+    "mkdocs-exclude",
+    "mkdocstrings" ]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -41,3 +57,20 @@ addopts = "--cov -v"
 testpaths = [
     "tests"
 ]
+
+[tool.black]
+line-length = 110
+skip-string-normalization = true
+
+[tool.bumpver]
+current_version = "v1.2.0"
+version_pattern = "vMAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} to {new_version}"
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{pep440_version}"']
+"aerokit/__init__.py" = ['__version__ = "{pep440_version}"']
+

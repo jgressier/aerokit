@@ -16,6 +16,15 @@ pip show aerokit
 
 ## Versions
 
+### [1.2.0](https://pypi.org/project/aerokit/) (2023-11-22)
+
+#### new
+
+- `common.numspectral` subpackage with Chebyshev derivation operator
+- `stability.OrrSommerfeld` with new Orr-Sommerfeld model
+- `stability.Euler` with new Linearized Euler model
+- eigenvalue problem, solver, sorting functions, convergence with Rayleigh method
+
 ### [1.1.3](https://pypi.org/project/aerokit/) (2021-06-02)
 
 #### fixed
@@ -49,8 +58,6 @@ pip show aerokit
 
 - changed total/stagnation notation Ti,Pi to Tt,Pt (backward compatibility handled)
 - moved `nozzle` and `riemann` to `instance.*` submodule 
-
-
 
 ### [1.0.0](https://pypi.org/project/aerokit/) (2021-01-20)
 

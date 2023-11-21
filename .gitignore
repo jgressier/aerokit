@@ -1,5 +1,6 @@
 # misc
 *.bak
+*.nogit
 
 # python compiled files
 # Byte-compiled / optimized / DLL files
