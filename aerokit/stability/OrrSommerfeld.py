@@ -30,8 +30,7 @@ from aerokit.stability import LinOperator
 
 
 class OrrSommerfeldModel(LinOperator):
-
-    def __init__(self, n, xmin=None, xmax=None, basestate = None) -> None:
+    def __init__(self, n, xmin=None, xmax=None, basestate=None) -> None:
         """Initialization of OrrSommerfeld model
 
         Args:
@@ -41,66 +40,66 @@ class OrrSommerfeldModel(LinOperator):
             basestate (_type_, optional): _description_. Defaults to None.
         """
         super().__init__(n, xmin, xmax)
-        self._BC_dict = { 'wall': self.setBC_wall }
+        self._BC_dict = {"wall": self.setBC_wall}
         if basestate is not None:
             self.set_basestate(basestate)
 
     def set_basestate(self, state: dict):
         """set basestate for Orr-Sommerfeld model"""
-        for k in ['alpha', 'Reynolds', 'uprofile']:
+        for k in ["alpha", "Reynolds", "uprofile"]:
             assert k in state.keys(), f"key {k} missing in params"
         # must check u profile ?
         super().set_basestate(state)
 
     def compute_operators(self):
         """compute operators for linearized
-          given primitive variables P, linearized operator is
-          At dv/dt = B v
+        given primitive variables P, linearized operator is
+        At dv/dt = B v
         """
         assert self.check_basestate()
-        alpha = self._basestate['alpha']
-        Rey = self._basestate['Reynolds']
+        alpha = self._basestate["alpha"]
+        Rey = self._basestate["Reynolds"]
         D4 = self._diffop.matder(4)
         D2 = self._diffop.matder(2)
         n = self.dim
         # compute u and ddu
-        u = self._basestate['uprofile'](self.x)
+        u = self._basestate["uprofile"](self.x)
         ddu = D2 @ u
         # At = alpha**2 * I - D**2
         self._At = D2 - alpha**2 * np.eye(n)
-        # B = 1/Re * [ D**4 - 2*alpha**2 * D**2 + alpha**4 * I ] + 
+        # B = 1/Re * [ D**4 - 2*alpha**2 * D**2 + alpha**4 * I ] +
         #   + alpha*j* [ u*(alpha**2-D**2) + ddu*I ]
-        self._B = np.diag(-1j*alpha*u) @ self._At + np.diag(1j*alpha*ddu) 
-        self._B += (D4 - (2*alpha**2) * D2 + alpha**4 * np.eye(n))/Rey
+        self._B = np.diag(-1j * alpha * u) @ self._At + np.diag(1j * alpha * ddu)
+        self._B += (D4 - (2 * alpha**2) * D2 + alpha**4 * np.eye(n)) / Rey
         self.compute_BC()
 
     def compute_BC(self):
         n = self.dim
-        self._BC_dict[self._BC_type[0]['type']](0, 0)
-        self._BC_dict[self._BC_type[1]['type']](n-1, n-2) # caution: function must write 2 BC at n-2 and n-1
+        self._BC_dict[self._BC_type[0]["type"]](0, 0)
+        self._BC_dict[self._BC_type[1]["type"]](
+            n - 1, n - 2
+        )  # caution: function must write 2 BC at n-2 and n-1
 
     def setBC_wall(self, istate, irow):
         n = self.dim
         i0 = istate if irow is None else irow
         D = self._diffop.matder(1)
-        for i in (i0, i0+1):
-            self._At[i,:] = 0.
-            self._B[i,:] = 0.
+        for i in (i0, i0 + 1):
+            self._At[i, :] = 0.0
+            self._B[i, :] = 0.0
         # v = 0
-        self._B[i0,istate] = 1.
+        self._B[i0, istate] = 1.0
         # dv = 0
-        self._B[i0+1,:n] = D[istate,:]
+        self._B[i0 + 1, :n] = D[istate, :]
 
 
 class Poiseuille(OrrSommerfeldModel):
     def __init__(self, n, alpha, Reynolds) -> None:
-        super().__init__(n, xmin=-1., xmax=1.)
-        self.set_basestate({
-            'Reynolds' : Reynolds,
-            'alpha': alpha,
-            'uprofile': lambda x: 1-x**2
-        })
-        self.set_BC({'type': 'wall'}, {'type': 'wall'})
+        super().__init__(n, xmin=-1.0, xmax=1.0)
+        self.set_basestate(
+            {"Reynolds": Reynolds, "alpha": alpha, "uprofile": lambda x: 1 - x**2}
+        )
+        self.set_BC({"type": "wall"}, {"type": "wall"})
 
 
 # ===============================================================
@@ -108,6 +107,7 @@ class Poiseuille(OrrSommerfeldModel):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
 
 # def resol(alpha, omega, Rey, DiffOp):
@@ -206,10 +206,10 @@ if __name__ == "__main__":
 #     return l, v
 
 
-
 # ===============================================================
 # automatic testing
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

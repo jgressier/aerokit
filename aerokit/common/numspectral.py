@@ -6,15 +6,15 @@ from scipy.linalg import toeplitz
 from aerokit.common._dev import lazyprop
 
 
-class ChebCollocation():
-    """Chebyshev collocation
-    """
-    def __init__(self, npts: int, xmin = None, xmax = None):
+class ChebCollocation:
+    """Chebyshev collocation"""
+
+    def __init__(self, npts: int, xmin=None, xmax=None):
         self._npts = npts
         self._max_Dorder = 0
         # default is -1 to 1 (reverse original xi distribution)
-        self._xmin = -1. if xmin is None else xmin
-        self._xmax = 1. if xmax is None else xmax
+        self._xmin = -1.0 if xmin is None else xmin
+        self._xmax = 1.0 if xmax is None else xmax
 
     @property
     def npts(self):
@@ -27,7 +27,7 @@ class ChebCollocation():
 
     @lazyprop
     def x(self):
-        return self._xmin + (self.xi-1.)/(-2.)*(self._xmax - self._xmin)
+        return self._xmin + (self.xi - 1.0) / (-2.0) * (self._xmax - self._xmin)
 
     def extrapol(self, fk, x):
         """
@@ -43,9 +43,7 @@ class ChebCollocation():
         """
         fk = np.array(fk).reshape(-1, 1)
         x = np.array(x).reshape(-1, 1)
-
         N = len(fk)
-        M = len(x)
 
         xk = np.sin(
             np.pi
@@ -83,7 +81,6 @@ class ChebCollocation():
         I = np.eye(N)
         n1 = N // 2
         n2 = -(-N // 2)  # equivalent of ceil
-        x = self.x
         irange = np.arange(N)
         Th = np.tile(irange * np.pi / (N - 1) / 2, (N, 1))
         DX = 2 * np.sin(Th + Th.T) * np.sin(Th - Th.T)
@@ -113,6 +110,6 @@ class ChebCollocation():
             D = (ell + 1) * Z * (C * D.diagonal()[:, np.newaxis] - D)
             # D[L] = -D.sum(axis=1)
             np.fill_diagonal(D, -D.sum(axis=1))
-            DM[:, :, ell] = D * (-2./(self._xmax-self._xmin))**(ell+1)
+            DM[:, :, ell] = D * (-2.0 / (self._xmax - self._xmin)) ** (ell + 1)
         self._matder = DM
         self._max_Dorder = maxorder

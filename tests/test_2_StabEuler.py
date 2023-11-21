@@ -23,27 +23,26 @@ import pytest
 #     Op.check_basestate()
 
 
-class Test_ChannelPer():
-
+class Test_ChannelPer:
     def init(self, n, Mach) -> Euler.Euler1D:
         ones = np.ones(n)
-        asound = 100.
-        Q = state(rho = 1.4*ones, u = (Mach*asound)*ones, p = asound**2.*ones)
-        Op = Euler.Euler1D(n, xmin=0., xmax=1., basestate=Q)
-        Op.set_BC('per', 'per')
+        asound = 100.0
+        Q = state(rho=1.4 * ones, u=(Mach * asound) * ones, p=asound**2.0 * ones)
+        Op = Euler.Euler1D(n, xmin=0.0, xmax=1.0, basestate=Q)
+        Op.set_BC("per", "per")
         return Op
 
-    @pytest.mark.parametrize("Mach", [-.2, .3, .8])
+    @pytest.mark.parametrize("Mach", [-0.2, 0.3, 0.8])
     def test_Channel_Mach(self, Mach):
         Op = self.init(n=51, Mach=Mach)
         Op.solve_eig()
         Q = Op._basestate
-        um, am, L = Q.u.mean(), Q.asound().mean(), Op.x.max()-Op.x.min()
-        omega, _, order = Op.select_and_sort(0.01, 5000., -1., 1., sort='real')
+        um, am, L = Q.u.mean(), Q.asound().mean(), Op.x.max() - Op.x.min()
+        omega, _, order = Op.select_and_sort(0.01, 5000.0, -1.0, 1.0, sort="real")
         puls = []
-        for u in [am-um, um, um+am]:
-            puls += [(2*np.pi*np.abs(u)/L*(i+1)) for i in range(10)]
+        for u in [am - um, um, um + am]:
+            puls += [(2 * np.pi * np.abs(u) / L * (i + 1)) for i in range(10)]
         puls = np.sort(puls)
-        for i in range(10): # check first 10 pulsations   
-            assert omega[order[i]].real == pytest.approx(puls[i]) 
-            assert omega[order[i]].imag < 1.e-8
+        for i in range(10):  # check first 10 pulsations
+            assert omega[order[i]].real == pytest.approx(puls[i])
+            assert omega[order[i]].imag < 1.0e-7

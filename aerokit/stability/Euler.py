@@ -1,4 +1,3 @@
-
 """
     The ``Euler`` module
     =========================
@@ -17,19 +16,18 @@
 
 import numpy as np
 from aerokit.stability import LinOperator
-import aerokit.aero.model1D as m1d 
+import aerokit.aero.model1D as m1d
 import aerokit.aero.ShockWave as sw
 
 
 class Euler1D(LinOperator):
-
     def __init__(self, n, xmin=None, xmax=None, basestate: m1d.state = None) -> None:
         super().__init__(n, xmin, xmax)
-        self._BC_dict = { 
-            'sym': self.setBC_sym,
-            'per': self.setBC_per,
-            'RH': self.setBC_RH,
-            }
+        self._BC_dict = {
+            "sym": self.setBC_sym,
+            "per": self.setBC_per,
+            "RH": self.setBC_RH,
+        }
         if basestate is not None:
             self.set_basestate(basestate)
 
@@ -39,8 +37,8 @@ class Euler1D(LinOperator):
 
     def compute_operators(self):
         """compute operators for linearized
-          given primitive variables P, linearized operator is
-          At dP/dt + Bx dP/dt + B0 P = 0
+        given primitive variables P, linearized operator is
+        At dP/dt + Bx dP/dt + B0 P = 0
         """
         D = self._diffop.matder(1)
         n = self.dim
@@ -50,18 +48,18 @@ class Euler1D(LinOperator):
         self._At = np.eye(N)
         # Bx
         self._Bx = np.diag(np.tile(q.u, self.nvar)) @ np.kron(np.eye(self.nvar), D)
-        self._Bx[0:n,n:2*n] = np.diag(q.rho) @ D
-        self._Bx[n:2*n,2*n:] = np.diag(1./q.rho) @ D
-        self._Bx[2*n:,n:2*n] = np.diag(q._gamma * q.p) @ D
+        self._Bx[0:n, n : 2 * n] = np.diag(q.rho) @ D
+        self._Bx[n : 2 * n, 2 * n :] = np.diag(1.0 / q.rho) @ D
+        self._Bx[2 * n :, n : 2 * n] = np.diag(q._gamma * q.p) @ D
         # derivatives of basestate
-        dq = m1d.state(rho = D @ q.rho, u = D @ q.u, p= D @ q.p)
+        dq = m1d.state(rho=D @ q.rho, u=D @ q.u, p=D @ q.p)
         # B0
         self._B0 = np.zeros((N, N))
-        self._B0[:2*n,:2*n] = np.diag(np.tile(dq.u, 2))
-        self._B0[2*n:,2*n:] = np.diag(q._gamma*dq.u)
-        self._B0[:n:,n:2*n] = np.diag(dq.rho)
-        self._B0[n:2*n:,:n] = np.diag(-dq.p/q.rho**2)
-        self._B0[2*n:,n:2*n] = np.diag(dq.p)
+        self._B0[: 2 * n, : 2 * n] = np.diag(np.tile(dq.u, 2))
+        self._B0[2 * n :, 2 * n :] = np.diag(q._gamma * dq.u)
+        self._B0[:n:, n : 2 * n] = np.diag(dq.rho)
+        self._B0[n : 2 * n :, :n] = np.diag(-dq.p / q.rho**2)
+        self._B0[2 * n :, n : 2 * n] = np.diag(dq.p)
         self._B = -self._Bx - self._B0
         self.compute_BC()
 
@@ -69,38 +67,38 @@ class Euler1D(LinOperator):
         n = self.dim
         if self._BC_type is None:
             raise ValueError("BC have not been set: use self.set_BC(Ltype, Rtype)")
-        if self._BC_type[0]['type'] == 'per':
-            assert self._BC_type[1]['type'] == 'per'
+        if self._BC_type[0]["type"] == "per":
+            assert self._BC_type[1]["type"] == "per"
             self.setBC_per()
         else:
-            self._BC_dict[self._BC_type[0]['type']](0, 0)
-            self._BC_dict[self._BC_type[1]['type']](n-1, n-1) 
+            self._BC_dict[self._BC_type[0]["type"]](0, 0)
+            self._BC_dict[self._BC_type[1]["type"]](n - 1, n - 1)
 
     def setBC_sym(self, istate, irow):
         n = self.dim
         i0 = istate if irow is None else irow
         D = self._diffop.matder(1)
-        for i in (0, n, 2*n):
-            self._At[i0+i,:] = 0.
-            self._B[i0+i,:] = 0.
+        for i in (0, n, 2 * n):
+            self._At[i0 + i, :] = 0.0
+            self._B[i0 + i, :] = 0.0
         # drho = 0
-        self._B[i0,:n] = D[istate,:]
+        self._B[i0, :n] = D[istate, :]
         # u = 0
-        self._B[i0+n,n+istate] = 1.
+        self._B[i0 + n, n + istate] = 1.0
         # dp = 0
-        self._B[i0+2*n,2*n:] = D[istate,:]
+        self._B[i0 + 2 * n, 2 * n :] = D[istate, :]
 
     def setBC_per(self):
         n = self.dim
         D = self._diffop.matder(1)
-        for i in (0, n-1, n, 2*n-1, 2*n, 3*n-1):
-            self._At[i,:] = 0.
-            self._B[i,:] = 0.
+        for i in (0, n - 1, n, 2 * n - 1, 2 * n, 3 * n - 1):
+            self._At[i, :] = 0.0
+            self._B[i, :] = 0.0
         for i in range(self.nvar):
-            self._B[i*n,i*n] = 1.
-            self._B[i*n,i*n+n-1] = -1.
-            self._B[i*n+n-1,i*n:(i+1)*n] = D[0,:]
-            self._B[i*n+n-1,i*n:(i+1)*n] -= D[n-1,:]
+            self._B[i * n, i * n] = 1.0
+            self._B[i * n, i * n + n - 1] = -1.0
+            self._B[i * n + n - 1, i * n : (i + 1) * n] = D[0, :]
+            self._B[i * n + n - 1, i * n : (i + 1) * n] -= D[n - 1, :]
 
     def setBC_RH(self, istate: int, irow: int = None):
         """Apply linerized Rankine Hugoniot equations from constant upstream value.
@@ -110,7 +108,7 @@ class Euler1D(LinOperator):
         At immediate downstream state 1i, the two RH BC can be written
             k_rho[0:1]*rho1i' + k_u[0:1]*u1i' + k_p[0:1]*p1i' = 0
         Then q1i' perturbations are replaced par q1m' perturbation at mean position using
-            q1i' = q1m' + dq/dx|1m * dxs 
+            q1i' = q1m' + dq/dx|1m * dxs
             with s=dxs/dt
 
         Args:
@@ -120,47 +118,48 @@ class Euler1D(LinOperator):
         n = self.dim
         D = self._diffop.matder(1)
         q = self._basestate
-        dq = m1d.state(rho = D @ q.rho, u = D @ q.u, p= D @ q.p) 
+        dq = m1d.state(rho=D @ q.rho, u=D @ q.u, p=D @ q.p)
         g = q._gamma
         M1 = q.Mach()[istate]
         # M0 is upstream but equations are symmetric
         M0 = sw.downstream_Mn(M1, g)
         rhoratio = sw.Rho_ratio(M0, g)
         pratio = sw.Ps_ratio(M0, g)
-        a0 = q.asound()[istate] / np.sqrt(pratio/rhoratio)
-        rho0 = q.rho[istate]/rhoratio
+        a0 = q.asound()[istate] / np.sqrt(pratio / rhoratio)
+        rho0 = q.rho[istate] / rhoratio
         # BC coefs k[0:1,0:2] stands for coefficients in 1st and 2nd BC for rho', u', p'
         # RH continuity equation: a0*M0' = srho*rho1' + su*u1'
-        srho = q.u[istate]/(rho0*(1.-rhoratio))
-        su = rhoratio*(1.-rhoratio)
-        k = np.zeros((2,3))
+        srho = q.u[istate] / (rho0 * (1.0 - rhoratio))
+        su = rhoratio * (1.0 - rhoratio)
+        k = np.zeros((2, 3))
         # BC for rho1'
-        kdrho = 4/(g+1.)*rhoratio**2 / M0**3  # coefficient for rho1'/rho0 = kdrho * MO'
-        k[0,0] = 1./rho0 - kdrho/a0*srho
-        k[0,1] = -kdrho/a0*su
+        kdrho = (
+            4 / (g + 1.0) * rhoratio**2 / M0**3
+        )  # coefficient for rho1'/rho0 = kdrho * MO'
+        k[0, 0] = 1.0 / rho0 - kdrho / a0 * srho
+        k[0, 1] = -kdrho / a0 * su
         # BC for p1'
-        kdp = 4*g/(g+1.)*M0
-        k[1,0] = -kdp/a0*srho
-        k[1,1] = -kdp/a0*su
-        k[1,2] = 1./q.p[istate]
+        kdp = 4 * g / (g + 1.0) * M0
+        k[1, 0] = -kdp / a0 * srho
+        k[1, 1] = -kdp / a0 * su
+        k[1, 2] = 1.0 / q.p[istate]
         # change BC at 1i (immediate downstream) to 1m (mean 1 downstream) and write BC to At and B
         #   d/dt(q1i') = d/dt(q1m') + dq/dx|1m * s
         i0 = istate if irow is None else irow
         irho = 0
-        ip = 2*n
+        ip = 2 * n
         # RH terms on temporal matrix
         for ibc, ieq in enumerate((irho, ip)):
-            self._At[ieq+i0,:] = 0.
-            self._B[ieq+i0,:] = 0.
+            self._At[ieq + i0, :] = 0.0
+            self._B[ieq + i0, :] = 0.0
             for j in range(3):
-                self._At[ieq+i0,j*n+istate] = k[ibc,j]
+                self._At[ieq + i0, j * n + istate] = k[ibc, j]
         # shock shift terms on B: dq/dx * a0 * MO'
         dq1 = np.array([dq.rho[istate], dq.u[istate], dq.p[istate]])
         for ibc, ieq in enumerate((irho, ip)):
             for iterm in range(3):
-                self._B[ieq,istate] += k[ibc,iterm]*dq1[iterm]*srho
-                self._B[ieq,2*n+istate] += k[ibc,iterm]*dq1[iterm]*su
-
+                self._B[ieq, istate] += k[ibc, iterm] * dq1[iterm] * srho
+                self._B[ieq, 2 * n + istate] += k[ibc, iterm] * dq1[iterm] * su
 
 
 # ===============================================================
@@ -168,4 +167,5 @@ class Euler1D(LinOperator):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
