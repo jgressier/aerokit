@@ -23,6 +23,7 @@
     -------------------
  
 	.. note::
+    
 """
 
 import numpy as np
@@ -96,9 +97,7 @@ class OrrSommerfeldModel(LinOperator):
 class Poiseuille(OrrSommerfeldModel):
     def __init__(self, n, alpha, Reynolds) -> None:
         super().__init__(n, xmin=-1.0, xmax=1.0)
-        self.set_basestate(
-            {"Reynolds": Reynolds, "alpha": alpha, "uprofile": lambda x: 1 - x**2}
-        )
+        self.set_basestate({"Reynolds": Reynolds, "alpha": alpha, "uprofile": lambda x: 1 - x**2})
         self.set_BC({"type": "wall"}, {"type": "wall"})
 
 

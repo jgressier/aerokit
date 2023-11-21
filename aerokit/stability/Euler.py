@@ -133,9 +133,7 @@ class Euler1D(LinOperator):
         su = rhoratio * (1.0 - rhoratio)
         k = np.zeros((2, 3))
         # BC for rho1'
-        kdrho = (
-            4 / (g + 1.0) * rhoratio**2 / M0**3
-        )  # coefficient for rho1'/rho0 = kdrho * MO'
+        kdrho = 4 / (g + 1.0) * rhoratio**2 / M0**3  # coefficient for rho1'/rho0 = kdrho * MO'
         k[0, 0] = 1.0 / rho0 - kdrho / a0 * srho
         k[0, 1] = -kdrho / a0 * su
         # BC for p1'

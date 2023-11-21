@@ -31,9 +31,7 @@ class LinOperator:
         """BC should be a dict with at least a 'type' key"""
         xbc = {"type": bc} if isinstance(bc, str) else bc
         if xbc["type"] not in self._BC_dict.keys():
-            raise ValueError(
-                f"{xbc['type']} key not found in available BC keys: {self._BC_dict.keys()}"
-            )
+            raise ValueError(f"{xbc['type']} key not found in available BC keys: {self._BC_dict.keys()}")
         return xbc
 
     def set_BC(self, Ltype: dict, Rtype: dict):
@@ -43,9 +41,7 @@ class LinOperator:
         return self._basestate is not None
 
     def compute_operators(self):
-        raise NotImplementedError(
-            "this class must be overcharged and operators defined"
-        )
+        raise NotImplementedError("this class must be overcharged and operators defined")
 
     def compute_BC(self):
         pass
@@ -60,17 +56,10 @@ class LinOperator:
         self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef * Id)
         return self._vals, self._vects
 
-    def select_and_sort(
-        self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real"
-    ):
+    def select_and_sort(self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real"):
         """select and sort"""
         vp = self._vals
-        condition = (
-            (vp.real < realmax)
-            & (vp.real >= realmin)
-            & (vp.imag > imagmin)
-            & (vp.imag < imagmax)
-        )
+        condition = (vp.real < realmax) & (vp.real >= realmin) & (vp.imag > imagmin) & (vp.imag < imagmax)
         vals = np.compress(condition, self._vals)
         vects = np.compress(condition, self._vects, axis=1)
         np.set_printoptions(formatter={"float_kind": "{:.4f}".format})
@@ -91,9 +80,7 @@ class LinOperator:
             eigenmode (_type_): _description_
         """
         B, M = self.get_RHS_time_matrices()
-        M = (
-            self._harmonic_time_coef * M
-        )  # must use explicit multiplication instead of *= (kind exception)
+        M = self._harmonic_time_coef * M  # must use explicit multiplication instead of *= (kind exception)
         new_eigm = eigenmode / nplin.norm(eigenmode)
         # print(omega, np.vdot(new_eigm, B @ new_eigm)/np.vdot(new_eigm, M @ new_eigm))
         new_omega = omega
@@ -103,9 +90,7 @@ class LinOperator:
             try:
                 w = nplin.solve(B - new_omega * M, new_eigm)
                 new_eigm = w / nplin.norm(w)
-                new_omega = np.vdot(new_eigm, B @ new_eigm) / np.vdot(
-                    new_eigm, M @ new_eigm
-                )
+                new_omega = np.vdot(new_eigm, B @ new_eigm) / np.vdot(new_eigm, M @ new_eigm)
                 # print(i, nplin.norm((B-new_omega*M)@ new_eigm), new_omega)
             except nplin.LinAlgError as err:
                 if "Singular matrix" in str(err):
