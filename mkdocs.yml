@@ -38,7 +38,6 @@ plugins:
   - mkdocs-jupyter:
       execute: True
       include_source: False
-      no_input: True
   - exclude:
       glob:
         - "requirements.txt"
