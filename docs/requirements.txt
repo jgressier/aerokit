@@ -4,4 +4,4 @@ mkdocs-exclude
 aerokit >= 1.1
 ipykernel
 mkdocs-jupyter
-mkdocstrings = {version = "<=0.22", extras = ["python"]}
+mkdocstrings[python] <= 0.22
