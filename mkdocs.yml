@@ -51,6 +51,6 @@ plugins:
           selection:
             #docstring_style: "restructured-text" # default is "google"
             filters:
-              - "!^_"  # exlude all members starting with _
+              - "!^_"  # exclude all members starting with _
       watch:
         - aerokit
