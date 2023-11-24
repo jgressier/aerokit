@@ -1,29 +1,29 @@
 """
     The ``OrrSommerfeld`` module
     =========================
- 
+
     Provides 1D incompressible stability equations named Orr-Sommerfeld
 
     Orr-Sommerfeld equation by pseudo-spectral collocation method.
 
-	\begin{equation*}
-		\Bigg[ \frac{1}{i Re} (D^2 - \alpha^2)^2 - (\alpha U - \omega)(D^2 - \alpha^2) + \alpha U'' \Bigg] \hat{v} = 0 \qquad \text{Orr–Sommerfeld equation}
-	\end{equation*}
+    \begin{equation*}
+        \Bigg[ \frac{1}{i Re} (D^2 - \alpha^2)^2 - (\alpha U - \omega)(D^2 - \alpha^2) + \alpha U'' \Bigg] \hat{v} = 0 \qquad \text{Orr–Sommerfeld equation}
+    \end{equation*}
 
-	*   $D = \frac{d}{d y}$
-	*   BCs: $\hat{v}(1) = \hat{v'}(1) = \hat{v}(-1) = \hat{v'}(-1) = 0$
-	*   temporal theory: $\alpha \in \mathbb{R}$, $\omega \in \mathbb{C}$
-	*   spatial theory: $\alpha \in \mathbb{C}$, $\omega \in \mathbb{R}$.
- 
+    *   $D = \frac{d}{d y}$
+    *   BCs: $\hat{v}(1) = \hat{v'}(1) = \hat{v}(-1) = \hat{v'}(-1) = 0$
+    *   temporal theory: $\alpha \in \mathbb{R}$, $\omega \in \mathbb{C}$
+    *   spatial theory: $\alpha \in \mathbb{C}$, $\omega \in \mathbb{R}$.
+
     :Example:
- 
+
     >>> import aerokit.stability.OrrSommerfeld as OS
- 
+
     Available functions
     -------------------
- 
-	.. note::
-    
+
+    .. note::
+
 """
 
 import numpy as np
@@ -102,12 +102,7 @@ class Poiseuille(OrrSommerfeldModel):
 
 
 # ===============================================================
-# automatic testing
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod()
+# historic (to be deleted ?)
 
 # def resol(alpha, omega, Rey, DiffOp):
 #     """
