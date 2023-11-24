@@ -33,7 +33,12 @@ import numpy as np
 from aerokit.stability import LinOperator
 
 
+class DictKeyError(Exception): pass
+
 class OrrSommerfeldModel(LinOperator):
+
+    req_keys = ["alpha", "Reynolds", "uprofile"]
+
     def __init__(self, n, xmin=None, xmax=None, basestate=None) -> None:
         """Initialization of OrrSommerfeld model
 
@@ -50,9 +55,16 @@ class OrrSommerfeldModel(LinOperator):
 
     def set_basestate(self, state: dict):
         """set basestate for Orr-Sommerfeld model"""
-        for k in ["alpha", "Reynolds", "uprofile"]:
-            assert k in state.keys(), f"key {k} missing in params"
-        # must check u profile ?
+        req_keys = self.__class__.req_keys
+        mis_keys = [k for k in req_keys if k not in state.keys()]
+        if mis_keys == req_keys:
+            raise DictKeyError(f"basestate misses all required keys {req_keys}")
+        if mis_keys != []:
+            raise DictKeyError(f"basestate misses keys {mis_keys} (keys {req_keys} required)")
+        # must check u profile? (condition on uprofile? callable for 0 or 1 or other?)
+        # # # if required type for uprofile is function:
+        # # check uprofile.__call__ exists or:
+        # # _ = uprofile(0) # should not raise TypeError: <type> object is not callable
         super().set_basestate(state)
 
     def compute_operators(self):
