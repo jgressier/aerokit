@@ -22,10 +22,12 @@ nav:
     - aero.MassFlow: userguide/aero.MassFlow.md
     - aero.ShockWave:  userguide/aero.ShockWave.md
   - Examples: 
-    - Examples: examples.md
+    - List of examples: examples.md
     - aero.Isentropic: examples/aero.Isentropic.ipynb
     - aero.MassFlow: examples/aero.MassFlow.ipynb
     - aero.ShockWave: examples/aero.ShockWave.ipynb
+    - common.numspectral: examples/common.numspectral.ipynb
+    - stability.OrrSommerfeld: examples/stability.OrrSommerfeld.ipynb
     - instance.riemann: examples/instance.riemann.ipynb
   - Change log: changelog.md
   - About: about.md
