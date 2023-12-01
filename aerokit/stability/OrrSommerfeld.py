@@ -1,36 +1,44 @@
-"""
+r"""
     The ``OrrSommerfeld`` module
     =========================
- 
+
     Provides 1D incompressible stability equations named Orr-Sommerfeld
 
     Orr-Sommerfeld equation by pseudo-spectral collocation method.
 
-	\begin{equation*}
-		\Bigg[ \frac{1}{i Re} (D^2 - \alpha^2)^2 - (\alpha U - \omega)(D^2 - \alpha^2) + \alpha U'' \Bigg] \hat{v} = 0 \qquad \text{Orr–Sommerfeld equation}
-	\end{equation*}
+    \begin{equation*}
+        \Bigg[    \frac{1}{i Re}   (D^2 - \alpha^2)^2
+             - (\alpha U - \omega) (D^2 - \alpha^2)
+             + \alpha U''
+        \Bigg] \hat{v} = 0 \qquad \text{Orr–Sommerfeld equation}
+    \end{equation*}
 
-	*   $D = \frac{d}{d y}$
-	*   BCs: $\hat{v}(1) = \hat{v'}(1) = \hat{v}(-1) = \hat{v'}(-1) = 0$
-	*   temporal theory: $\alpha \in \mathbb{R}$, $\omega \in \mathbb{C}$
-	*   spatial theory: $\alpha \in \mathbb{C}$, $\omega \in \mathbb{R}$.
- 
+    *   $D = \frac{d}{d y}$
+    *   BCs: $\hat{v}(1) = \hat{v'}(1) = \hat{v}(-1) = \hat{v'}(-1) = 0$
+    *   temporal theory: $\alpha \in \mathbb{R}$, $\omega \in \mathbb{C}$
+    *   spatial theory: $\alpha \in \mathbb{C}$, $\omega \in \mathbb{R}$.
+
     :Example:
- 
+
     >>> import aerokit.stability.OrrSommerfeld as OS
- 
+
     Available functions
     -------------------
- 
-	.. note::
-    
+
+    .. note::
+
 """
 
 import numpy as np
 from aerokit.stability import LinOperator
 
 
+class DictKeyError(Exception): pass
+
 class OrrSommerfeldModel(LinOperator):
+
+    req_keys = ["alpha", "Reynolds", "uprofile"]
+
     def __init__(self, n, xmin=None, xmax=None, basestate=None) -> None:
         """Initialization of OrrSommerfeld model
 
@@ -47,9 +55,16 @@ class OrrSommerfeldModel(LinOperator):
 
     def set_basestate(self, state: dict):
         """set basestate for Orr-Sommerfeld model"""
-        for k in ["alpha", "Reynolds", "uprofile"]:
-            assert k in state.keys(), f"key {k} missing in params"
-        # must check u profile ?
+        req_keys = self.__class__.req_keys
+        mis_keys = [k for k in req_keys if k not in state.keys()]
+        if mis_keys == req_keys:
+            raise DictKeyError(f"basestate misses all required keys {req_keys}")
+        if mis_keys != []:
+            raise DictKeyError(f"basestate misses keys {mis_keys} (keys {req_keys} required)")
+        # must check u profile? (condition on uprofile? callable for 0 or 1 or other?)
+        # # # if required type for uprofile is function:
+        # # check uprofile.__call__ exists or:
+        # # _ = uprofile(0) # should not raise TypeError: <type> object is not callable
         super().set_basestate(state)
 
     def compute_operators(self):
@@ -102,17 +117,12 @@ class Poiseuille(OrrSommerfeldModel):
 
 
 # ===============================================================
-# automatic testing
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod()
+# historic (to be deleted ?)
 
 # def resol(alpha, omega, Rey, DiffOp):
 #     """
 #     We write the Orr-Sommerfeld problem
-#     in the following form:    mat.X = b
+#     in the following form:    mat.X = vec
 
 #     u   : base flow velocity
 #     ddu : second derivative of u
@@ -120,74 +130,95 @@ if __name__ == "__main__":
 #     """
 
 #     npts = DiffOp.npts
-#     id_mat = np.eye(npts)
-#     b   = np.zeros(npts, dtype=complex)
+#     vec = np.zeros(npts, dtype=complex)
 #     mat = np.zeros((npts, npts), dtype=complex)
+
 #     ci = 1j
 #     u = 1 - DiffOp.x**2
 #     ddu = DiffOp.matder(2) @ u
 
+#     id_mat = np.eye(npts) # identity matrix
+
 #     for i in range(npts):
 #       for j in range(npts):
-#         mat[i,j] = alpha * (-u[i] * DiffOp.matder(2)[i,j] + (u[i] * alpha**2 + ddu[i]) * id_mat[i,j])
+#         mat[i, j] = alpha * (-u[i] * DiffOp.matder(2)[i, j]
+#                            + (u[i] * alpha**2 + ddu[i]) * id_mat[i, j])
 
 #     z1 = 1 / (ci * Rey)
 #     z2 = -2 * alpha**2 / (ci * Rey) + omega
 #     z3 = alpha**4 / (ci * Rey) - omega * alpha**2
-#     mat = mat + z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_mat
+#     mat += z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_mat
 
-#     mat[0,:] = DiffOp.matder(2)[0,:]
-#     mat[1,:] = DiffOp.matder(1)[0,:]
-#     mat[npts-2,:] = DiffOp.matder(1)[npts-1,:]
-#     mat[npts-1,:] = 0
-#     b[:] = 0
-#     mat[-1,-1] = 1
-#     b[0] = 1
+#     # Boundary conditions
 
-#     sol_v = np.linalg.solve(mat, b)
+#     # Line 0
+#     mat[0, :] = DiffOp.matder(2)[0, :]
+#     vec[0] = 1
+
+#     # Line 1
+#     mat[1, :] = DiffOp.matder(1)[0, :]
+
+#     # Line npts-2
+#     mat[-2, :] = DiffOp.matder(1)[-1, :]
+
+#     # Line npts-1
+#     mat[-1, :] = 0
+#     mat[-1, -1] = 1
+
+#     sol_v = np.linalg.solve(mat, vec)
 #     csol = sol_v[0]
+
 #     return csol, sol_v
 
 # def spectre(alpha, Rey, DiffOp, plot=True):
-#     n = DiffOp.npts
-#     mat1 = np.zeros((n, n), dtype=complex)
-#     mat2 = np.zeros((n, n), dtype=complex)
+#     """
+#     """
+
+#     npts = DiffOp.npts
+#     mat1 = np.zeros((npts, npts), dtype=complex)
+#     mat2 = np.zeros((npts, npts), dtype=complex)
 
 #     ci = 1j
 #     u = 1 - DiffOp.x**2
 #     ddu = DiffOp.matder(2) @ u
 
-#     id_matrix = np.eye(n) # identity matrix
+#     id_mat = np.eye(npts) # identity matrix
 
-#     for i in range(n):
-#       for j in range(n):
-#         mat1[i, j] = alpha * (-u[i] * DiffOp.matder(2)[i, j] + (u[i] * alpha**2 + ddu[i]) * id_matrix[i, j])
+#     for i in range(npts):
+#       for j in range(npts):
+#         mat1[i, j] = alpha * (-u[i] * DiffOp.matder(2)[i, j]
+#                             + (u[i] * alpha**2 + ddu[i]) * id_mat[i, j])
 
 #     z1 = 1 / (ci * Rey)
 #     z2 = -2 * alpha**2 / (ci * Rey)
 #     z3 = alpha**4 / (ci * Rey)
-#     mat1 += z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_matrix
+#     mat1 += z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_mat
 
 #     z2 = -1
 #     z3 = alpha**2
-#     mat2 += z2 * DiffOp.matder(2) + z3 * id_matrix
+#     mat2 += z2 * DiffOp.matder(2) + z3 * id_mat
 
 #     # Boundary conditions
+
+#     # Line 0
 #     mat1[0, :] = 0
 #     mat1[0, 0] = 1
 #     mat2[0, :] = 0
 
+#     # Line 1
 #     mat1[1, :] = DiffOp.matder(1)[0, :]
 #     mat2[1, :] = 0
 
-#     mat1[n-2, :] = DiffOp.matder(1)[n-1, :]
-#     mat2[n-2, :] = 0
+#     # Line npts-2
+#     mat1[-2, :] = DiffOp.matder(1)[-1, :]
+#     mat2[-2, :] = 0
 
-#     mat1[n-1, :] = 0
-#     mat1[n-1, n-1] = 1
-#     mat2[n-1, :] = 0
+#     # Line npts-1
+#     mat1[-1, :] = 0
+#     mat1[-1, -1] = 1
+#     mat2[-1, :] = 0
 
-#     l,v = eig(mat1, mat2)
+#     l, v = eig(mat1, mat2)
 
 #     if plot:
 #         import matplotlib.pyplot as plt
@@ -202,6 +233,7 @@ if __name__ == "__main__":
 #         plt.show()
 #     # else:
 #     #     vp[:4] = l[:4]
+
 #     return l, v
 
 
