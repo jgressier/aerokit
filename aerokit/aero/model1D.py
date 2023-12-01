@@ -2,12 +2,13 @@
   representation of 1D flows
 """
 
-#import math
 import numpy     as np
-#import ShockWave as sw
-#import IterativeSolve
 from aerokit.common import defaultgas as defg
 from aerokit.aero import Isentropic as Is
+import aerokit.aero.ShockWave as sw
+from typing import TypeVar
+
+Afloat = TypeVar('Afloat', float, np.ndarray)
 
 # -- class --
 
@@ -21,7 +22,7 @@ class state():
 		u
 		p
 	"""
-	def __init__(self, rho = None, u = None, p = None, gamma=defg._gamma):
+	def __init__(self, rho: Afloat, u: Afloat, p: Afloat, gamma=defg._gamma):
 		self._gamma = gamma
 		self.rho    = rho
 		self.u      = u
@@ -36,6 +37,28 @@ class state():
 
 	def copy(self):
 		return state(self.rho, self.u, self.p, self._gamma)
+
+	def state_RH(self):
+		"""return Rankine-Hugoniot jump state"""
+		M = self.Mach()
+		R = sw.Rho_ratio(M, self._gamma)
+		return state(
+			rho = self.rho * R,
+			u = self.u / R,
+			p = self.p * sw.Ps_ratio(M, self._gamma),
+			gamma = self._gamma
+		)
+
+	def state_isentropic_Mach(self, Mach):
+		"""return state defined by Mach number through isoenergetic isentropic transformation"""
+		ps  = self.rTtot() / Is.PtPs_Mach(Mach, self._gamma)
+		rts = self.rTtot() / Is.TtTs_Mach(Mach, self._gamma)
+		return state(
+			rho=ps/rts, 
+			u=Mach*np.sqrt(self._gamma*rts), 
+			p=ps
+		)
+		
 
 	def compute_from_pt_rtt_M(self, pt, rtt, M):
 		ps  = pt /Is.PtPs_Mach(M, self._gamma)
@@ -61,6 +84,9 @@ class state():
 		rts = rtt/Is.TtTs_Mach(M, self._gamma)
 		self.__init__(rho=p/rts, u=M*np.sqrt(self._gamma*rts), p=p)
 
+	def __getitem__(self, i):
+		return state(self.rho[i], self.u[i], self.p[i])
+	
 	def asound(self):
 		"""returns speed of sound"""
 		return np.sqrt(self._gamma*self.p/self.rho)

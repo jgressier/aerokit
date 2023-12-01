@@ -5,7 +5,7 @@ import aerokit.common.numspectral as ns
 
 
 class LinOperator:
-    # this definition is related to arbitratry definition of omega q(t) ~ exp(-j * omega * t)
+    # this definition is related to arbitratry definition of omega: q(t) ~ exp(-j * omega * t)
     _harmonic_time_coef = -1j
     _BC_dict = {}
 

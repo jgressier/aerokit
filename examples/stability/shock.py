@@ -25,75 +25,88 @@ print(
 
 
 class ShockModel(Euler1D):
-    def __init__(self, n, length, M1=None, M0=None) -> None:
+    def __init__(self, n, length, M1=None, M0=None, dM0dx=None) -> None:
         super().__init__(n, xmin=0.0, xmax=length)
         if M1 is None:
             assert M0 is not None, "at least one Mach number should be given"
             M1 = sw.downstream_Mn(M0)
         print(f"Initialize Shock impact model with M1={M1:.4f}")
-        # scale u1 so that du1/dx=-1
-        rttot = length**2 * (0.5 + 1.0 / (gam - 1.0) / M1**2)
-        u = (
-            -Is.Velocity_MachTt(M1, rttot, r=1.0)
-            * (self.x - self.x[-1])
-            / (self.x[0] - self.x[-1])
-        )
-        Q = state(gamma=gam)
-        Q.compute_from_pt_rtt_u(1e5, rttot, u)
+        rttot = 8.35e4
+        ptot = 1.8e5
+        u = Is.Velocity_MachTt(M1, rttot, r=1.) * (self.x - self.x[-1]) / (self.x[0] - self.x[-1])
+        print(f"u1: {u[0]}")
+        Q = state(rho=1., u=0., p=1., gamma=gam)
+        Q.compute_from_pt_rtt_u(ptot, rttot, u)
         self.set_basestate(Q)
-        self.compute_operators()
-        self.setBC("RH", "sym")
-        B, Id = self.get_RHS_time_matrices()
-        self._vals, self._vects = eig(B, self._harmonic_time_coef * Id)
-
-    def get_select(
-        self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real"
-    ):
-        """select and sort"""
-        vp = self._vals
-        condition = (
-            (vp.real < realmax)
-            & (vp.real >= realmin)
-            & (vp.imag > imagmin)
-            & (vp.imag < imagmax)
+        self.set_BC(
+            {'type': 'RH', 'dM0dx': dM0dx}, 
+            {'type': 'sym'}
         )
-        vals = np.compress(condition, self._vals)
-        vects = np.compress(condition, self._vects, axis=1)
-        np.set_printoptions(formatter={"float_kind": "{:.4f}".format})
-        print(f"{vals.size}/{vp.size} remaining eigenvalues")
-        sortmethod = {
-            "real": np.real,
-            "imag": lambda x: -np.imag(x),
-        }
-        order = np.argsort(sortmethod[sort](vals))
-        return vals, vects, order
+
+    # def get_select(
+    #     self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real"
+    # ):
+    #     """select and sort"""
+    #     vp = self._vals
+    #     condition = (
+    #         (vp.real < realmax)
+    #         & (vp.real >= realmin)
+    #         & (vp.imag > imagmin)
+    #         & (vp.imag < imagmax)
+    #     )
+    #     vals = np.compress(condition, self._vals)
+    #     vects = np.compress(condition, self._vects, axis=1)
+    #     np.set_printoptions(formatter={"float_kind": "{:.4f}".format})
+    #     print(f"{vals.size}/{vp.size} remaining eigenvalues")
+    #     sortmethod = {
+    #         "real": np.real,
+    #         "imag": lambda x: -np.imag(x),
+    #     }
+    #     order = np.argsort(sortmethod[sort](vals))
+    #     return vals, vects, order
 
 
 # --- MAIN ---
 
-n = 101
+M0 = 2.495
+length=2.28e-3
+dM0dx=850.
 
-model = ShockModel(n, M0=2.13, length=0.56)
-vals0, vects0, order = model.get_select(
-    realmin=0.0, realmax=4.0, imagmin=-10.0, imagmax=100.0
+n = 201
+
+model = ShockModel(n, M0=M0, length=length, dM0dx=dM0dx)
+
+import matplotlib.pyplot as plt
+if False:
+    fig, ax = plt.subplots(4,1)
+    Q: state = model._basestate
+    for iax, ival in zip(ax, (Q.rho, Q.u, Q.p, Q.Mach())):
+        iax.plot(model.x, ival)
+    plt.show()
+
+model.solve_eig()
+vals0, vects0, order = model.select_and_sort(
+    realmin=0., realmax=1200e3, 
+    imagmin=-1e5, imagmax=1e6
 )
 print("first eigenvalues")
 print(vals0[order][:20])
 
 n = 2 * (n - 1) + 1
 
-model = ShockModel(n, M0=2.13, length=0.56)
-vals, vects, order = model.get_select(
-    realmin=0.0, realmax=10.0, imagmin=-10.0, imagmax=-0.15
+model = ShockModel(n, M0=M0, length=length, dM0dx=dM0dx)
+vals, vects = model.solve_eig()
+vals, vects, order = model.select_and_sort(
+    realmin=0., realmax=1000e3, 
+    imagmin=-1e5, imagmax=1e6,
+    sort='imag'
 )
 print("first eigenvalues")
 print(vals[order][:20])
 
 # --- PLOT ---
-import matplotlib.pyplot as plt
-
-plt.plot(vals0.real, vals0.imag, "or", markersize=3, alpha=0.5)
-plt.plot(vals.real, vals.imag, "ob", markersize=5, alpha=0.5)
+plt.plot(vals0.real, vals0.imag, "ob", markersize=5, alpha=0.3)
+plt.plot(vals.real, vals.imag, "or", markersize=3, alpha=0.6)
 for i, v in enumerate(vals[order[:20]]):
     plt.text(v.real, v.imag, str(i))
 plt.xlabel("$\omega_r$")
@@ -107,10 +120,10 @@ plt.show()
 nv = 10
 fig, ax = plt.subplots(nv, model.nvar)
 for i in range(nv):
-    for j in (0, 2):
-        print(
-            j, model._diffop.matder(1)[n - 1, :] @ vects[j * n : (j + 1) * n, order[i]]
-        )
+    # for j in (0, 2): # ? .real
+    #     print(
+    #         j, model._diffop.matder(1)[n - 1, :] @ vects[j * n : (j + 1) * n, order[i]]
+    #     )
     for j in range(model.nvar):
         ax[i, j].plot(model._diffop.x, vects[j * n : (j + 1) * n, order[i]].real)
 plt.show()
