@@ -77,7 +77,6 @@ class inflow_pb():
 		ustar = self._qR.u + self._delta_uR(p)
 		gam   = self._qR._gamma
 		gsgmu = gam/(gam-1.)
-		#print 'it',p, ustar, p * ( 1. + .5*ustar**2 / (gsgmu*rtt0 - .5*ustar**2) )**gsgmu
 		return p * ( 1. + .5*ustar**2 / (gsgmu*rtt0 - .5*ustar**2) )**gsgmu
 
 	def _pstar_estimate_expansion(self, pt0):
