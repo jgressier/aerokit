@@ -61,7 +61,7 @@ class Euler1D(LinOperator):
         self._B0 = np.zeros((N, N))
         self._B0[:ip,:ip] = np.diag(np.tile(dq.u, 2))
         self._B0[ip:, ip:] = np.diag(q._gamma * dq.u)
-        self._B0[:n:, n:ip] = np.diag(dq.rho)
+        self._B0[:n, n:ip] = np.diag(dq.rho)
         self._B0[n:ip, :n] = np.diag(-dq.p / q.rho**2)
         self._B0[ip:, n:ip] = np.diag(dq.p)
         self._B = -self._Bx - self._B0
@@ -171,7 +171,7 @@ class Euler1D(LinOperator):
         bckSh[0, 1] = drhoratio/a0
         # BC for u1' (RH mass equation)
         bck0[1, 0] = -q0.u/q0.rho
-        bck0[1, 1] = -rhoratio
+        bck0[1, 1] = -1.
         bck1[1, 0] = q1.u/q0.rho
         bck1[1, 1] = rhoratio
         bckSh[1, 1] = 1-rhoratio

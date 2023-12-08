@@ -2,6 +2,7 @@ import numpy as np
 import numpy.linalg as nplin
 import scipy.linalg as scilin
 import aerokit.common.numspectral as ns
+from typing import Any
 
 
 class LinOperator:
@@ -23,7 +24,7 @@ class LinOperator:
     def x(self):
         return self._diffop.x
 
-    def set_basestate(self, state):
+    def set_basestate(self, state: Any):
         """set base state as it will be used by derived class"""
         self._basestate = state
 

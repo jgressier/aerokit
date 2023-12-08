@@ -85,6 +85,7 @@ class state():
 		self.__init__(rho=p/rts, u=M*np.sqrt(self._gamma*rts), p=p)
 
 	def __getitem__(self, i):
+		assert isinstance(self.rho, np.ndarray)
 		return state(self.rho[i], self.u[i], self.p[i])
 	
 	def asound(self):

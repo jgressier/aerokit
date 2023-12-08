@@ -125,5 +125,6 @@ for i in range(nv):
     #         j, model._diffop.matder(1)[n - 1, :] @ vects[j * n : (j + 1) * n, order[i]]
     #     )
     for j in range(model.nvar):
-        ax[i, j].plot(model._diffop.x, vects[j * n : (j + 1) * n, order[i]].real)
+        ax[i, j].plot(model._diffop.x, np.abs(vects[j * n : (j + 1) * n, order[i]]), 'b-')
+        ax[i, j].plot(model._diffop.x, vects[j * n : (j + 1) * n, order[i]].real, 'b--')
 plt.show()
