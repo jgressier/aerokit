@@ -28,14 +28,14 @@ class LinOperator:
         """set base state as it will be used by derived class"""
         self._basestate = state
 
-    def _check_BC(self, bc):
+    def _check_BC(self, bc: Any):
         """BC should be a dict with at least a 'type' key"""
         xbc = {"type": bc} if isinstance(bc, str) else bc
         if xbc["type"] not in self._BC_dict.keys():
             raise ValueError(f"{xbc['type']} key not found in available BC keys: {self._BC_dict.keys()}")
         return xbc
 
-    def set_BC(self, Ltype: dict, Rtype: dict):
+    def set_BC(self, Ltype: Any, Rtype: Any):
         self._BC_type = [self._check_BC(Ltype), self._check_BC(Rtype)]
 
     def check_basestate(self):

@@ -33,7 +33,9 @@ import numpy as np
 from aerokit.stability import LinOperator
 
 
-class DictKeyError(Exception): pass
+class DictKeyError(Exception):
+    pass
+
 
 class OrrSommerfeldModel(LinOperator):
 
@@ -82,11 +84,11 @@ class OrrSommerfeldModel(LinOperator):
         u = self._basestate["uprofile"](self.x)
         ddu = D2 @ u
         # At = alpha**2 * I - D**2
-        self._At = D2 - alpha**2 * np.eye(n)
+        self._At = D2 - alpha ** 2 * np.eye(n)
         # B = 1/Re * [ D**4 - 2*alpha**2 * D**2 + alpha**4 * I ] +
         #   + alpha*j* [ u*(alpha**2-D**2) + ddu*I ]
         self._B = np.diag(-1j * alpha * u) @ self._At + np.diag(1j * alpha * ddu)
-        self._B += (D4 - (2 * alpha**2) * D2 + alpha**4 * np.eye(n)) / Rey
+        self._B += (D4 - (2 * alpha ** 2) * D2 + alpha ** 4 * np.eye(n)) / Rey
         self.compute_BC()
 
     def compute_BC(self):
@@ -112,7 +114,7 @@ class OrrSommerfeldModel(LinOperator):
 class Poiseuille(OrrSommerfeldModel):
     def __init__(self, n, alpha, Reynolds) -> None:
         super().__init__(n, xmin=-1.0, xmax=1.0)
-        self.set_basestate({"Reynolds": Reynolds, "alpha": alpha, "uprofile": lambda x: 1 - x**2})
+        self.set_basestate({"Reynolds": Reynolds, "alpha": alpha, "uprofile": lambda x: 1 - x ** 2})
         self.set_BC({"type": "wall"}, {"type": "wall"})
 
 
@@ -169,72 +171,6 @@ class Poiseuille(OrrSommerfeldModel):
 #     csol = sol_v[0]
 
 #     return csol, sol_v
-
-# def spectre(alpha, Rey, DiffOp, plot=True):
-#     """
-#     """
-
-#     npts = DiffOp.npts
-#     mat1 = np.zeros((npts, npts), dtype=complex)
-#     mat2 = np.zeros((npts, npts), dtype=complex)
-
-#     ci = 1j
-#     u = 1 - DiffOp.x**2
-#     ddu = DiffOp.matder(2) @ u
-
-#     id_mat = np.eye(npts) # identity matrix
-
-#     for i in range(npts):
-#       for j in range(npts):
-#         mat1[i, j] = alpha * (-u[i] * DiffOp.matder(2)[i, j]
-#                             + (u[i] * alpha**2 + ddu[i]) * id_mat[i, j])
-
-#     z1 = 1 / (ci * Rey)
-#     z2 = -2 * alpha**2 / (ci * Rey)
-#     z3 = alpha**4 / (ci * Rey)
-#     mat1 += z1 * DiffOp.matder(4) + z2 * DiffOp.matder(2) + z3 * id_mat
-
-#     z2 = -1
-#     z3 = alpha**2
-#     mat2 += z2 * DiffOp.matder(2) + z3 * id_mat
-
-#     # Boundary conditions
-
-#     # Line 0
-#     mat1[0, :] = 0
-#     mat1[0, 0] = 1
-#     mat2[0, :] = 0
-
-#     # Line 1
-#     mat1[1, :] = DiffOp.matder(1)[0, :]
-#     mat2[1, :] = 0
-
-#     # Line npts-2
-#     mat1[-2, :] = DiffOp.matder(1)[-1, :]
-#     mat2[-2, :] = 0
-
-#     # Line npts-1
-#     mat1[-1, :] = 0
-#     mat1[-1, -1] = 1
-#     mat2[-1, :] = 0
-
-#     l, v = eig(mat1, mat2)
-
-#     if plot:
-#         import matplotlib.pyplot as plt
-#         plt.plot(l.real, l.imag, 'ob', markerdim=6)
-#         plt.hlines(y=0.0, xmin=-2, xmax=2, color='k', linestyle='--')
-#         plt.xlabel('$\omega_r$')
-#         plt.ylabel('$\omega_i$')
-#         plt.gca().yaxis.label.set(rotation='horizontal', ha='right');
-#         plt.title('Spectrum')
-#         # plt.axis('square')
-#         plt.axis([0.1, 1, -2, 0.5])
-#         plt.show()
-#     # else:
-#     #     vp[:4] = l[:4]
-
-#     return l, v
 
 
 # ===============================================================

@@ -29,7 +29,7 @@ pip show aerokit
 
 #### fixed
 
--  `instance.riemann`: fix wave speeds for right wave if it is an expansion
+- `instance.riemann`: fix wave speeds for right wave if it is an expansion
 
 ### [1.1.2](https://pypi.org/project/aerokit/) (2021-04-15)
 

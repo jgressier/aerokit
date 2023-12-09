@@ -46,9 +46,7 @@ class ChebCollocation:
         N = len(fk)
 
         xk = np.sin(
-            np.pi
-            * np.array(list(range(N - 1, 0, -2)) + list(range(0, -N, -2)))
-            / (2 * (N - 1))
+            np.pi * np.array(list(range(N - 1, 0, -2)) + list(range(0, -N, -2))) / (2 * (N - 1))
         ).reshape(-1, 1)
 
         # Compute weights for Chebyshev formula

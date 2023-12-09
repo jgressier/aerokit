@@ -18,86 +18,91 @@
     Blabla
   
 """
-#import math
+# import math
 import copy
-import numpy     as np
+import numpy as np
 import aerokit.aero.ShockWave as sw
-import aerokit.aero.model1D   as model1D
+import aerokit.aero.model1D as model1D
 
 # -- class --
 
+
 class unsteady_state(model1D.state):
-	"""
-	defines a one dimensional state
-	"""
-	def copy(self):
-		return copy.deepcopy(self)
+    """
+    defines a one dimensional state
+    """
 
-	def copysymmetric(self):
-		return unsteady_state(self.rho, -self.u, self.p, self._gamma)
+    def copy(self):
+        return copy.deepcopy(self)
 
-	def _rankinehugoniot_from_ushock(self, ushock):
-		"""
-			returns Rankine-Hugoniot state, given a shock velocity
-		
-			..warning:: this function is made private because there is no test about upstream/downstream consistency
-			nor the right ushock range (greater than u+a or lesser than u-a
-		"""
-		loc_Mn    = (self.u-ushock)/self.asound()          # this Mach number is signed
-		rho_ratio = sw.Rho_ratio(loc_Mn, self._gamma)
-		return unsteady_state(self.rho * rho_ratio,
-		             ushock + (self.u-ushock)/rho_ratio,
-		             self.p * sw.Ps_ratio(loc_Mn, self._gamma),
-	 	             gamma=self._gamma)
+    def copysymmetric(self):
+        return unsteady_state(self.rho, -self.u, self.p, self._gamma)
 
-	def delta_u_expansion(self, p):
-		"""
-			computes delta u through expansion given 'self' initial state and final pressure
+    def _rankinehugoniot_from_ushock(self, ushock):
+        """
+        returns Rankine-Hugoniot state, given a shock velocity
 
-			usage
-			-----
+        ..warning:: this function is made private because there is no test about upstream/downstream consistency
+        nor the right ushock range (greater than u+a or lesser than u-a
+        """
+        loc_Mn = (self.u - ushock) / self.asound()  # this Mach number is signed
+        rho_ratio = sw.Rho_ratio(loc_Mn, self._gamma)
+        return unsteady_state(
+            self.rho * rho_ratio,
+            ushock + (self.u - ushock) / rho_ratio,
+            self.p * sw.Ps_ratio(loc_Mn, self._gamma),
+            gamma=self._gamma,
+        )
 
-			if C- expansion, from left state,  middle velocity ustar is (uL - delta_u_expansion)
-			is C+ expansion, from right state, middle velocity ustar is (uR + delta_u_expansion)
+    def delta_u_expansion(self, p):
+        """
+        computes delta u through expansion given 'self' initial state and final pressure
 
-			..warning:: There is no consistent test that (arg) p is lesser than self.p
-			..note:: from Toro, page 119
-		"""
-		gmusd = .5*(self._gamma-1.)
-		return self.asound()/gmusd*((p/self.p)**(gmusd/self._gamma)-1.)
+        usage
+        -----
 
-	def delta_u_shock(self, p):
-		"""
-			computes delta u through shock given 'self' initial state and final pressure
+        if C- expansion, from left state,  middle velocity ustar is (uL - delta_u_expansion)
+        is C+ expansion, from right state, middle velocity ustar is (uR + delta_u_expansion)
 
-			usage
-			-----
+        ..warning:: There is no consistent test that (arg) p is lesser than self.p
+        ..note:: from Toro, page 119
+        """
+        gmusd = 0.5 * (self._gamma - 1.0)
+        return self.asound() / gmusd * ((p / self.p) ** (gmusd / self._gamma) - 1.0)
 
-			if C- shock, from left state,  middle velocity ustar is (uL - delta_u_shock)
-			is C+ shock, from right state, middle velocity ustar is (uR + delta_u_shock)
+    def delta_u_shock(self, p):
+        """
+        computes delta u through shock given 'self' initial state and final pressure
 
-			..warning:: There is no consistent test that (arg) p is greater than self.p
-		"""
-		return (p-self.p)*np.sqrt(2./self.rho/((self._gamma+1.)*p + (self._gamma-1.)*self.p))
+        usage
+        -----
 
-	def rho_through_shock(self, p):
-		"""
-			computes rho increase through shock given 'self' initial state and final pressure
+        if C- shock, from left state,  middle velocity ustar is (uL - delta_u_shock)
+        is C+ shock, from right state, middle velocity ustar is (uR + delta_u_shock)
 
-			..warning:: There is no consistent test that (arg) p is greater than self.p
-		"""
-		gmusgpu = (self._gamma-1.)/(self._gamma+1.)
-		pratio  = p/self.p
-		return self.rho * (pratio+gmusgpu)/(1.+gmusgpu*pratio)
+        ..warning:: There is no consistent test that (arg) p is greater than self.p
+        """
+        return (p - self.p) * np.sqrt(
+            2.0 / self.rho / ((self._gamma + 1.0) * p + (self._gamma - 1.0) * self.p)
+        )
 
-	def rho_through_isentropic(self, p):
-		"""
-			computes rho increase through isentropic compression or expansion given 'self' initial state and final pressure
-		"""
-		return self.rho * (p/self.p) ** (1./self._gamma)
+    def rho_through_shock(self, p):
+        """
+        computes rho increase through shock given 'self' initial state and final pressure
 
-	def shock_downstream(self, ushock):
-		"""computes downstream state of genuine unsteady shock wave"""
+        ..warning:: There is no consistent test that (arg) p is greater than self.p
+        """
+        gmusgpu = (self._gamma - 1.0) / (self._gamma + 1.0)
+        pratio = p / self.p
+        return self.rho * (pratio + gmusgpu) / (1.0 + gmusgpu * pratio)
 
-		### TO BE IMPLEMENTED# -- functions --
+    def rho_through_isentropic(self, p):
+        """
+        computes rho increase through isentropic compression or expansion given 'self' initial state and final pressure
+        """
+        return self.rho * (p / self.p) ** (1.0 / self._gamma)
 
+    def shock_downstream(self, ushock):
+        """computes downstream state of genuine unsteady shock wave"""
+
+        ### TO BE IMPLEMENTED# -- functions --

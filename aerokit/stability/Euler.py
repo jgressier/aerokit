@@ -22,7 +22,7 @@ import aerokit.aero.ShockWave as sw
 
 
 class Euler1D(LinOperator):
-    def __init__(self, n, xmin=None, xmax=None, basestate = None) -> None:
+    def __init__(self, n, xmin=None, xmax=None, basestate=None) -> None:
         super().__init__(n, xmin, xmax)
         self._BC_dict = {
             "sym": self.setBC_sym,
@@ -50,7 +50,7 @@ class Euler1D(LinOperator):
         # order is rho, u, p
         self._At = np.eye(N)
         # Bx
-        ip = 2*n
+        ip = 2 * n
         self._Bx = np.diag(np.tile(q.u, self.nvar)) @ np.kron(np.eye(self.nvar), D)
         self._Bx[0:n, n:ip] = np.diag(q.rho) @ D
         self._Bx[n:ip, ip:] = np.diag(1.0 / q.rho) @ D
@@ -59,10 +59,10 @@ class Euler1D(LinOperator):
         dq = m1d.state(rho=D @ q.rho, u=D @ q.u, p=D @ q.p)
         # B0
         self._B0 = np.zeros((N, N))
-        self._B0[:ip,:ip] = np.diag(np.tile(dq.u, 2))
+        self._B0[:ip, :ip] = np.diag(np.tile(dq.u, 2))
         self._B0[ip:, ip:] = np.diag(q._gamma * dq.u)
         self._B0[:n, n:ip] = np.diag(dq.rho)
-        self._B0[n:ip, :n] = np.diag(-dq.p / q.rho**2)
+        self._B0[n:ip, :n] = np.diag(-dq.p / q.rho ** 2)
         self._B0[ip:, n:ip] = np.diag(dq.p)
         self._B = -self._Bx - self._B0
         self.compute_BC()
@@ -80,15 +80,15 @@ class Euler1D(LinOperator):
             self._BC_dict[bctype](0, 0, **bcdict)
             bcdict = self._BC_type[1]
             bctype = bcdict.pop('type')
-            self._BC_dict[bctype](n-1, n-1, **bcdict)
+            self._BC_dict[bctype](n - 1, n - 1, **bcdict)
 
     def setBC_sym(self, istate, irow):
         n = self.dim
         i0 = istate if irow is None else irow
         irho = 0
         iu = n
-        ip = 2*n
-        il = 3*n # must specify last in A and B augmented
+        ip = 2 * n
+        il = 3 * n  # must specify last in A and B augmented
         D = self._diffop.matder(1)
         for i in (irho, iu, ip):
             self._At[i0 + i, :] = 0.0
@@ -96,9 +96,9 @@ class Euler1D(LinOperator):
         # drho = 0
         self._B[i0, :iu] = D[istate, :]
         # u = 0
-        self._B[i0+iu, iu+istate] = 1.0
+        self._B[i0 + iu, iu + istate] = 1.0
         # dp = 0
-        self._B[i0+ip, ip:il] = D[istate, :]
+        self._B[i0 + ip, ip:il] = D[istate, :]
 
     def setBC_per(self):
         n = self.dim
@@ -112,10 +112,10 @@ class Euler1D(LinOperator):
             self._B[i * n + n - 1, i * n : (i + 1) * n] = D[0, :]
             self._B[i * n + n - 1, i * n : (i + 1) * n] -= D[n - 1, :]
 
-    def setBC_RH(self, istate: int, irow: Union[int,None] = None, **kwargs):
+    def setBC_RH(self, istate: int, irow: Union[int, None] = None, **kwargs):
         """Apply linerized Rankine Hugoniot equations from constant upstream value.
 
-        There are 3 equations but 4 unknows (3 downstream perturbations and shock velocity or position). 
+        There are 3 equations but 4 unknows (3 downstream perturbations and shock velocity or position).
         Substituting the shock velocity s reduces the boundary equations to 2.
         At immediate downstream state 1s, the two RH BC can be written
             k_rho[0:1]*rho1s' + k_u[0:1]*u1s' + k_p[0:1]*p1s' = 0
@@ -135,8 +135,8 @@ class Euler1D(LinOperator):
         if kwargs:
             raise ValueError(f"unknown extra parameters for RH BC in Euler model: {kwargs.keys()}")
         # increase matrix size to add "dx" shock oscillation amplitude
-        self._At = np.block([[self._At, np.zeros((3*n,1))], [np.zeros((1, 3*n)), np.zeros((1,1))]])
-        self._B = np.block([[self._B, np.zeros((3*n,1))], [np.zeros((1, 3*n)), np.zeros((1,1))]])
+        self._At = np.block([[self._At, np.zeros((3 * n, 1))], [np.zeros((1, 3 * n)), np.zeros((1, 1))]])
+        self._B = np.block([[self._B, np.zeros((3 * n, 1))], [np.zeros((1, 3 * n)), np.zeros((1, 1))]])
         # --- base state ---
         q = self._basestate
         assert isinstance(q, m1d.state)
@@ -147,14 +147,14 @@ class Euler1D(LinOperator):
         M1 = q1.Mach()
         # M0 is upstream but equations are symmetric
         q0 = q1.state_RH()
-        print(q0,q1)
+        print(q0, q1)
         M0 = sw.downstream_Mn(M1, g)
         rhoratio = sw.Rho_ratio(M0, g)
         pratio = sw.Ps_ratio(M0, g)
         a0 = q0.asound()
         # parse additional argument
         print("dM0dx:", dM0dx)
-        if dM0dx is None: # if not defined, compute upstream gradient from downstream
+        if dM0dx is None:  # if not defined, compute upstream gradient from downstream
             print(f"upstream gradient not set, computed from RH and base state")
             raise ValueError("not yet implemented")
         # BC coefs bck0[0:2,0:2] in 3 BC equations for rho', u', p' at 0i
@@ -164,46 +164,46 @@ class Euler1D(LinOperator):
         bck1 = np.zeros((3, 3))
         bckSh = np.zeros((3, 2))
         # BC for rho1' (RH rho ratio from M0)
-        drhoratio = 4 / (g + 1.0) * rhoratio**2 / M0**3  # coefficient for rho1'/rho0 = kdrho * MO'
-        bck0[0, 0] = -rhoratio/q0.rho
-        bck1[0, 0] = 1./q0.rho
-        bckSh[0, 0] = -drhoratio*dM0dx
-        bckSh[0, 1] = drhoratio/a0
+        drhoratio = 4 / (g + 1.0) * rhoratio ** 2 / M0 ** 3  # coefficient for rho1'/rho0 = kdrho * MO'
+        bck0[0, 0] = -rhoratio / q0.rho
+        bck1[0, 0] = 1.0 / q0.rho
+        bckSh[0, 0] = -drhoratio * dM0dx
+        bckSh[0, 1] = drhoratio / a0
         # BC for u1' (RH mass equation)
-        bck0[1, 0] = -q0.u/q0.rho
-        bck0[1, 1] = -1.
-        bck1[1, 0] = q1.u/q0.rho
+        bck0[1, 0] = -q0.u / q0.rho
+        bck0[1, 1] = -1.0
+        bck1[1, 0] = q1.u / q0.rho
         bck1[1, 1] = rhoratio
-        bckSh[1, 1] = 1-rhoratio
+        bckSh[1, 1] = 1 - rhoratio
         # BC for p1' (RH p ratio from M0)
         dpratio = 4 * g / (g + 1.0) * M0
-        bck0[2, 2] = -pratio/q0.p
-        bck1[2, 2] = 1./q0.p
-        bckSh[2, 0] = -dpratio*dM0dx
-        bckSh[2, 1] = dpratio/a0
-        # change BC at 0i (immediate downstream) to 0m (mean 0 upstream) 
+        bck0[2, 2] = -pratio / q0.p
+        bck1[2, 2] = 1.0 / q0.p
+        bckSh[2, 0] = -dpratio * dM0dx
+        bckSh[2, 1] = dpratio / a0
+        # change BC at 0i (immediate downstream) to 0m (mean 0 upstream)
         #   q0i' = dq/dx|0m * dxs
         # bck0 coeffs feed bckSh[:,0] dxs coef
-        dx = self.x[1]-self.x[0]
-        q0p = q0.state_isentropic_Mach(M0 + dM0dx*dx)
-        drho0 = (q0p.rho-q0.rho)/dx
-        du0 = (q0p.u-q0.u)/dx
-        dp0 = (q0p.p-q0.p)/dx
+        dx = self.x[1] - self.x[0]
+        q0p = q0.state_isentropic_Mach(M0 + dM0dx * dx)
+        drho0 = (q0p.rho - q0.rho) / dx
+        du0 = (q0p.u - q0.u) / dx
+        dp0 = (q0p.p - q0.p) / dx
         for ibc in range(3):
             for ivar, idq0 in enumerate((drho0, du0, dp0)):
-                bckSh[ibc,0] += bck0[ibc,ivar]*idq0
-        # change BC at 1i (immediate downstream) to 1m (mean 1 downstream) 
+                bckSh[ibc, 0] += bck0[ibc, ivar] * idq0
+        # change BC at 1i (immediate downstream) to 1m (mean 1 downstream)
         #   q1i' = q1m' + dq/dx|1m * dxs
         # bck1 coeffs are the same for 1i et 1m AND feed bckSh[:,0] dxs coef
         for ibc in range(3):
             for ivar, dq0 in enumerate((dq1.rho, dq1.u, dq1.p)):
-                bckSh[ibc,0] += bck1[ibc,ivar]*dq0
+                bckSh[ibc, 0] += bck1[ibc, ivar] * dq0
         #
         i0 = istate if irow is None else irow
         irho = 0
         iu = n
-        ip = 2*n
-        idxs = 3*n
+        ip = 2 * n
+        idxs = 3 * n
         # Build  At dq/dx = B.q
         for ibc, ieq in enumerate((irho, idxs, ip)):
             self._At[ieq + i0, :] = 0.0
@@ -214,7 +214,7 @@ class Euler1D(LinOperator):
             self._B[ieq, idxs] = bckSh[ibc, 0]
             # B contains dependencies on rho1m', u1m', p1m'
             for ivar in range(3):
-                self._B[ieq, ivar*n+istate] = bck1[ibc, ivar]
+                self._B[ieq, ivar * n + istate] = bck1[ibc, ivar]
 
 
 # ===============================================================

@@ -11,6 +11,7 @@ Python packages for compressible flow computations
 [![GitHub stars](https://img.shields.io/github/stars/jgressier/aerokit.svg?style=flat&logo=github&label=Stars&logoColor=white)](https://github.com/jgressier/aerokit)
 [![PyPi downloads](https://img.shields.io/pypi/dm/aerokit.svg?style=flat)](https://pypistats.org/packages/aerokit)
 [![codecov](https://img.shields.io/codecov/c/github/jgressier/aerokit.svg?style=flat)](https://codecov.io/gh/jgressier/aerokit)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cf3b4b76534f42a1a1fe7c913d2ee782)](https://app.codacy.com/gh/jgressier/aerokit/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ### Features
 

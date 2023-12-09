@@ -21,10 +21,11 @@
  """
 
 import numpy as np
-from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
+from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
 
 # ===============================================================
 # implemented functions
+
 
 def TtTs_Mach(Mach, gamma=defg._gamma):
     """Computes Tt/Ts ratio from Mach number
@@ -35,18 +36,19 @@ def TtTs_Mach(Mach, gamma=defg._gamma):
 
     Returns:
       result Tt/Ts ratio
-      
+
     Example:
-      
+
         >>> TtTs_Mach(1.) # with default gamma 1.4
         1.2
     """
-    return 1.+.5*(gamma-1)*Mach**2
+    return 1.0 + 0.5 * (gamma - 1) * Mach ** 2
+
 
 def PtPs_Mach(Mach, gamma=defg._gamma):
     """Computes Pt/Ps ratio from Mach number
-    
-    		Long comment
+
+                Long comment
 
     Args:
       Mach: local Mach number (either scalar or numpy array)
@@ -54,7 +56,7 @@ def PtPs_Mach(Mach, gamma=defg._gamma):
 
     Returns:
       result Pt/Ps ratio
-      
+
     Example:
 
         >>> PtPs_Mach(1.) # with default gamma 1.4
@@ -62,7 +64,8 @@ def PtPs_Mach(Mach, gamma=defg._gamma):
         >>> PtPs_Mach(2., gamma=1.6)
         8.187044460255244
     """
-    return (1.+.5*(gamma-1.)*Mach**2)**(gamma/(gamma-1.))
+    return (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) ** (gamma / (gamma - 1.0))
+
 
 def Mach_TtTs(TtTs, gamma=defg._gamma):
     """Computes Mach number from Tt/Ts ratio
@@ -75,7 +78,8 @@ def Mach_TtTs(TtTs, gamma=defg._gamma):
         Mach number (same type as TtTs)
 
     """
-    return np.sqrt((TtTs-1.)*2./(gamma-1.))
+    return np.sqrt((TtTs - 1.0) * 2.0 / (gamma - 1.0))
+
 
 def Mach_PtPs(PtPs, gamma=defg._gamma):
     """Computes Mach number from Pt/Ps ratio
@@ -88,10 +92,11 @@ def Mach_PtPs(PtPs, gamma=defg._gamma):
         Mach number
 
     """
-    return np.sqrt((PtPs**((gamma-1.)/gamma)-1.)*2./(gamma-1.))
+    return np.sqrt((PtPs ** ((gamma - 1.0) / gamma) - 1.0) * 2.0 / (gamma - 1.0))
+
 
 def Velocity_MachTt(Mach, Tt, r=defg._r, gamma=defg._gamma):
-    """Computes velocity from 
+    """Computes velocity from
 
     Args:
       Mach: Mach number
@@ -103,7 +108,8 @@ def Velocity_MachTt(Mach, Tt, r=defg._r, gamma=defg._gamma):
         Velocity
 
     """
-    return Mach*np.sqrt(gamma*r*Tt/TtTs_Mach(Mach, gamma))
+    return Mach * np.sqrt(gamma * r * Tt / TtTs_Mach(Mach, gamma))
+
 
 # backward compatibility
 TiTs_Mach = TtTs_Mach
@@ -117,4 +123,5 @@ Velocity_MachTi = Velocity_MachTt
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

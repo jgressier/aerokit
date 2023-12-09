@@ -37,6 +37,7 @@ class Test_ChannelPer:
         Op = self.init(n=51, Mach=Mach)
         Op.solve_eig()
         Q = Op._basestate
+        assert isinstance(Q, state)
         um, am, L = Q.u.mean(), Q.asound().mean(), Op.x.max() - Op.x.min()
         omega, _, order = Op.select_and_sort(0.01, 5000.0, -1.0, 1.0, sort="real")
         puls = []

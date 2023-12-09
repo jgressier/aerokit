@@ -4,16 +4,17 @@
 
 import math
 import aerokit.aero.IterativeSolve as ITS
-import numpy      as np
+import numpy as np
 import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as degree
-from aerokit.common import defaultgas as defg # relative import is deprecated by doctest
+from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
 from aerokit.common._ode import _rkf45
 
 # --- NORMAL SHOCK WAVE ---
 
+
 def Ps_ratio(Mn, gamma=defg._gamma):
-    """ Computes static pressure ratio across a shockwave
+    """Computes static pressure ratio across a shockwave
 
     Args:
       Mn: upstream normal Mach number in shock reference frame
@@ -23,10 +24,11 @@ def Ps_ratio(Mn, gamma=defg._gamma):
         static pressure ratio
 
     """
-    return 1.+ (2.*gamma/(gamma+1.))*(Mn**2-1.)
+    return 1.0 + (2.0 * gamma / (gamma + 1.0)) * (Mn ** 2 - 1.0)
+
 
 def Mn_Ps_ratio(Pratio: float, gamma=defg._gamma):
-    """ Computes normal Mach number from static pressure ratio across a shockwave
+    """Computes normal Mach number from static pressure ratio across a shockwave
 
     Args:
       Pratio: static pressure ratio
@@ -36,7 +38,8 @@ def Mn_Ps_ratio(Pratio: float, gamma=defg._gamma):
         normal Mach number in shock reference frame
 
     """
-    return np.sqrt(1+(Pratio-1.)*(gamma+1.)/(2.*gamma)) 
+    return np.sqrt(1 + (Pratio - 1.0) * (gamma + 1.0) / (2.0 * gamma))
+
 
 def Rho_ratio(Mn, gamma=defg._gamma):
     """
@@ -48,7 +51,8 @@ def Rho_ratio(Mn, gamma=defg._gamma):
     Returns:
 
     """
-    return ((gamma+1.)*Mn**2)/(2.+(gamma-1.)*Mn**2)
+    return ((gamma + 1.0) * Mn ** 2) / (2.0 + (gamma - 1.0) * Mn ** 2)
+
 
 def Ts_ratio(Mn, gamma=defg._gamma):
     """
@@ -60,7 +64,8 @@ def Ts_ratio(Mn, gamma=defg._gamma):
     Returns:
 
     """
-    return Ps_ratio(Mn, gamma)/Rho_ratio(Mn, gamma)
+    return Ps_ratio(Mn, gamma) / Rho_ratio(Mn, gamma)
+
 
 def downstream_Mn(Mn, gamma=defg._gamma):
     """
@@ -72,46 +77,52 @@ def downstream_Mn(Mn, gamma=defg._gamma):
     Returns:
 
     """
-    return np.sqrt((1.+.5*(gamma-1.)*Mn**2)/(gamma*Mn**2-.5*(gamma-1.)))
+    return np.sqrt((1.0 + 0.5 * (gamma - 1.0) * Mn ** 2) / (gamma * Mn ** 2 - 0.5 * (gamma - 1.0)))
+
 
 def Pt_ratio(Mn, gamma=defg._gamma):
     """Total pressure ration through shock wave
 
     Args:
-      Mn: upstream relative normal Mach number to param 
+      Mn: upstream relative normal Mach number to param
       gamma:  (Default value = defg._gamma)
 
     Returns:
 
     """
-    return Ps_ratio(Mn, gamma)*Is.PtPs_Mach(downstream_Mn(Mn, gamma))/Is.PtPs_Mach(Mn, gamma)
+    return Ps_ratio(Mn, gamma) * Is.PtPs_Mach(downstream_Mn(Mn, gamma)) / Is.PtPs_Mach(Mn, gamma)
+
 
 def Mn_Pt_ratio(ptratio, gamma=defg._gamma):
     """
 
     Args:
-      ptratio: 
+      ptratio:
       gamma:  (Default value = defg._gamma)
 
     Returns:
 
     """
+
     def ptratio_of_mach(m):
         """
 
         Args:
-          m: 
+          m:
 
         Returns:
 
         """
         return Pt_ratio(m, gamma)
+
     if ptratio > 1:
         print("!!! cannot find Mn for Pt_ratio > 1")
         return 1
     return ITS.secant_solve(ptratio_of_mach, ptratio, 1.5)
 
+
 # --- LOCAL 2D SHOCK WAVE ---
+
 
 def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
     """
@@ -119,14 +130,15 @@ def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
     Args:
       Mach: param sigma:
       gamma: Default value = defg._gamma)
-      sigma: 
+      sigma:
 
     Returns:
 
     """
     sigrad = np.radians(sigma)
-    Mn     = Mach*np.sin(sigrad)
-    return sigma-np.degrees(np.arctan2(np.tan(sigrad), Rho_ratio(Mn, gamma)))
+    Mn = Mach * np.sin(sigrad)
+    return sigma - np.degrees(np.arctan2(np.tan(sigrad), Rho_ratio(Mn, gamma)))
+
 
 def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     """
@@ -134,12 +146,13 @@ def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     Args:
       Mach: param Pratio:
       gamma: Default value = defg._gamma)
-      Pratio: 
+      Pratio:
 
     Returns:
 
     """
-    return deflection_Mach_sigma(Mach, degree.asin(Mn_Ps_ratio(Pratio, gamma)/Mach), gamma)
+    return deflection_Mach_sigma(Mach, degree.asin(Mn_Ps_ratio(Pratio, gamma) / Mach), gamma)
+
 
 def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     """
@@ -147,16 +160,17 @@ def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     Args:
       Mach: param Pratio:
       gamma: Default value = defg._gamma)
-      Pratio: 
+      Pratio:
 
     Returns:
 
     """
     Mn0 = Mn_Ps_ratio(Pratio, gamma)
-    sig = degree.asin(Mn0/Mach)
+    sig = degree.asin(Mn0 / Mach)
     dev = deflection_Mach_sigma(Mach, sig, gamma)
     Mn1 = downstream_Mn(Mn0, gamma)
-    return Mn1/degree.sin(sig-dev)
+    return Mn1 / degree.sin(sig - dev)
+
 
 def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     """
@@ -164,23 +178,24 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     Args:
       Mach: param deflection:
       gamma: Default value = defg._gamma)
-      deflection: 
+      deflection:
 
     Returns:
 
     """
-    ka = (1. + .5*(gamma+1.)*Mach**2)*degree.tan(deflection)
-    kb = 1. - Mach**2
-    kc = (1. + .5*(gamma-1.)*Mach**2)*degree.tan(deflection)
-    kd = (ka**2/3. - kb)/3.
-    ke = 2.*ka**3/27. - ka*kb/3. + kc
-    if ke**2 - 4.*kd**3 > 0:
+    ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(deflection)
+    kb = 1.0 - Mach ** 2
+    kc = (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) * degree.tan(deflection)
+    kd = (ka ** 2 / 3.0 - kb) / 3.0
+    ke = 2.0 * ka ** 3 / 27.0 - ka * kb / 3.0 + kc
+    if ke ** 2 - 4.0 * kd ** 3 > 0:
         print("no weak shock wave solution")
-        return degree.asin(1./Mach)
+        return degree.asin(1.0 / Mach)
     else:
-        phi = np.arccos(-.5*ke/np.sqrt(kd**3))
-        kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
-        return degree.atan(1./kf)
+        phi = np.arccos(-0.5 * ke / np.sqrt(kd ** 3))
+        kf = 2.0 * np.sqrt(kd) * np.cos(phi / 3.0) - ka / 3.0
+        return degree.atan(1.0 / kf)
+
 
 def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     """
@@ -188,23 +203,24 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     Args:
       Mach: param deflection:
       gamma: Default value = defg._gamma)
-      deflection: 
+      deflection:
 
     Returns:
 
     """
-    ka = (1. + .5*(gamma+1.)*Mach**2)*degree.tan(deflection)
-    kb = 1. - Mach**2
-    kc = (1. + .5*(gamma-1.)*Mach**2)*degree.tan(deflection)
-    kd = (ka**2/3. - kb)/3.
-    ke = 2.*ka**3/27. - ka*kb/3. + kc
-    if ke**2 - 4.*kd**3 > 0:
+    ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(deflection)
+    kb = 1.0 - Mach ** 2
+    kc = (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) * degree.tan(deflection)
+    kd = (ka ** 2 / 3.0 - kb) / 3.0
+    ke = 2.0 * ka ** 3 / 27.0 - ka * kb / 3.0 + kc
+    if ke ** 2 - 4.0 * kd ** 3 > 0:
         print("no strong shock wave solution")
-        return 90.
+        return 90.0
     else:
-        phi = np.arccos(-.5*ke/np.sqrt(kd**3)) + 4*math.pi
-        kf  = 2.*np.sqrt(kd)*np.cos(phi/3.) - ka/3.
-        return degree.atan(1./kf)
+        phi = np.arccos(-0.5 * ke / np.sqrt(kd ** 3)) + 4 * math.pi
+        kf = 2.0 * np.sqrt(kd) * np.cos(phi / 3.0) - ka / 3.0
+        return degree.atan(1.0 / kf)
+
 
 def sigma_Mach_deflection(Mach, deflection, init=None, gamma=defg._gamma):
     """computes the shock angle from upstream Mach number and deflection angle
@@ -213,26 +229,29 @@ def sigma_Mach_deflection(Mach, deflection, init=None, gamma=defg._gamma):
       Mach: param deflection:
       init: Default value = None)
       gamma: Default value = defg._gamma)
-      deflection: 
+      deflection:
 
     Returns:
 
     """
     if init is None:
-        sig0 = degree.asin(1./Mach)+deflection
+        sig0 = degree.asin(1.0 / Mach) + deflection
     else:
         sig0 = init
+
     def local_f(sig):
         """
 
         Args:
-          sig: 
+          sig:
 
         Returns:
 
         """
         return deflection_Mach_sigma(Mach, sig, gamma)
-    return ITS.secant_solve(local_f, np.abs(deflection), sig0)*np.sign(deflection) 
+
+    return ITS.secant_solve(local_f, np.abs(deflection), sig0) * np.sign(deflection)
+
 
 def dev_Max(Mach, gamma=defg._gamma):
     """computes the maximum deviation (always subsonic downstream flow), separation of weak/strong shock
@@ -246,6 +265,7 @@ def dev_Max(Mach, gamma=defg._gamma):
     """
     return deflection_Mach_sigma(Mach, sigma_DevMax(Mach, gamma=gamma), gamma=gamma)
 
+
 def dev_Sonic(Mach, gamma=defg._gamma):
     """computes the deviation angle for a downstream SONIC Mach number
 
@@ -258,6 +278,7 @@ def dev_Sonic(Mach, gamma=defg._gamma):
     """
     return deflection_Mach_sigma(Mach, sigma_Sonic(Mach, gamma=gamma), gamma=gamma)
 
+
 def sigma_DevMax(Mach, gamma=defg._gamma):
     """computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
 
@@ -268,12 +289,21 @@ def sigma_DevMax(Mach, gamma=defg._gamma):
     Returns:
 
     """
-    fogpu = 4./(gamma+1.)
-    M2    = np.square(Mach)
-    #ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
-    #kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
-    #return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
-    return degree.asin(np.sqrt(1./fogpu/gamma/M2*(M2-fogpu+np.sqrt(M2*M2+2*(gamma-1.)*fogpu*M2+4.*fogpu))))
+    fogpu = 4.0 / (gamma + 1.0)
+    M2 = np.square(Mach)
+    # ka = (M2-1.)*(1.+.5*(gamma-1.)*M2)
+    # kb = .25*((gamma+1.)*M2-(3.-gamma))*M2 + 1.
+    # return degree.atan(np.sqrt((kb+np.sqrt(kb**2+ka))/ka))
+    return degree.asin(
+        np.sqrt(
+            1.0
+            / fogpu
+            / gamma
+            / M2
+            * (M2 - fogpu + np.sqrt(M2 * M2 + 2 * (gamma - 1.0) * fogpu * M2 + 4.0 * fogpu))
+        )
+    )
+
 
 def sigma_Sonic(Mach, gamma=defg._gamma):
     """computes the shock angle for a downstream SONIC Mach number
@@ -286,11 +316,13 @@ def sigma_Sonic(Mach, gamma=defg._gamma):
 
     """
     M2 = np.square(Mach)
-    ka = gamma-3+M2*(gamma+1)
-    kb = (gamma+1)*(np.square(M2-3)+gamma*np.square(M2+1))
-    return degree.asin(np.sqrt((ka+np.sqrt(kb))/(4*gamma*M2)))
+    ka = gamma - 3 + M2 * (gamma + 1)
+    kb = (gamma + 1) * (np.square(M2 - 3) + gamma * np.square(M2 + 1))
+    return degree.asin(np.sqrt((ka + np.sqrt(kb)) / (4 * gamma * M2)))
+
 
 # --- CONICAL SHOCK WAVE ---
+
 
 def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
     """
@@ -299,11 +331,12 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
       Mach: param sigma:
       gamma: Default value = defg._gamma)
       tol: Default value = 1.0e-6)
-      sigma: 
+      sigma:
 
     Returns:
 
     """
+
     def rhs(phi, data):
         """RHS for conical equations (2 equations)
 
@@ -315,36 +348,46 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
         """
         th = data[0]
         ma = data[1]
-        k  = 1.-(ma*degree.sin(phi-th))**2
-        rhs=np.zeros(2)
-        rhs[0] = -degree.sin(th)*degree.cos(phi-th)/degree.sin(phi)/k
-        rhs[1] =  np.pi/180.*degree.sin(th)*degree.sin(phi-th)/degree.sin(phi)/k*ma*(1.+.5*(gamma-1)*ma*ma)
+        k = 1.0 - (ma * degree.sin(phi - th)) ** 2
+        rhs = np.zeros(2)
+        rhs[0] = -degree.sin(th) * degree.cos(phi - th) / degree.sin(phi) / k
+        rhs[1] = (
+            np.pi
+            / 180.0
+            * degree.sin(th)
+            * degree.sin(phi - th)
+            / degree.sin(phi)
+            / k
+            * ma
+            * (1.0 + 0.5 * (gamma - 1) * ma * ma)
+        )
         return rhs
 
     # initial data for integration from downstream shock to wall
-    th   = deflection_Mach_sigma(Mach, sigma, gamma)
-    ma   = downstream_Mn(Mach*degree.sin(sigma), gamma)/degree.sin(sigma-th)
-    phi  = sigma
+    th = deflection_Mach_sigma(Mach, sigma, gamma)
+    ma = downstream_Mn(Mach * degree.sin(sigma), gamma) / degree.sin(sigma - th)
+    phi = sigma
     thma = np.array([th, ma])
-    h    = -phi/10.
+    h = -phi / 10.0
     conv = phi
-    while (abs(conv) >= tol):
+    while abs(conv) >= tol:
         dthma, err = _rkf45(rhs, phi, thma, h)
         # Accept integration step if error e is within tolerance
         if err <= tol:
             conv = thma[0] - phi
-            if conv/(h-dthma[0]) < 1:
-                h = h*conv/(h-dthma[0])
+            if conv / (h - dthma[0]) < 1:
+                h = h * conv / (h - dthma[0])
             else:
                 thma = thma + dthma
-                phi  = phi  + h
-                #print(Mach, sigma, phi, thma)
+                phi = phi + h
+                # print(Mach, sigma, phi, thma)
         else:
-            h = 0.9*h*(tol/err)**0.2
-            #print("new h ",h)
+            h = 0.9 * h * (tol / err) ** 0.2
+            # print("new h ",h)
 
-    deflection = .5*(thma[0] + phi)
+    deflection = 0.5 * (thma[0] + phi)
     return deflection
+
 
 def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
     """computes shock angle sigma from upstream Mach number and wall deflection
@@ -352,35 +395,39 @@ def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
     Args:
       Mach: param deflection:
       gamma: Default value = defg._gamma)
-      deflection: 
+      deflection:
 
     Returns:
 
     """
+
     def local_def(sig):
-        """internal wrapping function to iterative solve
-        """
+        """internal wrapping function to iterative solve"""
         return conical_deflection_Mach_sigma(Mach, sig, gamma)
-    return ITS.secant_solve(local_def, deflection, degree.asin(1./Mach)+deflection)
+
+    return ITS.secant_solve(local_def, deflection, degree.asin(1.0 / Mach) + deflection)
+
 
 def conical_Mach_walldeflection_sigma(deflection, sigma, gamma=defg._gamma):
-    """computes upstream Mach number from wall deflection and shock angle sigma 
+    """computes upstream Mach number from wall deflection and shock angle sigma
 
     Args:
       Mach: param deflection:
       gamma: Default value = defg._gamma)
-      deflection: 
+      deflection:
 
     Returns:
 
     """
     assert sigma > deflection
+
     def local_def(mach):
-        """internal wrapping function to iterative solve
-        """
-        #print("local mach sigma", mach, sigma)
+        """internal wrapping function to iterative solve"""
+        # print("local mach sigma", mach, sigma)
         return conical_deflection_Mach_sigma(mach, sigma, gamma)
-    return ITS.secant_solve(local_def, deflection, 1./degree.sin(sigma-.5*deflection))
+
+    return ITS.secant_solve(local_def, deflection, 1.0 / degree.sin(sigma - 0.5 * deflection))
+
 
 # backward compatibility
 Pi_ratio = Pt_ratio
