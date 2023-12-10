@@ -17,6 +17,43 @@ def test_cheb_initx():
     assert SpOp.x[-1] == 10.0
 
 
+def test_cheb_extrapol_exact():
+    n = 5
+    SpOp = ns.ChebCollocation(n)
+    f = lambda x: (x-.5)**2
+    x = np.linspace(-1., 1., 11, endpoint=True)
+    fx = SpOp.extrapol(f(SpOp.x), x)
+    assert np.allclose(fx, f(x), rtol=1e-12)
+
+
+def test_cheb_extrapol_approx():
+    n = 12
+    SpOp = ns.ChebCollocation(n)
+    f = lambda x: 1/(1.+x**2)
+    x = np.linspace(-1., 1., 11, endpoint=True)
+    fx = SpOp.extrapol(f(SpOp.x), x)
+    assert np.allclose(fx, f(x), rtol=1e-4)
+
+
+def test_cheb_fit_exact():
+    n = 5
+    SpOp = ns.ChebCollocation(n, 0., 10.)
+    f = lambda x: (x-1.)*(x-3.)*(x-7.)
+    x = np.linspace(0., 10., 51, endpoint=True)
+    fxi = SpOp.fit_to_gauss(x, f(x))
+    assert np.allclose(fxi, f(SpOp.x), rtol=1e-12)
+
+
+def test_cheb_fit_approx():
+    n = 20
+    SpOp = ns.ChebCollocation(n, 0., 10.)
+    f = lambda x: 2+np.sin(2*x)
+    x = np.linspace(0., 10., 51, endpoint=True)
+    fxi = SpOp.fit_to_gauss(x, f(x))
+    #print(np.abs(fxi-f(SpOp.x)).max())
+    assert np.allclose(fxi, f(SpOp.x), rtol=1e-4)
+
+
 def test_cheb_diff():
     def f(x):
         return np.exp(-((x - 0.1) ** 2))

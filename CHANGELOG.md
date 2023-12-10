@@ -16,6 +16,17 @@ pip show aerokit
 
 ## Versions
 
+### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
+
+#### new
+
+- `common.numspectral` extrapolation and fitting
+- `stability.Euler` with Rankine-Hugoniot conditions
+
+#### fixed
+
+- compilation of documentation on readthedocs
+ 
 ### [1.2.0](https://pypi.org/project/aerokit/) (2023-11-22)
 
 #### new
@@ -29,7 +40,7 @@ pip show aerokit
 
 #### fixed
 
--  `instance.riemann`: fix wave speeds for right wave if it is an expansion
+- `instance.riemann`: fix wave speeds for right wave if it is an expansion
 
 ### [1.1.2](https://pypi.org/project/aerokit/) (2021-04-15)
 

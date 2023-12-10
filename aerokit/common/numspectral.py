@@ -2,6 +2,7 @@
 
 """
 import numpy as np
+from numpy.polynomial import chebyshev
 from scipy.linalg import toeplitz
 from aerokit.common._dev import lazyprop
 
@@ -27,11 +28,18 @@ class ChebCollocation:
 
     @lazyprop
     def x(self):
-        return self._xmin + (self.xi - 1.0) / (-2.0) * (self._xmax - self._xmin)
+        return self._xi_to_x(self.xi)
+
+    def _x_to_xi(self, x):
+        return 1.-2.*(x-self._xmin)/ (self._xmax - self._xmin)
+
+    def _xi_to_x(self, xi):
+        """compute x for any xi"""
+        return self._xmin + (xi - 1.0) / (-2.0) * (self._xmax - self._xmin)
 
     def extrapol(self, fk, x):
         """
-        Compute the polynomial interpolant of the data (xk, fk),
+        Compute the polynomial interpolant of the data (xk, fk) to new x,
         where xk are the Chebyshev nodes.
 
         Parameters:
@@ -41,29 +49,23 @@ class ChebCollocation:
         Returns:
         - p: Vector of interpolated values.
         """
-        fk = np.array(fk).reshape(-1, 1)
-        x = np.array(x).reshape(-1, 1)
-        N = len(fk)
+        VdMxi = chebyshev.chebvander(self.xi, self._npts-1)
+        coefs = np.linalg.solve(VdMxi, fk)
+        fx = chebyshev.chebval(self._x_to_xi(x), coefs)
+        return fx
 
-        xk = np.sin(
-            np.pi
-            * np.array(list(range(N - 1, 0, -2)) + list(range(0, -N, -2)))
-            / (2 * (N - 1))
-        ).reshape(-1, 1)
+    def fit_to_gauss(self, x, f):
+        """compute value at collocation points that best fit (x,f) pairs
 
-        # Compute weights for Chebyshev formula
-        w = np.ones(N) * (-1) ** np.array(range(N))
-        w[0] = w[0] / 2
-        w[-1] = w[-1] / 2
+        Args:
+            x (_type_): _description_
+            f (_type_): _description_
+        """
+        VdM = chebyshev.chebvander(self._x_to_xi(x), self._npts-1)
+        coefs = np.linalg.lstsq(VdM, f)[0]
+        fxi = chebyshev.chebval(self.xi, coefs)
+        return fxi
 
-        # Compute quantities x-x(k) and their reciprocals
-        D = x - xk.T
-        eps = np.finfo(float).eps
-        D = 1.0 / (D + eps * (D == 0))
-
-        # Evaluate interpolant as matrix-vector products
-        p = np.sum(D * (w * fk.T), axis=1) / np.sum(D * w, axis=1)
-        return p.reshape(-1, 1)
 
     def matder(self, order: int):
         assert order >= 1

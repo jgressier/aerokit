@@ -2,10 +2,11 @@ import numpy as np
 import numpy.linalg as nplin
 import scipy.linalg as scilin
 import aerokit.common.numspectral as ns
+from typing import Any
 
 
 class LinOperator:
-    # this definition is related to arbitratry definition of omega q(t) ~ exp(-j * omega * t)
+    # this definition is related to arbitratry definition of omega: q(t) ~ exp(-j * omega * t)
     _harmonic_time_coef = -1j
     _BC_dict = {}
 
@@ -23,18 +24,18 @@ class LinOperator:
     def x(self):
         return self._diffop.x
 
-    def set_basestate(self, state):
+    def set_basestate(self, state: Any):
         """set base state as it will be used by derived class"""
         self._basestate = state
 
-    def _check_BC(self, bc):
+    def _check_BC(self, bc: Any):
         """BC should be a dict with at least a 'type' key"""
         xbc = {"type": bc} if isinstance(bc, str) else bc
         if xbc["type"] not in self._BC_dict.keys():
             raise ValueError(f"{xbc['type']} key not found in available BC keys: {self._BC_dict.keys()}")
         return xbc
 
-    def set_BC(self, Ltype: dict, Rtype: dict):
+    def set_BC(self, Ltype: Any, Rtype: Any):
         self._BC_type = [self._check_BC(Ltype), self._check_BC(Rtype)]
 
     def check_basestate(self):
