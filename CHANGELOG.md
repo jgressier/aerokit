@@ -16,6 +16,17 @@ pip show aerokit
 
 ## Versions
 
+### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
+
+#### new
+
+- `common.numspectral` extrapolation and fitting
+- `stability.Euler` with Rankine-Hugoniot conditions
+
+#### fixed
+
+- compilation of documentation on readthedocs
+ 
 ### [1.2.0](https://pypi.org/project/aerokit/) (2023-11-22)
 
 #### new
