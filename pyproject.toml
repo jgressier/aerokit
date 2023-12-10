@@ -1,6 +1,6 @@
 [project]
 name = "aerokit"
-version = "1.2.0"
+version = "1.2.1"
 description = "Python tools for basic fluid mechanics computations"
 authors = [{name="J. Gressier", email="jeremie.gressier@isae-supaero.fr"}]
 readme = "README.md"
@@ -63,7 +63,7 @@ line-length = 110
 skip-string-normalization = true
 
 [tool.bumpver]
-current_version = "v1.2.0"
+current_version = "v1.2.1"
 version_pattern = "vMAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} to {new_version}"
 commit = true
