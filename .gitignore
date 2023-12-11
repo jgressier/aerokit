@@ -11,6 +11,8 @@ __pycache__/
 .python-version
 
 # Unit test / coverage reports
+build/
+aerokit.egg-info/
 htmlcov/
 .tox/
 .nox/
