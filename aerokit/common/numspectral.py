@@ -62,7 +62,7 @@ class ChebCollocation:
             f (_type_): _description_
         """
         VdM = chebyshev.chebvander(self._x_to_xi(x), self._npts-1)
-        coefs = np.linalg.lstsq(VdM, f)[0]
+        coefs = np.linalg.lstsq(VdM, f, rcond=None)[0]
         fxi = chebyshev.chebval(self.xi, coefs)
         return fxi
 
