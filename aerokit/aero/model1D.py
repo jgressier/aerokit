@@ -12,7 +12,6 @@ Afloat = TypeVar('Afloat', float, np.ndarray)
 
 # -- class --
 
-
 class state:
     """
     defines a one dimensional state class
@@ -35,7 +34,7 @@ class state:
 
     @property
     def size(self):
-        return self.rho.size if isinstance(self.rho, np.ndarray) else 1
+        return max((q.size if isinstance(q, np.ndarray) else 1) for q in (self.rho, self.u, self.p))
 
     def copy(self):
         return state(self.rho, self.u, self.p, self._gamma)
