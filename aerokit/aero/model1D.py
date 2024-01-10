@@ -12,7 +12,38 @@ Afloat = TypeVar('Afloat', float, np.ndarray)
 
 # -- class --
 
-class state:
+
+class __state(): # parent class not specific to 1D
+    __init_attributes = ('rho', 'u', 'p', 'gamma')
+
+    def __init__(self):
+        self.rho = None
+        self.p = None
+        self._gamma = None
+
+    def asound(self):
+        """returns speed of sound"""
+        return np.sqrt(self._gamma * self.p / self.rho) #type: ignore
+
+    def Vmag(self):
+        pass
+
+    def KinE(self):
+        pass
+
+    def Mach(self):
+        pass
+
+    def Ptot(self):
+        """returns Total pressure"""
+        return self.p * Is.PtPs_Mach(self.Mach(), self._gamma)
+
+    def rTtot(self):
+        """returns Total temperature"""
+        return self.p / self.rho + (self._gamma - 1.0) / self._gamma * self.KinE() #type: ignore
+
+
+class State1d(__state):
     """
     defines a one dimensional state class
 
@@ -39,8 +70,22 @@ class state:
     def copy(self):
         return state(self.rho, self.u, self.p, self._gamma)
 
+    def KinE(self):
+        return .5*self.u**2
+
+    def Vmag(self):
+        return np.abs(self.u)
+
+    def Mach(self):
+        """returns Mach number"""
+        return self.u / self.asound()
+
+    def massflow(self):
+        """returns massflow"""
+        return self.rho * self.u
+
     def state_RH(self):
-        """return Rankine-Hugoniot jump state"""
+        """return steady Rankine-Hugoniot jump state"""
         M = self.Mach()
         R = sw.Rho_ratio(M, self._gamma)
         return state(
@@ -51,7 +96,7 @@ class state:
         """return state defined by Mach number through isoenergetic isentropic transformation"""
         ps = self.rTtot() / Is.PtPs_Mach(Mach, self._gamma)
         rts = self.rTtot() / Is.TtTs_Mach(Mach, self._gamma)
-        return state(rho=ps / rts, u=Mach * np.sqrt(self._gamma * rts), p=ps)
+        return State1d(rho=ps / rts, u=Mach * np.sqrt(self._gamma * rts), p=ps)
 
     def compute_from_pt_rtt_M(self, pt, rtt, M):
         ps = pt / Is.PtPs_Mach(M, self._gamma)
@@ -79,11 +124,9 @@ class state:
 
     def __getitem__(self, i):
         assert isinstance(self.rho, np.ndarray)
-        return state(self.rho[i], self.u[i], self.p[i])
-
-    def asound(self):
-        """returns speed of sound"""
-        return np.sqrt(self._gamma * self.p / self.rho)
+        assert isinstance(self.u, np.ndarray)
+        assert isinstance(self.p, np.ndarray)
+        return State1d(self.rho[i], self.u[i], self.p[i])
 
     def left_acoustic(self):
         """returns left 'actual' speed of sound"""
@@ -93,22 +136,6 @@ class state:
         """returns left 'actual' speed of sound"""
         return self.u + np.sqrt(self._gamma * self.p / self.rho)
 
-    def Mach(self):
-        """returns Mach number"""
-        return self.u / self.asound()
 
-    def massflow(self):
-        """returns massflow"""
-        return self.rho * self.u
-
-    def Ptot(self):
-        """returns Total pressure"""
-        return self.p * Is.PtPs_Mach(self.Mach(), self._gamma)
-
-    def rTtot(self):
-        """returns Total temperature"""
-        return self.p / self.rho + 0.5 * (self._gamma - 1.0) / self._gamma * self.u ** 2
-
-    # def rTtot(self):
-    # 	"""returns speed of sound"""
-    # 	return self.u/self.asound()
+class state(State1d): # for backward compatibility
+    pass
