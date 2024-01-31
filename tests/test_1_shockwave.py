@@ -1,3 +1,4 @@
+from aerokit.aero import degree
 import aerokit.aero.ShockWave as sw
 import numpy as np
 import pytest
@@ -81,3 +82,42 @@ def test_conical_shock_sigma():
 def test_conical_shock_mach():
     mach = sw.conical_Mach_walldeflection_sigma(30.0, 45.0)
     assert mach == pytest.approx(2.2376, rel=1.0e-4)  # solution of iterative process
+
+
+@pytest.mark.parametrize("mach", [1.1, 2., 10.])
+def test_devmax_consistency(mach):
+    sig = sw.sigma_DevMax(mach)
+    devmax = sw.dev_Max(mach)
+    devm, devp = (sw.deflection_Mach_sigma(mach, coef*sig) for coef in (.99, 1.01))
+    assert devm < devmax
+    assert devp < devmax
+
+
+@pytest.mark.parametrize("gam", [1.2, 1.4, 1.6])
+def test_devmaxMinf(gam):
+    Minf = 1e10
+    assert sw.dev_MaxMinf(gam) == pytest.approx(sw.dev_Max(Minf, gam))
+
+
+@pytest.mark.parametrize("mach", [1.1, 2., 10.])
+def test_M1sonic(mach):
+    sig = sw.sigma_Sonic(mach)
+    dev = sw.dev_Sonic(mach)
+    Mn1 = sw.downstream_Mn(mach*degree.sin(sig))
+    assert Mn1/degree.sin(sig-dev) == pytest.approx(1.)
+
+
+@pytest.mark.parametrize("dev", [1., 5., 10., 40.])
+def test_mach_devmax(dev):
+    M0max = sw.Mach_DevMax(dev)
+    assert M0max > 1.
+    newdev = sw.dev_Max(M0max)
+    assert newdev == pytest.approx(dev)
+
+
+@pytest.mark.parametrize("dev", [1., 5., 10., 40.])
+def test_mach_sonic(dev):
+    M0 = sw.Mach_DevSonic(dev)
+    sig = sw.sigma_Sonic(M0)
+    Mn1 = sw.downstream_Mn(M0*degree.sin(sig))
+    assert Mn1/degree.sin(sig-dev) == pytest.approx(1.)

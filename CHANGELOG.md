@@ -16,6 +16,12 @@ pip show aerokit
 
 ## Versions
 
+### [1.2.x](https://pypi.org/project/aerokit/) (2024-02-xx)
+
+#### new
+
+- `aero.ShockWave`: maximum deviation, and Mach at maximum deviation and sonic points
+
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
 
 #### new
