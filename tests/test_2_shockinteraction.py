@@ -15,4 +15,3 @@ def test_wronginit():
 def test_init():
     P1 = SWI.ShockInteraction(2., 40., -45.)
     print(P1.solve())
-    raise ValueError

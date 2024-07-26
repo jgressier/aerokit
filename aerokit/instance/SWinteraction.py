@@ -4,10 +4,11 @@
 """
 
 import numpy as np
+from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
 import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
-from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
+import aerokit.aero.model2Dpolar as M2D
 from scipy.optimize import newton
 
 
@@ -25,11 +26,16 @@ class ShockInteraction:
     def __init__(self, M0, sigma01, sigma02, gamma=defg._gamma):
         if M0 <= 1.0:
             raise ValueError("upstream Mach number M0 must be supersonic")
-        self._M0 = M0
+        self._state = dict()
+        self._state[0] = M2D.state2Dpolar(M0, 0.) # default angle=0., rho and p normalized
         self._gamma = gamma
         self.sigma01 = sigma01  # use setter
-        self.sigma02 = sigma12  # use setter
+        self.sigma02 = sigma02  # use setter
 
+    @property
+    def M0(self):
+        return self._state[0].Mach
+    
     @property
     def sigma01(self):
         return self._sigma01
@@ -41,27 +47,29 @@ class ShockInteraction:
     @sigma01.setter
     def sigma01(self, value):
         self._solved = False
-        if value < deg.asin(1 / self._M0):
-            print(value, deg.asin(1 / self._M0))
+        if value < deg.asin(1 / self.M0):
             raise ValueError("sigma01 angle must be more than µ0")
         self._sigma01 = value
-        self._theta1 = sw.deflection_Mach_sigma(self._M0, self._sigma01, self._gamma)
+        self._state[1] = self[0].shock_sigma(value)
 
     @sigma02.setter
     def sigma02(self, value):
         self._solved = False
-        if value > -deg.asin(1 / self._M0):
+        if value > -deg.asin(1 / self.M0):
             raise ValueError("sigma02 angle must be negative and (abs) more than µ0")
         self._sigma02 = value
-        self._theta2 = sw.deflection_Mach_sigma(self._M0, self._sigma02, self._gamma)
+        self._state[2] = self[0].shock_sigma(value)
 
+    def __getitem__(self, value) -> M2D.state2Dpolar:
+        return self._state[value]
+    
     def solve(self):
-        Mn01 = self._M0*deg.sin(self._sigma01)
-        Mn02 = self._M0*deg.sin(self._sigma02)
+        Mn01 = self.M0*deg.sin(self._sigma01)
+        Mn02 = self.M0*deg.sin(self._sigma02)
         p1 = sw.Ps_ratio(Mn01, self._gamma)
         p2 = sw.Ps_ratio(Mn02, self._gamma)
         def delta_p(theta):
-            
-        th_init = (self._theta1 + self._theta2) / 2
+            return 1.            
+        th_init = 0.
 
-        return th
+        return th_init
