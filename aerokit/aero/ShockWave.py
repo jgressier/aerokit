@@ -128,6 +128,7 @@ def Mn_Pt_ratio(ptratio, gamma=defg._gamma):
 def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
     """
     computes deflection (either weak or strong) from upstream Mach and sigma shock angle
+    (handle negative sigma angles)
 
     Args:
       Mach: param sigma:
