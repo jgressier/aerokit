@@ -9,7 +9,7 @@ import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
 import aerokit.aero.model2Dpolar as M2D
-from scipy.optimize import newton
+from scipy import optimize
 
 
 class ShockInteraction:
@@ -64,12 +64,26 @@ class ShockInteraction:
         return self._state[value]
     
     def solve(self):
+        """solve the interaction of shocks using intersection points
+        in the p/angle diagram
+
+        Returns:
+            _type_: _description_
+        """
         Mn01 = self.M0*deg.sin(self._sigma01)
         Mn02 = self.M0*deg.sin(self._sigma02)
         p1 = sw.Ps_ratio(Mn01, self._gamma)
         p2 = sw.Ps_ratio(Mn02, self._gamma)
-        def delta_p(theta):
-            return 1.            
-        th_init = 0.
 
-        return th_init
+        def delta_p(theta):
+            Q3 = self[1].weakshock_deviation(theta-self[1].angle)
+            Q4 = self[2].weakshock_deviation(theta-self[2].angle)
+            return Q4.p-Q3.p
+        
+        th_init = 0.
+        sol = optimize.root_scalar(delta_p, x0=th_init, method='newton')
+        theta = sol.root
+        self.solved = sol.converged
+        self._state[3] = self[1].weakshock_deviation(theta-self[1].angle)
+        self._state[4] = self[2].weakshock_deviation(theta-self[2].angle)
+        return theta

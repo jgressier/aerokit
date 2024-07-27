@@ -14,4 +14,6 @@ def test_wronginit():
 
 def test_init():
     P1 = SWI.ShockInteraction(2., 40., -45.)
-    print(P1.solve())
+    P1.solve()
+    assert P1.solved
+    assert abs(P1[3].p - P1[4].p) / P1[0].p < 1.e-6

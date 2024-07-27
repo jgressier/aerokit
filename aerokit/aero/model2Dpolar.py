@@ -20,7 +20,7 @@ class state2Dpolar():
             p
     """
 
-    def __init__(self, Mach, angle, rho=1., p=1., gamma=defg._gamma):
+    def __init__(self, Mach, angle=0., rho=1., p=1., gamma=defg._gamma):
         self._gamma = gamma
         self.rho = rho
         self.Mach = Mach
@@ -43,7 +43,7 @@ class state2Dpolar():
     def weakshock_deviation(self, deviation):
         sigma = sw.weaksigma_Mach_deflection(self.Mach, deviation, self._gamma)
         Mn0 = self.Mach * deg.sin(sigma)
-        M1 = sw.downstream_Mn(Mn, self._gamma)/deg.sin(sigma-deviation)
+        M1 = sw.downstream_Mn(Mn0, self._gamma)/deg.sin(sigma-deviation)
         return state2Dpolar(M1, self.angle+deviation,
                             rho=self.rho*sw.Rho_ratio(Mn0, self._gamma),
                             p=self.p*sw.Ps_ratio(Mn0, self._gamma),)
