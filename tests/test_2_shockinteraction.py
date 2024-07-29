@@ -4,16 +4,36 @@ import pytest
 
 def test_wronginit():
     with pytest.raises(ValueError) as e_info:
-        P1 = SWI.ShockInteraction(.5, 40., -45.)
+        Pb = SWI.ShockInteraction(.5, 40., -45.)
     with pytest.raises(ValueError) as e_info:
-        P1 = SWI.ShockInteraction(2., 10., -45.)
+        Pb = SWI.ShockInteraction(2., 10., -45.)
     with pytest.raises(ValueError) as e_info:
-        P1 = SWI.ShockInteraction(2., 30., -15.)
+        Pb = SWI.ShockInteraction(2., 30., -15.)
     with pytest.raises(ValueError) as e_info:
-        P1 = SWI.ShockInteraction(2., -40., 40.)
+        Pb = SWI.ShockInteraction(2., -40., 40.)
 
 def test_init():
-    P1 = SWI.ShockInteraction(2., 40., -45.)
-    P1.solve()
-    assert P1.solved
-    assert abs(P1[3].p - P1[4].p) / P1[0].p < 1.e-6
+    Pb = SWI.ShockInteraction(2., 40., -45.)
+    Pb.solve()
+    assert Pb.solved
+    assert Pb.check34balanced()
+
+def test_weakweak():
+    Pb = SWI.ShockInteraction(2., 35., -40.)
+    Pb.solve()
+    assert Pb.check34balanced()
+    assert Pb[3].angle == pytest.approx(-4.8651971)
+
+def test_weakstrong():
+    Pb = SWI.ShockInteraction(4., 35., -90.)
+    print(Pb.solve(verbose=True))
+    assert Pb.check34balanced()
+    assert Pb[3].angle == pytest.approx(-15.527119)
+    # 2 and 4 must be the same states and subsonic
+    assert Pb[2].Mach < 1
+    assert Pb[2].Mach == Pb[4].Mach
+    assert Pb[2].angle == Pb[4].angle
+    assert Pb[2].p == Pb[4].p
+    # 0 to 2 shock angle must be corrected
+    assert Pb.sigma01 == 35.
+    assert Pb.sigma02 == 91.

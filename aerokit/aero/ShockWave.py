@@ -186,18 +186,19 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     Returns:
 
     """
-    ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(deflection)
+    dev = abs(deflection) # negative deflection is another branch
+    ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(dev)
     kb = 1.0 - Mach ** 2
-    kc = (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) * degree.tan(deflection)
+    kc = (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) * degree.tan(dev)
     kd = (ka ** 2 / 3.0 - kb) / 3.0
     ke = 2.0 * ka ** 3 / 27.0 - ka * kb / 3.0 + kc
     if ke ** 2 - 4.0 * kd ** 3 > 0:
         print("no weak shock wave solution")
-        return degree.asin(1.0 / Mach)
+        return degree.asin(1.0 / Mach)*np.sign(deflection)
     else:
         phi = np.arccos(-0.5 * ke / np.sqrt(kd ** 3))
         kf = 2.0 * np.sqrt(kd) * np.cos(phi / 3.0) - ka / 3.0
-        return degree.atan(1.0 / kf)
+        return degree.atan(1.0 / kf)*np.sign(deflection)
 
 
 def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):

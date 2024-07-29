@@ -14,7 +14,7 @@ from scipy import optimize
 
 class ShockInteraction:
     """Class to define and compute shock interaction
-    upstream flow is 0 ;
+    upstream flow is 0 ; 1 and 2 are respective bottom and top downstream states
 
     Args:
         M0 (float): upstream Mach number
@@ -27,7 +27,7 @@ class ShockInteraction:
         if M0 <= 1.0:
             raise ValueError("upstream Mach number M0 must be supersonic")
         self._state = dict()
-        self._state[0] = M2D.state2Dpolar(M0, 0.) # default angle=0., rho and p normalized
+        self._state[0] = M2D.state2Dpolar(M0, 0.0)  # default angle=0., rho and p normalized
         self._gamma = gamma
         self.sigma01 = sigma01  # use setter
         self.sigma02 = sigma02  # use setter
@@ -35,7 +35,7 @@ class ShockInteraction:
     @property
     def M0(self):
         return self._state[0].Mach
-    
+
     @property
     def sigma01(self):
         return self._sigma01
@@ -62,7 +62,10 @@ class ShockInteraction:
 
     def __getitem__(self, value) -> M2D.state2Dpolar:
         return self._state[value]
-    
+
+    def check34balanced(self, tol=1.0e-6):
+        return (abs(self[3].p - self[4].p) / self[0].p < tol) and (abs(self[3].angle - self[4].angle) < tol)
+
     def solve(self):
         """solve the interaction of shocks using intersection points
         in the p/angle diagram
@@ -70,20 +73,18 @@ class ShockInteraction:
         Returns:
             _type_: _description_
         """
-        Mn01 = self.M0*deg.sin(self._sigma01)
-        Mn02 = self.M0*deg.sin(self._sigma02)
-        p1 = sw.Ps_ratio(Mn01, self._gamma)
-        p2 = sw.Ps_ratio(Mn02, self._gamma)
-
+        print(self[1].Mach, self[2].Mach)
+        Q1i = self[1] if self[1].Mach > 1 else self[0]
+        Q2i = self[2] if self[2].Mach > 1 else self[0]
         def delta_p(theta):
-            Q3 = self[1].weakshock_deviation(theta-self[1].angle)
-            Q4 = self[2].weakshock_deviation(theta-self[2].angle)
-            return Q4.p-Q3.p
-        
-        th_init = 0.
+            Q3 = Q1i.weakshock_deviation(theta - Q1i.angle)
+            Q4 = Q2i.weakshock_deviation(theta - Q2i.angle)
+            return Q4.p - Q3.p
+
+        th_init = 0.0
         sol = optimize.root_scalar(delta_p, x0=th_init, method='newton')
         theta = sol.root
         self.solved = sol.converged
-        self._state[3] = self[1].weakshock_deviation(theta-self[1].angle)
-        self._state[4] = self[2].weakshock_deviation(theta-self[2].angle)
+        self._state[3] = self[1].weakshock_deviation(theta - self[1].angle)
+        self._state[4] = self[2].weakshock_deviation(theta - self[2].angle)
         return theta
