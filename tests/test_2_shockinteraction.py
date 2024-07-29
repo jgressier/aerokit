@@ -23,12 +23,14 @@ def test_weakweak():
     Pb.solve()
     assert Pb.check34balanced()
     assert Pb[3].angle == pytest.approx(-4.8651971)
+    Pb.plot_angle_pressure()
+    SWI.plotsw.plt.show()
 
 def test_weakstrong():
     Pb = SWI.ShockInteraction(4., 35., -90.)
     print(Pb.solve(verbose=True))
     assert Pb.check34balanced()
-    assert Pb[3].angle == pytest.approx(-15.527119)
+    assert Pb[3].angle == pytest.approx(2.3707989)
     # 2 and 4 must be the same states and subsonic
     assert Pb[2].Mach < 1
     assert Pb[2].Mach == Pb[4].Mach
@@ -36,4 +38,6 @@ def test_weakstrong():
     assert Pb[2].p == Pb[4].p
     # 0 to 2 shock angle must be corrected
     assert Pb.sigma01 == 35.
-    assert Pb.sigma02 == 91.
+    assert Pb.sigma02 == pytest.approx(89.33539)
+    Pb.plot_angle_pressure()
+    SWI.plotsw.plt.show()
