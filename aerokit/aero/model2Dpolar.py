@@ -40,6 +40,9 @@ class state2Dpolar():
     def rotate(self, deviation):
         self.angle += deviation
 
+    def devmax(self):
+        return sw.dev_Max(self.Mach, self._gamma)
+    
     def weakshock_deviation(self, deviation):
         sigma = sw.weaksigma_Mach_deflection(self.Mach, deviation, self._gamma)
         Mn0 = self.Mach * deg.sin(sigma)

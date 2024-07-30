@@ -24,12 +24,11 @@ class ShockInteraction:
         gamma (float, optional): ratio of specific quantities
     """
 
-    def __init__(self, M0, sigma01, sigma02, gamma=defg._gamma):
+    def __init__(self, M0, sigma01, sigma02):
         if M0 <= 1.0:
             raise ValueError("upstream Mach number M0 must be supersonic")
         self._state = dict()
         self._state[0] = M2D.state2Dpolar(M0, 0.0)  # default angle=0., rho and p normalized
-        self._gamma = gamma
         self.sigma01 = sigma01  # use setter
         self.sigma02 = sigma02  # use setter
 
@@ -74,11 +73,13 @@ class ShockInteraction:
         Returns:
             _type_: _description_
         """
-        print(f"SWI solve init:\n  Q1:{self[1]}\n  Q2:{self[2]}")
+        zvar = True # change variable to optimize newton
+        #print(f"SWI solve init:\n  Q1:{self[1]}\n  Q2:{self[2]}")
         Q1i = self[1] if self[1].Mach > 1 else self[0]
         Q2i = self[2] if self[2].Mach > 1 else self[0]
-
-        def delta_p(theta):
+        deltarange = 1.1*max([abs(Q.angle)+Q.devmax() for Q in (Q1i, Q2i) ])
+        def delta_p(ztheta):
+            theta = deg.atan(ztheta)*deltarange/90. if zvar else ztheta
             if self[1].Mach > 1:
                 Q3 = Q1i.weakshock_deviation(theta - Q1i.angle)
             else:
@@ -90,8 +91,10 @@ class ShockInteraction:
             if verbose: print(f"SWI iterations:\n  {Q3}\n  {Q4}")
             return Q4.p - Q3.p
 
-        th_init = -1.
-        sol = optimize.root_scalar(delta_p, x0=th_init, method='newton')
+        th_init = self[1].angle-.5*self[1].devmax() #5*(Q1i.angle + Q2i.angle)
+        zth = deg.tan(90./deltarange*th_init) if zvar else th_init
+        sol = optimize.root_scalar(delta_p, x0=zth, method='newton')#, bracket=[-30., 30.])
+        if zvar: sol.root = deg.atan(sol.root)*deltarange/90.
         theta = sol.root
         self.solved = sol.converged
         if self[1].Mach > 1:
@@ -101,14 +104,12 @@ class ShockInteraction:
             self._state[1] = self[3].copy()
             self._sigma01 = sw.deflection_Mach_sigma(self.M0, theta-self[0].angle)
         if self[2].Mach > 1:
-            print('weak test')
             self._state[4] = self[2].weakshock_deviation(theta - self[2].angle)
         else:
-            print('strong test')
             self._state[4] = self[0].strongshock_deviation(theta - self[0].angle)
             self._state[2] = self[4].copy()
             self._sigma02 = sw.strongsigma_Mach_deflection(self.M0, theta-self[0].angle)
-        print(f"SWI solve end:\n  Q1:{self[1]}\n  Q2:{self[2]}\n  Q3:{self[3]}\n  Q4:{self[4]}")
+        #print(f"SWI solve end:\n  Q1:{self[1]}\n  Q2:{self[2]}\n  Q3:{self[3]}\n  Q4:{self[4]}")
         return sol
 
     def plot_angle_pressure(self, ax=plotsw.plt):
@@ -119,7 +120,6 @@ class ShockInteraction:
         if self[2].Mach > 1:
             plotsw.plot_theta_pressure(self[2].Mach, thet_init=self[2].angle, p_init=self[2].p, color='red', ax=ax)
 
-        # # plot symbols for flow regions
-        # plt.plot(0,    1.,   'bo')
-        # plt.plot(wdev, p1p0, 'wo')
-        # plt.plot(0.,   p2p0, 'go')
+        # plot symbols for flow regions
+        for i, sty in zip([1, 2, 3, 4], ['ro', 'ro', 'rx', 'bx']):
+            ax.plot(self[i].angle, self[i].p, sty)
