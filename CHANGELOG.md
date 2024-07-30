@@ -16,11 +16,17 @@ pip show aerokit
 
 ## Versions
 
-### [1.2.x](https://pypi.org/project/aerokit/) (2024-02-xx)
+### [1.3.x](https://pypi.org/project/aerokit/) (2024-02-xx)
 
 #### new
 
 - `aero.ShockWave`: maximum deviation, and Mach at maximum deviation and sonic points
+- `aero.model2Dpolar`: 2d supersonic state model
+- `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
+
+#### fix
+
+- `aero.ShockWave`: handle negative deviation and right branches of polar
 
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
 
