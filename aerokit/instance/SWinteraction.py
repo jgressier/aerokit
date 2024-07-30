@@ -88,18 +88,24 @@ class ShockInteraction:
         def delta_p(ztheta):
             theta = z2ang(ztheta)
             if self[1].Mach > 1:
-                Q3 = Q1i.weakshock_deviation(theta - Q1i.angle)
+                dev = theta - Q1i.angle
+                Q3 = Q1i.weakshock_deviation(dev)
+                if abs(dev) > Q1i.devmax(): # penalty
+                    Q3.p += 10*deg.tan(-dev - Q1i.devmax())*self[0].p
             else:
                 Q3 = Q1i.strongshock_deviation(theta - self[0].angle)
             if self[2].Mach > 1:
-                Q4 = Q2i.weakshock_deviation(theta - Q2i.angle)
+                dev = theta - Q2i.angle
+                Q4 = Q2i.weakshock_deviation(dev)
+                if abs(dev) > Q2i.devmax(): # penalty
+                    Q4.p += 10*deg.tan(dev - Q2i.devmax())*self[0].p
             else:
                 Q4 = Q2i.strongshock_deviation(theta - self[0].angle)
             if verbose: print(f"SWI iterations:\n  {Q3}\n  {Q4}")
             return Q4.p - Q3.p
 
-        z0 = ang2z(Q2i.angle if self[2].Mach > 1 else Q1i.angle-.5*Q1i.devmax())
-        z1 = ang2z(Q1i.angle if self[1].Mach > 1 else Q2i.angle+.5*Q2i.devmax())
+        z0 = ang2z(.8*Q2i.angle if self[2].Mach > 1 else Q1i.angle-.5*Q1i.devmax())
+        z1 = ang2z(.8*Q1i.angle if self[1].Mach > 1 else Q2i.angle+.5*Q2i.devmax())
         #z0 = ang2z(self[1].angle-.5*self[1].devmax())
         #sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='secant')#, bracket=[-30., 30.])
         sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='newton')#, bracket=[-30., 30.])
