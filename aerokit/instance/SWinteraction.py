@@ -107,8 +107,8 @@ class ShockInteraction:
         z0 = ang2z(.8*Q2i.angle if self[2].Mach > 1 else Q1i.angle-.5*Q1i.devmax())
         z1 = ang2z(.8*Q1i.angle if self[1].Mach > 1 else Q2i.angle+.5*Q2i.devmax())
         #z0 = ang2z(self[1].angle-.5*self[1].devmax())
-        #sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='secant')#, bracket=[-30., 30.])
-        sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='newton')#, bracket=[-30., 30.])
+        sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='secant')#, bracket=[-30., 30.])
+        #sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='newton')#, bracket=[-30., 30.])
         sol.root = z2ang(sol.root)
         theta = sol.root
         self.solved = sol.converged

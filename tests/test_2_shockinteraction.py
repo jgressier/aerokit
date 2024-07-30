@@ -45,7 +45,7 @@ def test_weakstrong():
     #Pb.plot_angle_pressure()
     #SWI.plotsw.plt.show()
 
-@pytest.mark.xfail
+#@pytest.mark.xfail # newton fails, secant ok
 @pytest.mark.parametrize("M0, sig1, sig2", [(2., 35., -40), (3., 30., -45), (4., 50., -20)])
 def test_weakweak_tricky(M0, sig1, sig2):
     Pb = SWI.ShockInteraction(M0, sig1, sig2)
