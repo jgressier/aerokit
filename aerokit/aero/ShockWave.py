@@ -194,7 +194,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     ke = 2.0 * ka ** 3 / 27.0 - ka * kb / 3.0 + kc
     if ke ** 2 - 4.0 * kd ** 3 > 0:
         print("no weak shock wave solution")
-        return degree.asin(1.0 / Mach)*np.sign(deflection)
+        return sigma_DevMax(Mach, gamma)*np.sign(deflection)
     else:
         phi = np.arccos(-0.5 * ke / np.sqrt(kd ** 3))
         kf = 2.0 * np.sqrt(kd) * np.cos(phi / 3.0) - ka / 3.0

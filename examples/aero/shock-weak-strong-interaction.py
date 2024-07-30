@@ -7,7 +7,7 @@ import numpy as np
 
 counter = 0
 
-for M0 in [1.5, 2., 4., 6, 10.]:
+for M0 in [2., 3., 4., 6, 10.]:
     dev = np.linspace(.1*sw.dev_Sonic(M0), .8*sw.dev_Sonic(M0), 50)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8,4))
@@ -31,7 +31,7 @@ for M0 in [1.5, 2., 4., 6, 10.]:
     #ax1.set_ylim(-95., 95.)
     ax1.set_title(f"M0={M0}")
 
-    id = 10
+    id = 40
     swi = SWI.ShockInteraction(M0, sig1[id], -90.)
     sol = swi.solve(verbose=True)
     swi.plot_angle_pressure(ax=ax2)

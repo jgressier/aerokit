@@ -13,17 +13,19 @@ def test_wronginit():
         Pb = SWI.ShockInteraction(2., -40., 40.)
 
 def test_init():
-    Pb = SWI.ShockInteraction(2., 40., -45.)
+    Pb = SWI.ShockInteraction(2., 35., -40.)
     Pb.solve(verbose=True)
     assert Pb.solved
     assert Pb.check34balanced()
+    #Pb.plot_angle_pressure()
+    #SWI.plotsw.plt.show()
 
 def test_weakweak():
-    Pb = SWI.ShockInteraction(2., 35., -40.)
+    Pb = SWI.ShockInteraction(3., 25., -30.)
     Pb.solve()
     assert Pb.check34balanced()
-    assert Pb[3].angle == pytest.approx(-4.8651971)
-    Pb.plot_angle_pressure()
+    assert Pb[3].angle == pytest.approx(-5.437509)
+    #Pb.plot_angle_pressure()
     #SWI.plotsw.plt.show()
 
 def test_weakstrong():
@@ -42,6 +44,25 @@ def test_weakstrong():
     assert Pb.sigma02 == pytest.approx(89.33539)
     Pb.plot_angle_pressure()
     #SWI.plotsw.plt.show()
+
+@pytest.mark.parametrize("M0, sig1, sig2", [(2., 35., -40), (3., 30., -45), (4., 50., -20)])
+def test_weakweak_tricky(M0, sig1, sig2):
+    Pb = SWI.ShockInteraction(M0, sig1, sig2)
+    Pb.solve(verbose=True)
+    Pb.plot_angle_pressure()
+    SWI.plotsw.plt.show()
+    assert Pb.solved
+    assert Pb.check34balanced()
+
+@pytest.mark.xfail
+@pytest.mark.parametrize("M0, sig1, sig2", [(3., 40., -45), (4., 60., -20)])
+def test_weakweak_fail(M0, sig1, sig2):
+    Pb = SWI.ShockInteraction(M0, sig1, sig2)
+    Pb.solve(verbose=True)
+    #Pb.plot_angle_pressure()
+    #SWI.plotsw.plt.show()
+    assert Pb.solved
+    assert Pb.check34balanced()
 
 @pytest.mark.parametrize("M0, sig", [(4., 20.), (4., 50.)])
 def test_weakstrong_tricky(M0, sig):

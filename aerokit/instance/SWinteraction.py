@@ -78,8 +78,15 @@ class ShockInteraction:
         Q1i = self[1] if self[1].Mach > 1 else self[0]
         Q2i = self[2] if self[2].Mach > 1 else self[0]
         deltarange = 1.1*max([abs(Q.angle)+Q.devmax() for Q in (Q1i, Q2i) ])
+
+        def ang2z(a):
+            return deg.tan(90./deltarange*a) if zvar else a
+        
+        def z2ang(z):
+            return deg.atan(z)*deltarange/90. if zvar else z
+
         def delta_p(ztheta):
-            theta = deg.atan(ztheta)*deltarange/90. if zvar else ztheta
+            theta = z2ang(ztheta)
             if self[1].Mach > 1:
                 Q3 = Q1i.weakshock_deviation(theta - Q1i.angle)
             else:
@@ -91,10 +98,12 @@ class ShockInteraction:
             if verbose: print(f"SWI iterations:\n  {Q3}\n  {Q4}")
             return Q4.p - Q3.p
 
-        th_init = self[1].angle-.5*self[1].devmax() #5*(Q1i.angle + Q2i.angle)
-        zth = deg.tan(90./deltarange*th_init) if zvar else th_init
-        sol = optimize.root_scalar(delta_p, x0=zth, method='secant')#, bracket=[-30., 30.])
-        if zvar: sol.root = deg.atan(sol.root)*deltarange/90.
+        z0 = ang2z(Q2i.angle if self[2].Mach > 1 else Q1i.angle-.5*Q1i.devmax())
+        z1 = ang2z(Q1i.angle if self[1].Mach > 1 else Q2i.angle+.5*Q2i.devmax())
+        #z0 = ang2z(self[1].angle-.5*self[1].devmax())
+        #sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='secant')#, bracket=[-30., 30.])
+        sol = optimize.root_scalar(delta_p, x0=z0, x1=z1, method='newton')#, bracket=[-30., 30.])
+        sol.root = z2ang(sol.root)
         theta = sol.root
         self.solved = sol.converged
         if self[1].Mach > 1:
@@ -121,5 +130,5 @@ class ShockInteraction:
             plotsw.plot_theta_pressure(self[2].Mach, thet_init=self[2].angle, p_init=self[2].p, color='red', ax=ax)
 
         # plot symbols for flow regions
-        for i, sty in zip([1, 2, 3, 4], ['ro', 'ro', 'rx', 'bx']):
+        for i, sty in zip([1, 2, 3, 4], ['ro', 'ro', 'rx', 'b+']):
             ax.plot(self[i].angle, self[i].p, sty)
