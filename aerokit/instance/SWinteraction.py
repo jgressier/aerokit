@@ -93,7 +93,7 @@ class ShockInteraction:
 
         th_init = self[1].angle-.5*self[1].devmax() #5*(Q1i.angle + Q2i.angle)
         zth = deg.tan(90./deltarange*th_init) if zvar else th_init
-        sol = optimize.root_scalar(delta_p, x0=zth, method='newton')#, bracket=[-30., 30.])
+        sol = optimize.root_scalar(delta_p, x0=zth, method='secant')#, bracket=[-30., 30.])
         if zvar: sol.root = deg.atan(sol.root)*deltarange/90.
         theta = sol.root
         self.solved = sol.converged
