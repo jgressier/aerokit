@@ -6,7 +6,7 @@ import numpy as np
 from aerokit.aero import Isentropic, Supersonic
 from aerokit.common import defaultgas as defg
 from aerokit.aero.model1D import __state
-import aerokit.aero.ShockWave as sw
+#import aerokit.aero.ShockWave as sw
 import aerokit.aero.degree as deg
 from typing import TypeVar
 
@@ -32,8 +32,8 @@ class State2d(__state):
         self.v = v
         self.p = p
 
-    def __repr__(self):
-        return "state (rho, u, v, p) : (%s, %s, %s)" % (self.rho, self.u, self.v, self.p)
+    def __str__(self):
+        return "state (rho, u, v, p) : (%s, %s, %s, %s)" % (self.rho, self.u, self.v, self.p)
 
     @property
     def size(self):
@@ -98,5 +98,8 @@ class State2d(__state):
     #     self.__init__(rho=p / rts, u=M * np.sqrt(self._gamma * rts), p=p)
 
     def __getitem__(self, i):
-        assert isinstance(self.rho, np.ndarray)
+        for v in self.rho, self.u, self.v, self.p:
+            if not isinstance(v, np.ndarray):
+                # raise a type error
+                raise TypeError("object has not been initialized as an numpy ndarray")
         return State2d(self.rho[i], self.u[i], self.v[i], self.p[i])
