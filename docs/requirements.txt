@@ -1,7 +1,14 @@
-mkdocs-material
+aerokit >= 1.1
+# mkdocs-material
+# mkdocs-include-markdown-plugin
+# mkdocs-exclude
+# ipykernel
+# mkdocs-jupyter
+# mkdocstrings[python] <= 0.22
+mkdocs>=1.5,<1.6
+mkdocs-material>=9.5,<10
+mkdocstrings>=0.24,<0.25
+mkdocstrings-python>=1.8,<1.9
+mkdocs-jupyter>=0.24,<0.25
 mkdocs-include-markdown-plugin
 mkdocs-exclude
-aerokit >= 1.1
-ipykernel
-mkdocs-jupyter
-mkdocstrings[python] <= 0.22
