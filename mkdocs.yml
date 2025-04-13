@@ -54,5 +54,5 @@ plugins:
             #docstring_style: "restructured-text" # default is "google"
             filters:
               - "!^_"  # exclude all members starting with _
-      watch:
-        - aerokit
+      # watch: # not available in mkdocstrings 0.24
+      #   - aerokit
