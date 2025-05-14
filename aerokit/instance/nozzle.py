@@ -79,7 +79,7 @@ def _NPR_Ms_list(AsAc):
     NPR0 = Is.PtPs_Mach(Msub)
     Msup = mf.MachSup_Sigma(AsAc)
     Msh = sw.downstream_Mn(Msup)
-    NPRsw = Is.PtPs_Mach(Msh) / sw.Pi_ratio(Msup)
+    NPRsw = Is.PtPs_Mach(Msh) / sw.Pt_ratio(Msup)
     NPR1 = Is.PtPs_Mach(Msup)
     return NPR0, NPRsw, NPR1, Msub, Msh, Msup
 
@@ -219,5 +219,4 @@ class nozzle:
 
 if __name__ == "__main__":
     import doctest
-
     doctest.testmod()
