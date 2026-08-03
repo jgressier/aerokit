@@ -66,7 +66,7 @@ class ChebCollocation:
         assert order >= 1
         if order > self._max_Dorder:
             self.compute_matder(order)
-        return self._mapping.scale_derivative(self._matder[:, :, order - 1], order)
+        return self._mapping.transform_derivative_matrices(self._matder)[:, :, order - 1]
 
     def compute_matder(self, maxorder):
         """

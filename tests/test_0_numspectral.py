@@ -117,10 +117,10 @@ def test_cheb_diff_map_scaling():
     n = 20
     reference = ns.ChebCollocation(n)
     mapped = ns.ChebCollocation(n, xmin=-0.5, xmax=0.8)
-    reference.compute_matder(2)
-    mapped.compute_matder(2)
+    reference.compute_matder(4)
+    mapped.compute_matder(4)
     scale = 2.0 / 1.3
 
     assert np.allclose(mapped._matder, reference._matder)
-    assert np.allclose(mapped.matder(1), reference.matder(1) * scale)
-    assert np.allclose(mapped.matder(2), reference.matder(2) * scale**2)
+    for order in range(1, 5):
+        assert np.allclose(mapped.matder(order), reference.matder(order) * scale**order)
