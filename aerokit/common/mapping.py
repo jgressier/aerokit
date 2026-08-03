@@ -13,6 +13,10 @@ class Mapping(ABC):
     def x_to_xi(self, x):
         pass
 
+    @abstractmethod
+    def scale_derivative(self, derivative, order):
+        pass
+
 
 class AffineMapping(Mapping):
     """Affine mapping between [-1, 1] and [xmin, xmax]."""
@@ -26,3 +30,6 @@ class AffineMapping(Mapping):
 
     def x_to_xi(self, x):
         return 1. - 2. * (x - self.xmin) / (self.xmax - self.xmin)
+
+    def scale_derivative(self, derivative, order):
+        return derivative * (-2.0 / (self.xmax - self.xmin)) ** order

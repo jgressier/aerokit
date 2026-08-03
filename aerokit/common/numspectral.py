@@ -66,7 +66,7 @@ class ChebCollocation:
         assert order >= 1
         if order > self._max_Dorder:
             self.compute_matder(order)
-        return self._matder[:, :, order - 1]
+        return self._mapping.scale_derivative(self._matder[:, :, order - 1], order)
 
     def compute_matder(self, maxorder):
         """
@@ -107,6 +107,6 @@ class ChebCollocation:
             D = (ell + 1) * Z * (C * D.diagonal()[:, np.newaxis] - D)
             # D[L] = -D.sum(axis=1)
             np.fill_diagonal(D, -D.sum(axis=1))
-            DM[:, :, ell] = D * (-2.0 / (self._xmax - self._xmin)) ** (ell + 1)
+            DM[:, :, ell] = D
         self._matder = DM
         self._max_Dorder = maxorder
