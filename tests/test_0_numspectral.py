@@ -1,5 +1,5 @@
 import aerokit.common.numspectral as ns
-from aerokit.common.mapping import AffineMapping
+from aerokit.common.mapping import AffineMapping, SemiInfiniteAlgebraicMapping, SemiInfiniteRationalMapping
 import numpy as np
 import pytest
 
@@ -24,6 +24,36 @@ def test_affine_mapping_derivatives():
     assert mapping.d2xi_dx2() == 0.0
     assert mapping.d3xi_dx3() == 0.0
     assert mapping.d4xi_dx4() == 0.0
+
+
+@pytest.mark.parametrize(
+    "mapping, dxi_dx, d2xi_dx2, d3xi_dx3, d4xi_dx4",
+    [
+        (
+            SemiInfiniteRationalMapping(2.0),
+            lambda xi: (1.0 - xi) ** 2 / 4.0,
+            lambda xi: -(1.0 - xi) ** 3 / 8.0,
+            lambda xi: 3.0 * (1.0 - xi) ** 4 / 32.0,
+            lambda xi: -3.0 * (1.0 - xi) ** 5 / 32.0,
+        ),
+        (
+            SemiInfiniteAlgebraicMapping(2.0),
+            lambda xi: (1.0 - xi) * np.sqrt(1.0 - xi**2) / 2.0,
+            lambda xi: -(1.0 - xi) ** 2 * (2.0 * xi + 1.0) / 4.0,
+            lambda xi: 3.0 * xi * (1.0 - xi) ** 2 * np.sqrt(1.0 - xi**2) / 4.0,
+            lambda xi: 3.0 * (1.0 - xi) ** 3 * (1.0 - 2.0 * xi - 4.0 * xi**2) / 8.0,
+        ),
+    ],
+)
+def test_semi_infinite_mappings(mapping, dxi_dx, d2xi_dx2, d3xi_dx3, d4xi_dx4):
+    xi = np.array([-0.8, -0.2, 0.5])
+    assert np.allclose(mapping.x_to_xi(mapping.xi_to_x(xi)), xi)
+    assert mapping.xi_to_x(-1.0) == 0.0
+    assert np.isinf(mapping.xi_to_x(1.0))
+    assert np.allclose(mapping.dxi_dx(xi), dxi_dx(xi))
+    assert np.allclose(mapping.d2xi_dx2(xi), d2xi_dx2(xi))
+    assert np.allclose(mapping.d3xi_dx3(xi), d3xi_dx3(xi))
+    assert np.allclose(mapping.d4xi_dx4(xi), d4xi_dx4(xi))
 
 
 def test_cheb_extrapol_exact():
