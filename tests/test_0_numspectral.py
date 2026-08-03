@@ -1,4 +1,5 @@
 import aerokit.common.numspectral as ns
+from aerokit.common.mapping import AffineMapping
 import numpy as np
 import pytest
 
@@ -15,6 +16,14 @@ def test_cheb_initx():
     SpOp = ns.ChebCollocation(n, 0, 10.0)
     assert SpOp.x[0] == 0.0
     assert SpOp.x[-1] == 10.0
+
+
+def test_affine_mapping_derivatives():
+    mapping = AffineMapping(0.0, 10.0)
+    assert mapping.dxi_dx() == -0.2
+    assert mapping.d2xi_dx2() == 0.0
+    assert mapping.d3xi_dx3() == 0.0
+    assert mapping.d4xi_dx4() == 0.0
 
 
 def test_cheb_extrapol_exact():
