@@ -74,11 +74,13 @@ class NSaxi(LinOperator):
         # B0
         #self._B0 = np.zeros((N, N))
         self._B0 = 1j*kx*np.diag(np.tile(Ux, self.nvar)) # i*kx*Ux on diagonal
+        # continuity
         self._B0[0:n, n:2*n] += 1j*kx*np.diag(rho)
-        self._B0[0:n, 2*n:3*n] += np.diag(drho + 1j*kx*rho/rcorr)
+        self._B0[0:n, 2*n:3*n] += np.diag(drho + rho/rcorr)
         self._B0[0:n, 3*n:4*n] += 1j*m*np.diag(rho/rcorr)
-        self._B0[n:2*n, 2*n:3*n] += 1j*kx*np.diag(P/rho**2)
-        self._B0[n:2*n, 3*n:4*n] += np.diag(dUx)
+        # momentum ux
+        self._B0[n:2*n, 0:n] += 1j*kx*np.diag(P/rho**2)
+        self._B0[n:2*n, 2*n:3*n] += np.diag(dUx)
         self._B0[n:2*n, 4*n:N] += 1j*kx*np.eye(n)
         self._B0[2*n:3*n, 0:n] = np.diag(dT) 
         self._B0[2*n:3*n, 4*n:N] = np.diag(drho/rho)
@@ -86,7 +88,7 @@ class NSaxi(LinOperator):
         self._B0[3*n:4*n, 4*n:N] = 1j*m*np.diag(1./rcorr)
         self._B0[4*n:N, n:2*n] += 1j*kx*(gam-1)*np.diag(P/rho)
         self._B0[4*n:N, 2*n:3*n] += np.diag(dT + (gam-1)*P/rho/rcorr)
-        self._B0[4*n:N, 3*n:4*n] += 1j*m*np.diag(rho/rcorr)
+        self._B0[4*n:N, 3*n:4*n] += 1j*m*(gam-1)*np.diag(P/rho/rcorr)
         # B1
         #self._B1 = np.diag(np.tile(q.u, self.nvar)) @ np.kron(np.eye(self.nvar), D)
         self._B1 = np.zeros((N, N))
