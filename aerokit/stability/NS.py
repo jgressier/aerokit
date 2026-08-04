@@ -17,14 +17,18 @@
 from typing import Union
 import numpy as np
 from aerokit.stability._base import LinOperator
+from aerokit.common.mapping import Mapping
 
 
 class NSaxi(LinOperator):
 
     req_keys = ["kx", "m", "rho", "P", "Ux", "gamma"]
 
-    def __init__(self, n, rmin=0., rmax=None, basestate={}) -> None:
+    def __init__(self, n, rmin=0., rmax=None, basestate={}, mapping=None) -> None:
         super().__init__(n, xmin=rmin, xmax=rmax)
+        self._mapping = mapping
+        if mapping is not None:
+            self._r = mapping.xi_to_x(self._diffop.xi)[::-1]
         if basestate is not None:
             self.set_basestate(basestate)
         # if not provided, may be initialized later
@@ -36,14 +40,25 @@ class NSaxi(LinOperator):
 
     @property
     def r(self):
-        return self.x # alias x to r for cylindrical equations
+        return self._diffop.x if self._mapping is None else self._r
+
+    @property
+    def x(self):
+        return self.r
+
+    def _radial_matder(self, order):
+        if self._mapping is None:
+            return self._diffop.matder(order)
+        self._diffop.compute_matder(order)
+        derivatives = self._mapping.transform_derivative_matrices(self._diffop._matder)
+        return derivatives[::-1, ::-1, order - 1]
 
     def compute_operators(self):
         """compute operators for linearized
         given primitive variables P, linearized operator is
         At dP/dt + B1 dP/dr + B0 P = 0
         """
-        D = self._diffop.matder(1)
+        D = self._radial_matder(1)
         n = self.dim
         N = self.dim * self.nvar
         assert np.isclose(self.r[0], 0)
@@ -89,7 +104,7 @@ class NSaxi(LinOperator):
 
     def setBC_axis(self, m):
         n = self.dim
-        Dn = self._diffop.matder(1)[-1,:]
+        Dn = self._radial_matder(1)[-1,:]
         for ivar in range(self.nvar):
             irow = ivar*n
             self._At[irow, :] = 0.0
@@ -98,7 +113,7 @@ class NSaxi(LinOperator):
 
     def setBC_far(self):
         n = self.dim
-        Dn = self._diffop.matder(1)[-1,:]
+        Dn = self._radial_matder(1)[-1,:]
         for ivar in range(self.nvar):
             irow = (ivar + 1)*n - 1
             self._At[irow, :] = 0.0
