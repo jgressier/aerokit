@@ -12,6 +12,7 @@ import argparse
 from pathlib import Path
 import sys
 
+from matplotlib.pyplot import xlim
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
@@ -51,24 +52,37 @@ def solve_temporal_spectrum(npts=101, kx=1.0, m=1, mach=1.5, r_theta=5.0, gamma=
     return model, omega[finite], modes[:, finite]
 
 
-def select_modes(omega, modes, nmodes=1, reference=None):
-    """Select eigenpairs by growth rate or continuation from ``reference``.
+def select_modes(omega, modes, nmodes=1, mode="guided", reference=None):
+    """Select positive-real-frequency eigenpairs.
 
-    With no reference, the modes with the largest growth rates are selected.
-    With a reference frequency for each mode, a minimum-distance assignment in
-    the complex-omega plane preserves branches across a wavenumber scan.
+    ``mode='growth'`` selects the modes with the largest growth rates.
+    ``mode='continuation'`` matches modes to ``reference`` in the complex
+    frequency plane.  Returned modes are always ordered by increasing real
+    frequency.
     """
     if nmodes < 1:
         raise ValueError("nmodes must be positive")
-    nmodes = min(nmodes, omega.size)
-    if reference is None:
+    if mode == "growth":
         indices = np.argsort(omega.imag)[::-1][:nmodes]
-    else:
+    elif mode == "guided":
+        positive = omega.real > 1.e-3
+        if positive.sum() < nmodes:
+            raise ValueError(
+                f"requested {nmodes} modes but only {positive.sum()} have positive real frequency"
+            )
+        omega = omega[positive]
+        modes = modes[:, positive]
+        indices = np.argsort(omega.real)[:][:nmodes]
+    elif mode == "continuation":
+        if reference is None:
+            raise ValueError("mode='continuation' requires reference frequencies")
         reference = np.asarray(reference)[:nmodes]
         cost = np.abs(reference[:, np.newaxis] - omega[np.newaxis, :])
         rows, columns = linear_sum_assignment(cost)
         indices = np.empty(nmodes, dtype=int)
         indices[rows] = columns
+    else:
+        raise ValueError("mode must be 'guided', 'growth' or 'continuation'")
     return omega[indices], modes[:, indices]
 
 
@@ -93,7 +107,7 @@ def plot_modes(model, omegas, modes):
             xycoords="axes fraction",
             va="top",
         )
-    fig.suptitle("Most unstable temporal modes")
+    fig.suptitle(f"Selected temporal modes $k_x={model._basestate['kx']}$")
     fig.tight_layout()
 
 
@@ -113,8 +127,10 @@ def animate_spectrum(k_values, spectra, selected_spectra):
     selected, = axis.plot([], [], "ro", label="Selected modes")
     axis.axhline(0.0, color="k", linewidth=0.8)
     axis.set(
-        xlim=(real_min - real_pad, real_max + real_pad),
-        ylim=(imag_min - imag_pad, imag_max + imag_pad),
+        # xlim=(real_min - real_pad, real_max + real_pad),
+        # ylim=(imag_min - imag_pad, imag_max + imag_pad),
+        xlim=(-20, 20),
+        ylim=(-10, 10),
         xlabel=r"$\Re(\omega)$",
         ylabel=r"$\Im(\omega)$",
     )
@@ -141,8 +157,11 @@ def main():
     parser.add_argument("--scan-k", action="store_true", help="scan kx from zero to --kx")
     parser.add_argument("--nk", type=int, default=41, help="number of kx values for --scan-k")
     parser.add_argument("--nmodes", type=int, default=2, help="number of most unstable modes to plot")
+    parser.add_argument("--animation-output", help="save the scan animation (for example, spectrum.gif or spectrum.mp4)")
     parser.add_argument("--no-plot", action="store_true")
     args = parser.parse_args()
+    if args.animation_output and not args.scan_k:
+        parser.error("--animation-output requires --scan-k")
 
     model, omega, modes = solve_temporal_spectrum(
         npts=args.npts,
@@ -160,6 +179,7 @@ def main():
     k_values = None
     omega_selected = None
     spectra = None
+    spectrum_animation = None
     if args.scan_k:
         k_values = np.linspace(0.0, args.kx, args.nk)
         omega_selected = np.full((k_values.size, args.nmodes), np.nan + 1j * np.nan)
@@ -175,10 +195,18 @@ def main():
                 mapping_scale=args.mapping_scale,
             )
             spectra.append(omega_k)
-            omega_k_selected, _ = select_modes(omega_k, modes_k, args.nmodes, reference=reference)
-            omega_selected[i, : omega_k_selected.size] = omega_k_selected
+            selection_mode = 'guided'
+            omega_k_selected, _ = select_modes(
+                omega_k, modes_k, args.nmodes, mode=selection_mode, reference=reference
+            )
+            omega_selected[i, :omega_k_selected.size] = omega_k_selected
             reference = omega_k_selected
         print(f"Maximum growth among selected branches: {omega_selected.imag.max():.6g}")
+
+    if args.animation_output:
+        spectrum_animation = animate_spectrum(k_values, spectra, omega_selected)
+        print(f"Saving animation to {args.animation_output}")
+        spectrum_animation.save(args.animation_output)
 
     if not args.no_plot:
         import matplotlib.pyplot as plt
@@ -210,16 +238,17 @@ def main():
         if args.scan_k:
             fig, (ax_real, ax_imag) = plt.subplots(1, 2, figsize=(12, 4), sharex=True)
             for i in range(args.nmodes):
-                ax_real.plot(k_values, omega_selected[:, i].real, "o-", label=f"Mode {i+1}", ms=3)
-                ax_imag.plot(k_values, omega_selected[:, i].imag, "o-", label=f"Mode {i+1}", ms=3)
+                ax_real.plot(k_values, omega_selected[:, i].real, "o", label=f"Mode {i+1}", ms=3)
+                ax_imag.plot(k_values, omega_selected[:, i].imag, "o", label=f"Mode {i+1}", ms=3)
             ax_real.set(xlabel=r"$k_x$", ylabel=r"$\Re(\omega)$", title="Frequency branches")
-            ax_real.set_ylim(-10, 10.)
+            #ax_real.set_ylim(0, 10.)
             ax_imag.set(xlabel=r"$k_x$", ylabel=r"$\Im(\omega)$", title="Growth-rate branches")
             ax_real.grid(True)
             ax_imag.grid(True)
             ax_imag.legend()
             fig.tight_layout()
-            spectrum_animation = animate_spectrum(k_values, spectra, omega_selected)
+            if spectrum_animation is None:
+                spectrum_animation = animate_spectrum(k_values, spectra, omega_selected)
         plt.show()
 
 

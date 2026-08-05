@@ -104,22 +104,47 @@ class NSaxi(LinOperator):
         self.setBC_axis(self._basestate['m'])
         self.setBC_far()
 
+    def _clear_row(self, irow):
+        self._At[irow, :] = 0.0
+        self._B[irow, :] = 0.0
+
     def setBC_axis(self, m):
         n = self.dim
-        Dn = self._radial_matder(1)[-1,:]
-        for ivar in range(self.nvar):
-            irow = ivar*n
-            self._At[irow, :] = 0.0
-            self._B[irow, :] = 0.0
-            self._B[irow, irow] = 1.0
+        D = self._radial_matder(1)
+        irho, iux, iur, iut, irT = (ivar * n for ivar in range(self.nvar))
+        if m == 0:
+            # Scalars are even; both transverse velocity components are odd.
+            for irow, icol in ((irho, irho), (iux, iux), (irT, irT)):
+                self._clear_row(irow)
+                self._B[irow, icol : icol + n] = D[0, :]
+            for irow in (iur, iut):
+                self._clear_row(irow)
+                self._B[irow, irow] = 1.0
+        elif abs(m) == 1:
+            # Scalars vanish, while regular Cartesian transverse velocity
+            # requires utheta - i*sign(m)*ur = 0 and d(utheta + i*sign(m)*ur)/dr = 0.
+            for irow in (irho, iux, irT):
+                self._clear_row(irow)
+                self._B[irow, irow] = 1.0
+            sign_m = np.sign(m)
+            self._clear_row(iur)
+            self._B[iur, iur] = -1j * sign_m
+            self._B[iur, iut] = 1.0
+            self._clear_row(iut)
+            self._B[iut, iur : iur + n] = 1j * sign_m * D[0, :]
+            self._B[iut, iut : iut + n] = D[0, :]
+        else:
+            # All perturbation components vanish as r**(|m|-1) or faster.
+            for irow in (irho, iux, iur, iut, irT):
+                self._clear_row(irow)
+                self._B[irow, irow] = 1.0
 
     def setBC_far(self):
         n = self.dim
         Dn = self._radial_matder(1)[-1,:]
         for ivar in range(self.nvar):
             irow = (ivar + 1)*n - 1
-            self._At[irow, :] = 0.0
-            self._B[irow, :] = 0.0
+            self._clear_row(irow)
             self._B[irow, irow] = 1.0
 
 
