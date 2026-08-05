@@ -133,7 +133,7 @@ class NSaxi(LinOperator):
             self._clear_row(iut)
             self._B[iut, iur : iur + n] = 1j * sign_m * D[0, :]
             self._B[iut, iut : iut + n] = D[0, :]
-        else:
+        else: # m >= 2
             # All perturbation components vanish as r**(|m|-1) or faster.
             for irow in (irho, iux, iur, iut, irT):
                 self._clear_row(irow)

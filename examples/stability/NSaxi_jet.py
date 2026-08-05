@@ -52,6 +52,16 @@ def solve_temporal_spectrum(npts=101, kx=1.0, m=1, mach=1.5, r_theta=5.0, gamma=
     return model, omega[finite], modes[:, finite]
 
 
+def print_progress_bar(completed, total, label="Scanning $k_x$", width=30):
+    """Display an in-place terminal progress bar."""
+    filled = width * completed // total
+    print(
+        f"\r{label}: [{'#' * filled}{'.' * (width - filled)}] {completed}/{total}",
+        end="",
+        flush=True,
+    )
+
+
 def select_modes(omega, modes, nmodes=1, mode="guided", reference=None):
     """Select positive-real-frequency eigenpairs.
 
@@ -65,7 +75,7 @@ def select_modes(omega, modes, nmodes=1, mode="guided", reference=None):
     if mode == "growth":
         indices = np.argsort(omega.imag)[::-1][:nmodes]
     elif mode == "guided":
-        positive = omega.real > 1.e-3
+        positive = (omega.real > 1.e-3) & (np.abs(omega.imag) < 1.e-2)
         if positive.sum() < nmodes:
             raise ValueError(
                 f"requested {nmodes} modes but only {positive.sum()} have positive real frequency"
@@ -129,8 +139,8 @@ def animate_spectrum(k_values, spectra, selected_spectra):
     axis.set(
         # xlim=(real_min - real_pad, real_max + real_pad),
         # ylim=(imag_min - imag_pad, imag_max + imag_pad),
-        xlim=(-20, 20),
-        ylim=(-10, 10),
+        xlim=(-2, 20),
+        ylim=(-2, 2),
         xlabel=r"$\Re(\omega)$",
         ylabel=r"$\Im(\omega)$",
     )
@@ -171,7 +181,7 @@ def main():
         r_theta=args.r_theta,
         mapping_scale=args.mapping_scale,
     )
-    print(f"Computed {omega.size} finite temporal eigenvalues with NSaxi.")
+    print(f"Computed {omega.size} finite temporal eigenvalues with NSaxi, kx={args.kx}  .")
     initial_omega_selected, initial_modes_selected = select_modes(omega, modes, args.nmodes)
     for rank, omega_mode in enumerate(initial_omega_selected, start=1):
         print(f"Mode {rank}: omega = {omega_mode.real:.6g} {omega_mode.imag:+.6g}i")
@@ -201,6 +211,8 @@ def main():
             )
             omega_selected[i, :omega_k_selected.size] = omega_k_selected
             reference = omega_k_selected
+            print_progress_bar(i + 1, k_values.size)
+        print()
         print(f"Maximum growth among selected branches: {omega_selected.imag.max():.6g}")
 
     if args.animation_output:
@@ -245,7 +257,7 @@ def main():
             ax_imag.set(xlabel=r"$k_x$", ylabel=r"$\Im(\omega)$", title="Growth-rate branches")
             ax_real.grid(True)
             ax_imag.grid(True)
-            ax_imag.legend()
+            ax_imag.legend(loc="upper right")
             fig.tight_layout()
             if spectrum_animation is None:
                 spectrum_animation = animate_spectrum(k_values, spectra, omega_selected)
