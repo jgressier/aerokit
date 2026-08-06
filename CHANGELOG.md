@@ -25,6 +25,10 @@ pip show aerokit
 - `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
 - `aero.plot.Geom` class (for flow-solutions jupyterbook)
 
+#### breaking changes
+
+- `aero.CompressibleFlow` now raises an import error. Import the required functions from `aero.Isentropic`, `aero.Supersonic`, or `aero.MassFlow` instead.
+
 #### fix
 
 - `aero.ShockWave`: handle negative deviation and right branches of polar
