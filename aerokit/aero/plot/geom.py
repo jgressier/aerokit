@@ -1,7 +1,5 @@
 """Utilities for drawing two-dimensional flow boundaries."""
 
-from functools import cached_property
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -38,13 +36,13 @@ class Wall:
             return np.linspace(values[0], values[1], self.npts)
         return values
 
-    @cached_property
+    @property
     def x(self):
         if callable(self._xdef):
             return np.asarray(self._xdef(self.y))
         return self._samples(self._xdef)
 
-    @cached_property
+    @property
     def y(self):
         if callable(self._ydef):
             return np.asarray(self._ydef(self.x))
