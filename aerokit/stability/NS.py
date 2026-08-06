@@ -61,7 +61,8 @@ class NSaxi(LinOperator):
         D = self._radial_matder(1)
         n = self.dim
         N = self.dim * self.nvar
-        assert np.isclose(self.r[0], 0)
+        if not np.isclose(self.r[0], 0.0):
+            raise ValueError("NSaxi requires the radial grid to start at the axis (r = 0)")
         rcorr =  np.maximum(self.r, self.r[1]/10.)  # alias for cylindrical coordinates and corrected to avoid zero
         # parameters
         kx, m = self._basestate['kx'], self._basestate['m']

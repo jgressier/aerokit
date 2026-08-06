@@ -26,6 +26,22 @@ def _operator_with_axis_bc(m):
     return operator
 
 
+def test_nsaxi_requires_axis_on_radial_grid():
+    n = 10
+    state = {
+        "kx": 1.0,
+        "m": 0,
+        "rho": np.ones(n),
+        "P": np.ones(n),
+        "Ux": np.zeros(n),
+        "gamma": 1.4,
+    }
+    operator = NSaxi(n, rmin=0.1, rmax=1.0, basestate=state)
+
+    with np.testing.assert_raises_regex(ValueError, "start at the axis"):
+        operator.compute_operators()
+
+
 def test_nsaxi_axis_bc_m0():
     operator = _operator_with_axis_bc(0)
     n = operator.dim
