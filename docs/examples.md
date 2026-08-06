@@ -10,4 +10,5 @@
 
 ## Specific flow case and solution
 
+- [`supersonic profile`](supersonic-isotri): supersonic flow around triangular profile
 - [`instance.riemann`](instance.riemann): unsteady shock tube and interface interaction

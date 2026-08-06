@@ -8,7 +8,7 @@ from aerokit.common import defaultgas as defg  # relative import is deprecated b
 import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
-import aerokit.aero.model2Dpolar as M2D
+import aerokit.aero.model2D as M2D
 import aerokit.aero.plot.shockpolar as plotsw
 from scipy import optimize
 
@@ -28,7 +28,7 @@ class ShockInteraction:
         if M0 <= 1.0:
             raise ValueError("upstream Mach number M0 must be supersonic")
         self._state = dict()
-        self._state[0] = M2D.state2Dpolar(M0, 0.0)  # default angle=0., rho and p normalized
+        self._state[0] = M2D.State2DMach(M0, 0.0)  # default angle=0., rho and p normalized
         self.sigma01 = sigma01  # use setter
         self.sigma02 = sigma02  # use setter
 
@@ -60,7 +60,7 @@ class ShockInteraction:
         self._sigma02 = value
         self._state[2] = self[0].shock_sigma(value)
 
-    def __getitem__(self, value) -> M2D.state2Dpolar:
+    def __getitem__(self, value) -> M2D.State2DMach:
         return self._state[value]
 
     def check34balanced(self, tol=1.0e-6):
