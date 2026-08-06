@@ -1,6 +1,9 @@
 # misc
 *.bak
 *.nogit
+.DS_Store
+*.swp
+*.swo
 
 # python compiled files
 # Byte-compiled / optimized / DLL files
@@ -11,6 +14,8 @@ __pycache__/
 .python-version
 
 # Unit test / coverage reports
+build/
+aerokit.egg-info/
 htmlcov/
 .tox/
 .nox/

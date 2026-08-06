@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.linalg import eig
 from aerokit.common.defaultgas import set_gamma
 from aerokit.aero.model1D import state
 from aerokit.stability.Euler import Euler1D
@@ -86,7 +85,7 @@ if False:
 
 model.solve_eig()
 vals0, vects0, order = model.select_and_sort(
-    realmin=0., realmax=1200e3, 
+    realmin=0., realmax=1200e3,
     imagmin=-1e5, imagmax=1e6
 )
 print("first eigenvalues")
@@ -97,7 +96,7 @@ n = 2 * (n - 1) + 1
 model = ShockModel(n, M0=M0, length=length, dM0dx=dM0dx)
 vals, vects = model.solve_eig()
 vals, vects, order = model.select_and_sort(
-    realmin=0., realmax=1000e3, 
+    realmin=0., realmax=1000e3,
     imagmin=-1e5, imagmax=1e6,
     sort='imag'
 )

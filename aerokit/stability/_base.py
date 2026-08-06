@@ -57,14 +57,15 @@ class LinOperator:
         self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef * Id)
         return self._vals, self._vects
 
-    def select_and_sort(self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real"):
+    def select_and_sort(self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real", verbose=True):
         """select and sort"""
         vp = self._vals
         condition = (vp.real < realmax) & (vp.real >= realmin) & (vp.imag > imagmin) & (vp.imag < imagmax)
         vals = np.compress(condition, self._vals)
         vects = np.compress(condition, self._vects, axis=1)
         np.set_printoptions(formatter={"float_kind": "{:.4f}".format})
-        print(f"{vals.size}/{vp.size} remaining eigenvalues")
+        if verbose:
+            print(f"{vals.size}/{vp.size} remaining eigenvalues")
         sortmethod = {
             "real": np.real,
             "imag": lambda x: -np.imag(x),

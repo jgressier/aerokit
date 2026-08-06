@@ -35,6 +35,8 @@ nav:
 plugins:
   - search
   - include-markdown
+  - autorefs:
+      link_titles: auto
   - mkdocs-jupyter:
       execute: True
       include_source: False
@@ -54,5 +56,5 @@ plugins:
             #docstring_style: "restructured-text" # default is "google"
             filters:
               - "!^_"  # exclude all members starting with _
-      watch:
-        - aerokit
+      # watch: # not available in mkdocstrings 0.24
+      #   - aerokit

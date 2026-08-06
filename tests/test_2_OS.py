@@ -1,12 +1,12 @@
 import aerokit.stability.OrrSommerfeld as OS
-import numpy as np
+#import numpy as np
 import pytest
 
 
 def test_initdefault():
-    with pytest.raises(OS.DictKeyError) as e_info:
+    with pytest.raises(OS.DictKeyError):
         Op = OS.OrrSommerfeldModel(100, basestate={})
-    with pytest.raises(OS.DictKeyError) as e_info:
+    with pytest.raises(OS.DictKeyError):
         Op = OS.OrrSommerfeldModel(100, basestate={'alpha':1.0})
     #
     Op = OS.OrrSommerfeldModel(100)

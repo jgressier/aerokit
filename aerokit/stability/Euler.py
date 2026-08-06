@@ -155,7 +155,7 @@ class Euler1D(LinOperator):
         # parse additional argument
         print("dM0dx:", dM0dx)
         if dM0dx is None:  # if not defined, compute upstream gradient from downstream
-            print(f"upstream gradient not set, computed from RH and base state")
+            print("upstream gradient not set, computed from RH and base state")
             raise ValueError("not yet implemented")
         # BC coefs bck0[0:2,0:2] in 3 BC equations for rho', u', p' at 0i
         # BC coefs bck1[0:2,0:2] in 3 BC equations for rho', u', p' at 1i
@@ -201,7 +201,7 @@ class Euler1D(LinOperator):
         #
         i0 = istate if irow is None else irow
         irho = 0
-        iu = n
+        #iu = n
         ip = 2 * n
         idxs = 3 * n
         # Build  At dq/dx = B.q

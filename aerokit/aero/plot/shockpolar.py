@@ -8,7 +8,7 @@ import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
 
 import matplotlib.pyplot as plt
-from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma
+from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma, set_grid  # noqa: F401
 
 
 def plot_theta_sigma(
@@ -20,6 +20,7 @@ def plot_theta_sigma(
     sonic=False,
     color='k',
     linestyle='-',
+    ax=plt,
     **kwargs
 ):
     """
@@ -42,23 +43,23 @@ def plot_theta_sigma(
     sig = np.linspace(deg.asin(1.0 / mach), 90.0, npts + 1)
     dev = sw.deflection_Mach_sigma(mach, sig, gamma)
     if curve in ['right', 'both']:
-        plt.plot(dev, sig, color=color, linestyle=linestyle, **kwargs)
+        ax.plot(dev, sig, color=color, linestyle=linestyle, **kwargs)
     if curve in ['left', 'both']:
-        plt.plot(-dev, sig, color=color, linestyle=linestyle, **kwargs)
+        ax.plot(-dev, sig, color=color, linestyle=linestyle, **kwargs)
     if devmax:
         thet = sw.dev_Max(mach, gamma=gamma)
         sig = sw.sigma_DevMax(mach, gamma=gamma)
         if curve in ['right', 'both']:
-            plt.plot(thet, sig, 'ro', alpha=0.9)
+            ax.plot(thet, sig, 'ro', alpha=0.9)
         if curve in ['left', 'both']:
-            plt.plot(-thet, sig, 'ro', alpha=0.9)
+            ax.plot(-thet, sig, 'ro', alpha=0.9)
     if sonic:
         thet = sw.dev_Sonic(mach, gamma=gamma)
         sig = sw.sigma_Sonic(mach, gamma=gamma)
         if curve in ['right', 'both']:
-            plt.plot(thet, sig, 'ko', markerfacecolor='white')
+            ax.plot(thet, sig, 'ko', markerfacecolor='white')
         if curve in ['left', 'both']:
-            plt.plot(-thet, sig, 'ko', markerfacecolor='white')
+            ax.plot(-thet, sig, 'ko', markerfacecolor='white')
 
 
 def plot_theta_pressure(

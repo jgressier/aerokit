@@ -9,6 +9,7 @@ import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as degree
 from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
 from aerokit.common._ode import _rkf45
+from scipy.optimize import newton
 
 # --- NORMAL SHOCK WAVE ---
 
@@ -126,6 +127,8 @@ def Mn_Pt_ratio(ptratio, gamma=defg._gamma):
 
 def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
     """
+    computes deflection (either weak or strong) from upstream Mach and sigma shock angle
+    (handle negative sigma angles)
 
     Args:
       Mach: param sigma:
@@ -183,18 +186,19 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     Returns:
 
     """
-    ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(deflection)
+    dev = abs(deflection) # negative deflection is another branch
+    ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(dev)
     kb = 1.0 - Mach ** 2
-    kc = (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) * degree.tan(deflection)
+    kc = (1.0 + 0.5 * (gamma - 1.0) * Mach ** 2) * degree.tan(dev)
     kd = (ka ** 2 / 3.0 - kb) / 3.0
     ke = 2.0 * ka ** 3 / 27.0 - ka * kb / 3.0 + kc
     if ke ** 2 - 4.0 * kd ** 3 > 0:
         print("no weak shock wave solution")
-        return degree.asin(1.0 / Mach)
+        return sigma_DevMax(Mach, gamma)*np.sign(deflection)
     else:
         phi = np.arccos(-0.5 * ke / np.sqrt(kd ** 3))
         kf = 2.0 * np.sqrt(kd) * np.cos(phi / 3.0) - ka / 3.0
-        return degree.atan(1.0 / kf)
+        return degree.atan(1.0 / kf)*np.sign(deflection)
 
 
 def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
@@ -266,11 +270,23 @@ def dev_Max(Mach, gamma=defg._gamma):
     return deflection_Mach_sigma(Mach, sigma_DevMax(Mach, gamma=gamma), gamma=gamma)
 
 
+def dev_MaxMinf(gamma=defg._gamma):
+  """_summary_
+
+  Args:
+      gamma (_type_, optional): ratio of specific heats. Defaults to defg._gamma.
+
+  Returns:
+      float: maximum shock angle 
+  """
+  return degree.atan(1./math.sqrt((gamma+1)*(gamma-1)))
+
+
 def dev_Sonic(Mach, gamma=defg._gamma):
     """computes the deviation angle for a downstream SONIC Mach number
 
     Args:
-      Mach: param gamma:  (Default value = defg._gamma)
+      Mach: upstream Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:
@@ -279,11 +295,37 @@ def dev_Sonic(Mach, gamma=defg._gamma):
     return deflection_Mach_sigma(Mach, sigma_Sonic(Mach, gamma=gamma), gamma=gamma)
 
 
+def Mach_DevMax(dev, gamma=defg._gamma):
+    """computes the deviation angle for a downstream SONIC Mach number
+
+    Args:
+      Mach: upstream Mach number
+      gamma:  (Default value = defg._gamma)
+
+    Returns:
+
+    """
+    return newton(lambda m: dev-dev_Max(m, gamma), 1.1) # must improve initialization
+
+
+def Mach_DevSonic(dev, gamma=defg._gamma):
+    """computes the deviation angle for a downstream SONIC Mach number
+
+    Args:
+      Mach: upstream Mach number
+      gamma:  (Default value = defg._gamma)
+
+    Returns:
+
+    """
+    return newton(lambda m: dev-dev_Sonic(m, gamma), 1.1) # must improve initialization
+
+
 def sigma_DevMax(Mach, gamma=defg._gamma):
     """computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
 
     Args:
-      Mach: param gamma:  (Default value = defg._gamma)
+      Mach: upstream Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:
@@ -309,7 +351,7 @@ def sigma_Sonic(Mach, gamma=defg._gamma):
     """computes the shock angle for a downstream SONIC Mach number
 
     Args:
-      Mach: param gamma:  (Default value = defg._gamma)
+      Mach: upstream Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:

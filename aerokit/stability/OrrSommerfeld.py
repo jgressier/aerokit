@@ -73,8 +73,10 @@ class OrrSommerfeldModel(LinOperator):
         """compute operators for linearized
         given primitive variables P, linearized operator is
         At dv/dt = B v
+        where the unknown v is the transverse velocity perturbation
         """
-        assert self.check_basestate()
+        if not self.check_basestate():
+            raise ValueError("basestate is not set")
         alpha = self._basestate["alpha"]
         Rey = self._basestate["Reynolds"]
         D4 = self._diffop.matder(4)

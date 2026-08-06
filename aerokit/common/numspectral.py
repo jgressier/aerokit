@@ -5,6 +5,7 @@ import numpy as np
 from numpy.polynomial import chebyshev
 from scipy.linalg import toeplitz
 from aerokit.common._dev import lazyprop
+from aerokit.common.mapping import AffineMapping
 
 
 class ChebCollocation:
@@ -16,6 +17,7 @@ class ChebCollocation:
         # default is -1 to 1 (reverse original xi distribution)
         self._xmin = -1.0 if xmin is None else xmin
         self._xmax = 1.0 if xmax is None else xmax
+        self._mapping = AffineMapping(self._xmin, self._xmax)
 
     @property
     def npts(self):
@@ -28,14 +30,7 @@ class ChebCollocation:
 
     @lazyprop
     def x(self):
-        return self._xi_to_x(self.xi)
-
-    def _x_to_xi(self, x):
-        return 1.-2.*(x-self._xmin)/ (self._xmax - self._xmin)
-
-    def _xi_to_x(self, xi):
-        """compute x for any xi"""
-        return self._xmin + (xi - 1.0) / (-2.0) * (self._xmax - self._xmin)
+        return self._mapping.xi_to_x(self.xi)
 
     def extrapol(self, fk, x):
         """
@@ -51,7 +46,7 @@ class ChebCollocation:
         """
         VdMxi = chebyshev.chebvander(self.xi, self._npts-1)
         coefs = np.linalg.solve(VdMxi, fk)
-        fx = chebyshev.chebval(self._x_to_xi(x), coefs)
+        fx = chebyshev.chebval(self._mapping.x_to_xi(x), coefs)
         return fx
 
     def fit_to_gauss(self, x, f):
@@ -61,8 +56,8 @@ class ChebCollocation:
             x (_type_): _description_
             f (_type_): _description_
         """
-        VdM = chebyshev.chebvander(self._x_to_xi(x), self._npts-1)
-        coefs = np.linalg.lstsq(VdM, f)[0]
+        VdM = chebyshev.chebvander(self._mapping.x_to_xi(x), self._npts-1)
+        coefs = np.linalg.lstsq(VdM, f, rcond=None)[0]
         fxi = chebyshev.chebval(self.xi, coefs)
         return fxi
 
@@ -71,7 +66,7 @@ class ChebCollocation:
         assert order >= 1
         if order > self._max_Dorder:
             self.compute_matder(order)
-        return self._matder[:, :, order - 1]
+        return self._mapping.transform_derivative_matrices(self._matder)[:, :, order - 1]
 
     def compute_matder(self, maxorder):
         """
@@ -112,6 +107,6 @@ class ChebCollocation:
             D = (ell + 1) * Z * (C * D.diagonal()[:, np.newaxis] - D)
             # D[L] = -D.sum(axis=1)
             np.fill_diagonal(D, -D.sum(axis=1))
-            DM[:, :, ell] = D * (-2.0 / (self._xmax - self._xmin)) ** (ell + 1)
+            DM[:, :, ell] = D
         self._matder = DM
         self._max_Dorder = maxorder

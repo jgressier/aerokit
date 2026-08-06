@@ -8,9 +8,9 @@ import numpy as np
 def maxFparam_Mach(Mach, gamma=1.4):
     """computes maximum Fanno parameter for a given Mach number state
     This maximum value makes the flow reach a sonic state
-    \f$
-      \left(\frac{1 - M^2}{\gamma M^2}\right) + \left(\frac{\gamma + 1}{2\gamma}\right)\ln\left[\frac{M^2}{\left(\frac{2}{\gamma + 1}\right)\left(1 + \frac{\gamma - 1}{2}M^2\right)}\right]
-    \f$
+    \\f$
+      \\left(\\frac{1 - M^2}{\\gamma M^2}\\right) + \\left(\\frac{\\gamma + 1}{2\\gamma}\\right)\\ln\\left[\\frac{M^2}{\\left(\\frac{2}{\\gamma + 1}\\right)\\left(1 + \\frac{\\gamma - 1}{2}M^2\\right)}\\right]
+    \\f$
     """
     m2 = np.square(Mach)
     return (1 - m2) / (gamma * m2) + (gamma + 1) / (2 * gamma) * np.log(

@@ -14,9 +14,16 @@ Most implemented functions use normalized properties.
 - `Fanno`: Fanno 1D flow (momentum source)
 - `Rayleigh`: Rayleigh 1D flow (energy source)
 - `model1D`: class for 1D compressible state
+- `model2D`: 2D compressible states represented with either velocity components or Mach number and angle (suitable for supersonic flows)
 - `unsteady1D`: extended class for 1D unsteady computations
 
 ## `aerokit.instance` module
 
 - `riemann`: solution for generalized Riemann problems (shock tube)
 - `nozzle`: solution of 1D nozzle problem
+- `SWinteraction`: computation of interaction of two shock waves (at least one weak shock)
+
+## `aerokit.stability` module
+
+- `OrrSommerfeldt`: Orr-Sommerfeldt equations for the temporal stability of 1D parallel incompressible flow
+- `Euler`: Linearized 1D compressible Euler (inviscid) equations
