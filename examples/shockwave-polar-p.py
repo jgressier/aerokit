@@ -4,9 +4,9 @@ Plot of local Rankine-Hugoniot equations (2D shock waves)
 @author: j.gressier
 """
 
-import aero.degree           as deg
-import aero.CompressibleFlow as aerof
-import aero.ShockWave        as aerosw
+import aerokit.aero.degree as deg
+import aerokit.aero.ShockWave as aerosw
+import aerokit.aero.Supersonic as sup
 import numpy                 as np
 import matplotlib.pyplot     as plt
 
@@ -23,8 +23,8 @@ for m in macharray:
     sig  = np.linspace(deg.asin(1./m), 90., npoints+1)
     dev  = aerosw.deflection_Mach_sigma(m, sig, gam)
     kpsw = aerosw.Ps_ratio(m*deg.sin(sig), gam)     # pressure ratio only depends on normal Mach number
-    rdev = np.linspace(0., .99*aerof.PrandtlMeyer_Mach(m, gam), npoints+1)
-    kpis = aerof.IsentropicPsratio_Mach_deflection(m, rdev, gam) 
+    rdev = np.linspace(0., .99*sup.PrandtlMeyer_Mach(m, gam), npoints+1)
+    kpis = sup.IsentropicPsratio_Mach_deflection(m, rdev, gam)
     plt.plot(dev,  kpsw, 'k-')
     plt.plot(rdev, kpis, 'k--', alpha=0.6)
     plt.plot(rdev[-1], kpis[-1], 'ro', alpha=0.5)

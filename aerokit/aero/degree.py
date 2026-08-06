@@ -26,4 +26,5 @@ def atan(a):
 
 
 def atan2(a, b):
+    """Compute arctan(b/a) in degrees."""
     return np.degrees(np.arctan2(a, b))
