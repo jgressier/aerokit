@@ -16,11 +16,12 @@ pip show aerokit
 
 ## Versions
 
-### [1.2.x](https://pypi.org/project/aerokit/) (2024-02-xx)
+### [1.3.x](https://pypi.org/project/aerokit/) (2026-08-xx)
 
 #### new
 
-- `aero.ShockWave`: maximum deviation, and Mach at maximum deviation and sonic points
+- `aero.refstate`: dimensional density, velocity, dynamic viscosity, and length references with Reynolds-number evaluation
+- `blayer.profile`: generic boundary-layer profile class and incompressible velocity-profile implementation with displacement and momentum thicknesses
 
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
 
@@ -32,7 +33,7 @@ pip show aerokit
 #### fixed
 
 - compilation of documentation on readthedocs
- 
+
 ### [1.2.0](https://pypi.org/project/aerokit/) (2023-11-22)
 
 #### new
@@ -74,7 +75,7 @@ pip show aerokit
 #### changed
 
 - changed total/stagnation notation Ti,Pi to Tt,Pt (backward compatibility handled)
-- moved `nozzle` and `riemann` to `instance.*` submodule 
+- moved `nozzle` and `riemann` to `instance.*` submodule
 
 ### [1.0.0](https://pypi.org/project/aerokit/) (2021-01-20)
 
