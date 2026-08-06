@@ -22,6 +22,14 @@ pip show aerokit
 
 - `aero.refstate`: dimensional density, velocity, dynamic viscosity, and length references with Reynolds-number evaluation
 - `blayer.profile`: generic boundary-layer profile class and incompressible velocity-profile implementation with displacement and momentum thicknesses
+- `aero.ShockWave`: maximum deviation, and Mach at maximum deviation and sonic points
+- `aero.model2Dpolar`: 2d supersonic state model
+- `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
+- `aero.plot.Geom` class (for flow-solutions jupyterbook)
+
+#### fix
+
+- `aero.ShockWave`: handle negative deviation and right branches of polar
 
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
 

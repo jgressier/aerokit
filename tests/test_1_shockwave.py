@@ -54,6 +54,19 @@ def test_Mn_Ps():
     assert sw.Ps_ratio(2.0) == pytest.approx(4.5)
     assert sw.Mn_Ps_ratio(sw.Ps_ratio(3.0)) == pytest.approx(3.0)
 
+def weakshock_symmetry():
+    M0 = 4.
+    dev = 30.
+    sigp = sw.weaksigma_Mach_deflection(M0, dev)
+    sigm = sw.weaksigma_Mach_deflection(M0, -dev)
+    assert sigp == pytest.approx(-sigm)
+
+def strongshock_symmetry():
+    M0 = 4.
+    dev = 30.
+    sigp = sw.strongsigma_Mach_deflection(M0, dev)
+    sigm = sw.strongsigma_Mach_deflection(M0, -dev)
+    assert sigp == pytest.approx(-sigm)
 
 @pytest.mark.parametrize("M0, dev", [(1.5, 5.0), (3.0, 10.0), (4.0, 30.0)])
 def test_polar_iterative_vs_cubic_weak(M0, dev):
