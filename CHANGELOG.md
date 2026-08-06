@@ -24,10 +24,20 @@ pip show aerokit
 - `aero.model2Dpolar`: 2d supersonic state model
 - `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
 - `aero.plot.Geom` class (for flow-solutions jupyterbook)
+- `common.mapping`: coordinate-mapping framework for spectral collocation, including affine and semi-infinite rational/algebraic mappings
+- `stability.NS.NSaxi`: inviscid compressible axisymmetric Navier--Stokes temporal stability operator
+- `examples/stability/NSaxi_jet.py`: temporal round-jet stability example, wavenumber scans, selected-mode plots, and spectrum animation export
+
+#### changed
+
+- `common.numspectral.ChebCollocation`: differentiation matrices are computed on the reference Chebyshev interval; physical derivatives are obtained through the selected mapping.
+- `stability.OrrSommerfeld` and eigenvalue-selection utilities: small API and documentation improvements.
 
 #### fix
 
 - `aero.ShockWave`: handle negative deviation and right branches of polar
+- `stability.NS.NSaxi`: cylindrical terms and axis regularity boundary conditions now depend on the azimuthal mode number.
+- Documentation and CI configuration updated for current Python and documentation.
 
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
 
