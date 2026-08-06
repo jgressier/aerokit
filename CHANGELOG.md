@@ -16,7 +16,7 @@ pip show aerokit
 
 ## Versions
 
-### [1.3.0](https://pypi.org/project/aerokit/) (2025-04-xx)
+### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new
 
@@ -25,8 +25,7 @@ pip show aerokit
 - `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
 - `aero.plot.Geom` class (for flow-solutions jupyterbook)
 - `common.mapping`: coordinate-mapping framework for spectral collocation, including affine and semi-infinite rational/algebraic mappings
-- `stability.NS.NSaxi`: inviscid compressible axisymmetric Navier--Stokes temporal stability operator
-- `examples/stability/NSaxi_jet.py`: temporal round-jet stability example, wavenumber scans, selected-mode plots, and spectrum animation export
+- `stability.NS.NSaxi`: inviscid compressible axisymmetric Navier--Stokes temporal stability operator (with example)
 
 #### changed
 
