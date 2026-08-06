@@ -16,7 +16,7 @@ pip show aerokit
 
 ## Versions
 
-### [1.3.0](https://pypi.org/project/aerokit/) (2025-04-xx)
+### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new
 
@@ -24,6 +24,13 @@ pip show aerokit
 - `aero.model2D`: 2d supersonic state models with velocity-component and Mach/angle representations
 - `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
 - `aero.plot.Geom` class (for flow-solutions jupyterbook)
+- `common.mapping`: coordinate-mapping framework for spectral collocation, including affine and semi-infinite rational/algebraic mappings
+- `stability.NS.NSaxi`: inviscid compressible axisymmetric Navier--Stokes temporal stability operator (with example)
+
+#### changed
+
+- `common.numspectral.ChebCollocation`: differentiation matrices are computed on the reference Chebyshev interval; physical derivatives are obtained through the selected mapping.
+- `stability.OrrSommerfeld` and eigenvalue-selection utilities: small API and documentation improvements.
 
 #### breaking changes
 
@@ -32,6 +39,8 @@ pip show aerokit
 #### fix
 
 - `aero.ShockWave`: handle negative deviation and right branches of polar
+- `stability.NS.NSaxi`: cylindrical terms and axis regularity boundary conditions now depend on the azimuthal mode number.
+- Documentation and CI configuration updated for current Python and documentation.
 
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)
 
