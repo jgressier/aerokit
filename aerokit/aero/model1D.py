@@ -123,9 +123,8 @@ class State1d(__state):
         self.__init__(rho=p / rts, u=M * np.sqrt(self._gamma * rts), p=p)
 
     def __getitem__(self, i):
-        assert isinstance(self.rho, np.ndarray)
-        assert isinstance(self.u, np.ndarray)
-        assert isinstance(self.p, np.ndarray)
+        if not all(isinstance(value, np.ndarray) for value in (self.rho, self.u, self.p)):
+            raise TypeError("object has not been initialized as a numpy ndarray")
         return State1d(self.rho[i], self.u[i], self.p[i])
 
     def left_acoustic(self):

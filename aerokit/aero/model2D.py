@@ -68,7 +68,7 @@ class State2d(__state):
     def omega(self):
         """returns Prandtl-Meyer (or Busemann) angle in degree"""
         return Supersonic.PrandtlMeyer_Mach(self.Mach(), self._gamma)
-    
+
     # def state_RH(self):
     #     """return Rankine-Hugoniot jump state"""
     #     M = self.Mach()

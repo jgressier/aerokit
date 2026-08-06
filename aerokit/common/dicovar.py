@@ -125,7 +125,7 @@
 #         """
 #         return list of keys in dictionnary
 #         """
-#         return self._dv.keys()            
+#         return self._dv.keys()
 
 #     def get(self, var):
 #         """
@@ -205,4 +205,3 @@
 #     dicoVar.printDatabase()
 
 # # -----------------------------------------------------------------
-

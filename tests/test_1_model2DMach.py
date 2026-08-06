@@ -1,7 +1,4 @@
-from aerokit.aero import degree
 import aerokit.aero.model2D as M2P
-import aerokit.aero.ShockWave as sw
-import numpy as np
 import pytest
 
 
@@ -65,4 +62,3 @@ def test_stronghock():
     assert Q11p.p > 1
     Q11m = Q0.weakshock_deviation(Q1m.angle)
     assert Q11m.p > 1
-

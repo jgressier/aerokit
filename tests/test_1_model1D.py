@@ -35,6 +35,11 @@ def test_init_qgam():
     assert q.Mach() == pytest.approx(2.0, rel=1e-10)
 
 
+def test_item_requires_array_state():
+    with pytest.raises(TypeError, match="numpy ndarray"):
+        m1d.State1d(rho=1.0, u=0.0, p=1.0)[0]
+
+
 def test_init_Mneg():
     q = m1d.State1d(rho=1.3, u=-20.0, p=100.0, gamma=1.3)
     assert q.asound() == pytest.approx(10.0, rel=1e-10)
@@ -85,5 +90,4 @@ def test_new_RH():
     assert q1.rho == pytest.approx(q3.rho, rel=1e-10)
     assert q1.u == pytest.approx(q3.u, rel=1e-10)
     assert q1.p == pytest.approx(q3.p, rel=1e-10)
-
 

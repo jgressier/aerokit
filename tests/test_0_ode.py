@@ -22,7 +22,7 @@ def test_RK4_basic_functionality():
 #     x0, y0 = 0, 1
 #     xStop = 1
 #     h = 0  # Zero step size
-    
+
 #     X, Y = RK4(F, x0, y0, xStop, h)
 #     # With zero step, should only have initial values
 #     assert len(X) == 1 and len(Y) == 1, "Expected single initial point in output"
