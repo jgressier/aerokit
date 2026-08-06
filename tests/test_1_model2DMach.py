@@ -21,7 +21,7 @@ def test_init_default():
 def test_normalshock():
     Q0 = M2P.State2DMach(Mach=2.)
     Q1 = Q0.shock_sigma(90.)
-    assert Q1.angle == 0.
+    assert Q1.angle == pytest.approx(0.0)
     assert Q1.Mach < 1.
 
 def test_weakshock():

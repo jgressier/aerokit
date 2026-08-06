@@ -36,9 +36,9 @@ def test_weakstrong():
     assert Pb[3].angle == pytest.approx(2.3707989)
     # 2 and 4 must be the same states and subsonic
     assert Pb[2].Mach < 1
-    assert Pb[2].Mach == Pb[4].Mach
-    assert Pb[2].angle == Pb[4].angle
-    assert Pb[2].p == Pb[4].p
+    assert Pb[2].Mach == pytest.approx(Pb[4].Mach)
+    assert Pb[2].angle == pytest.approx(Pb[4].angle)
+    assert Pb[2].p == pytest.approx(Pb[4].p)
     # 0 to 2 shock angle must be corrected
     assert Pb.sigma01 == 35.
     assert Pb.sigma02 == pytest.approx(89.33539)
