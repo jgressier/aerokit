@@ -6,7 +6,7 @@ import numpy as np
 from aerokit.aero import Isentropic, Supersonic
 from aerokit.common import defaultgas as defg
 from aerokit.aero.model1D import __state
-#import aerokit.aero.ShockWave as sw
+import aerokit.aero.ShockWave as sw
 import aerokit.aero.degree as deg
 from typing import TypeVar
 
@@ -41,6 +41,16 @@ class State2d(__state):
 
     def copy(self):
         return State2d(self.rho, self.u, self.v, self.p, self._gamma)
+
+    @classmethod
+    def from_mach_angle(cls, Mach, angle=0., rho=1., p=1., gamma=defg._gamma):
+        """Build a component state from Mach-number magnitude and angle."""
+        speed = Mach * np.sqrt(gamma * p / rho)
+        return cls(rho, speed * deg.cos(angle), speed * deg.sin(angle), p, gamma)
+
+    def to_mach_angle(self):
+        """Return the equivalent Mach/angle state."""
+        return State2DMach.from_components(self.rho, self.u, self.v, self.p, self._gamma)
 
     def KinE(self):
         return .5*(self.u**2+self.v**2)
@@ -103,3 +113,92 @@ class State2d(__state):
                 # raise a type error
                 raise TypeError("object has not been initialized as an numpy ndarray")
         return State2d(self.rho[i], self.u[i], self.v[i], self.p[i])
+
+
+class State2DMach(__state):
+    """Two-dimensional state parameterized by Mach-number magnitude and angle."""
+
+    def __init__(self, Mach, angle=0., rho=1., p=1., gamma=defg._gamma):
+        self._gamma = gamma
+        self.rho = rho
+        self.Mach = Mach
+        self.angle = angle
+        self.p = p
+
+    def __repr__(self):
+        return "state (rho, Mach, angle, p) : (%s, %s, %s, %s)" % (self.rho, self.Mach, self.angle, self.p)
+
+    @property
+    def size(self):
+        return max((q.size if isinstance(q, np.ndarray) else 1) for q in (self.rho, self.Mach, self.angle, self.p))
+
+    def copy(self):
+        return self.__class__(self.Mach, self.angle, self.rho, self.p, self._gamma)
+
+    @classmethod
+    def from_components(cls, rho, u, v, p, gamma=defg._gamma):
+        """Build a Mach/angle state from velocity components."""
+        speed = np.hypot(u, v)
+        return cls(speed / np.sqrt(gamma * p / rho), deg.atan2(v, u), rho, p, gamma)
+
+    def to_components(self):
+        """Return the equivalent velocity-component state."""
+        return State2d.from_mach_angle(self.Mach, self.angle, self.rho, self.p, self._gamma)
+
+    def Vmag(self):
+        return self.Mach * self.asound()
+
+    def KinE(self):
+        return .5 * self.Vmag()**2
+
+    def Ptot(self):
+        return self.p * Isentropic.PtPs_Mach(self.Mach, self._gamma)
+
+    def rotate(self, deviation):
+        self.angle += deviation
+
+    def devmax(self):
+        return sw.dev_Max(self.Mach, self._gamma)
+
+    def weakshock_deviation(self, deviation, direction=0):
+        if direction * deviation < 0:
+            raise ValueError("deviation must have the same sign as direction")
+        adev = np.abs(deviation)
+        sigma = sw.weaksigma_Mach_deflection(self.Mach, adev, self._gamma)
+        Mn0 = self.Mach * deg.sin(sigma)
+        M1 = abs(sw.downstream_Mn(Mn0, self._gamma) / deg.sin(sigma - adev))
+        return self.__class__(M1, self.angle + deviation,
+                              rho=self.rho * sw.Rho_ratio(Mn0, self._gamma),
+                              p=self.p * sw.Ps_ratio(Mn0, self._gamma), gamma=self._gamma)
+
+    def strongshock_deviation(self, deviation, direction=0):
+        if direction * deviation < 0:
+            raise ValueError("deviation must have the same sign as direction")
+        adev = np.abs(deviation)
+        sigma = sw.strongsigma_Mach_deflection(self.Mach, adev, self._gamma)
+        Mn0 = self.Mach * deg.sin(sigma)
+        M1 = abs(sw.downstream_Mn(Mn0, self._gamma) / deg.sin(sigma - adev))
+        return self.__class__(M1, self.angle + deviation,
+                              rho=self.rho * sw.Rho_ratio(Mn0, self._gamma),
+                              p=self.p * sw.Ps_ratio(Mn0, self._gamma), gamma=self._gamma)
+
+    def shock_sigma(self, sigma):
+        deviation = sw.deflection_Mach_sigma(self.Mach, sigma)
+        Mn0 = self.Mach * deg.sin(sigma)
+        M1 = abs(sw.downstream_Mn(Mn0, self._gamma) / deg.sin(sigma - deviation))
+        return self.__class__(M1, self.angle + deviation,
+                              rho=self.rho * sw.Rho_ratio(Mn0, self._gamma),
+                              p=self.p * sw.Ps_ratio(Mn0, self._gamma), gamma=self._gamma)
+
+    def isentropic_deviation(self, deviation, direction=1):
+        M1 = Supersonic.Mach_PrandtlMeyer(
+            Supersonic.PrandtlMeyer_Mach(self.Mach, self._gamma) - direction * deviation,
+            self._gamma)
+        pratio = Isentropic.PtPs_Mach(self.Mach, self._gamma) / Isentropic.PtPs_Mach(M1, self._gamma)
+        return self.__class__(M1, self.angle + deviation, rho=self.rho * pratio**(1.0 / self._gamma),
+                              p=self.p * pratio, gamma=self._gamma)
+
+    def sharp_deviation(self, deviation, direction=1):
+        if direction * deviation > 0:
+            return self.weakshock_deviation(deviation, direction)
+        return self.isentropic_deviation(deviation, direction)

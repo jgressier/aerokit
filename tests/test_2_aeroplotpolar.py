@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import aerokit.aero.ShockWave as sw
-import aerokit.aero.model2Dpolar as m2d
+import aerokit.aero.model2D as m2d
 import aerokit.aero.plot.shockpolar as shp
 import numpy as np
 
@@ -25,7 +25,7 @@ def test_pressurepolar():
 
     fig = shp.figure_theta_pressure()
 
-    Q = m2d.state2Dpolar(M0)
+    Q = m2d.State2DMach(M0)
 
     pw = [ Q.weakshock_deviation(d).p for d in dev ]
     ps = [ Q.strongshock_deviation(d).p for d in dev ]

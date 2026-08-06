@@ -21,7 +21,7 @@ pip show aerokit
 #### new
 
 - `aero.ShockWave`: maximum deviation, and Mach at maximum deviation and sonic points
-- `aero.model2Dpolar`: 2d supersonic state model
+- `aero.model2D`: 2d supersonic state models with velocity-component and Mach/angle representations
 - `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
 
 #### fix

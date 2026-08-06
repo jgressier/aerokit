@@ -14,7 +14,7 @@ Most implemented functions use normalized properties.
 - `Fanno`: Fanno 1D flow (momentum source)
 - `Rayleigh`: Rayleigh 1D flow (energy source)
 - `model1D`: class for 1D compressible state
-- `model2Dpolar`: class for 2D compressible state with Mach and angle (suitable for supersonic flows)
+- `model2D`: 2D compressible states represented with either velocity components or Mach number and angle (suitable for supersonic flows)
 - `unsteady1D`: extended class for 1D unsteady computations
 
 ## `aerokit.instance` module

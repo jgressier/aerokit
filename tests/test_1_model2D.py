@@ -23,3 +23,14 @@ def test_init_qarray():
     assert q.asound() == pytest.approx(10.0, rel=1e-10) #
     assert np.allclose(q.Mach(), u/10., atol=1e-10)
 
+
+def test_mach_angle_conversion():
+    q = m2d.State2d(rho=1.4, u=20.0, v=20.0, p=100.0)
+    qma = q.to_mach_angle()
+    assert qma.Mach == pytest.approx(2.0 * np.sqrt(2.0))
+    assert qma.angle == pytest.approx(45.0)
+    q_components = qma.to_components()
+    assert q_components.u == pytest.approx(q.u)
+    assert q_components.v == pytest.approx(q.v)
+    assert q_components.rho == q.rho
+    assert q_components.p == q.p
