@@ -110,3 +110,68 @@ class ChebCollocation:
             DM[:, :, ell] = D
         self._matder = DM
         self._max_Dorder = maxorder
+
+
+class MultiDomainChebCollocation:
+    """Two Chebyshev subdomains joined at an internal interface.
+
+    The interface node is shared, giving a grid on ``[xmin, interface]`` and
+    ``[interface, xmax]`` that is clustered at both outer boundaries and at
+    the interface.
+    """
+
+    def __init__(self, npts, xmin=-1.0, interface=0.0, xmax=1.0):
+        if npts < 4:
+            raise ValueError("each subdomain requires at least four points")
+        if not xmin < interface < xmax:
+            raise ValueError("interface must lie strictly between xmin and xmax")
+        self._left = ChebCollocation(npts, xmin=xmin, xmax=interface)
+        self._right = ChebCollocation(npts, xmin=interface, xmax=xmax)
+        self._npts_per_domain = npts
+        self._matder = {}
+
+    @property
+    def npts(self):
+        return 2 * self._npts_per_domain - 1
+
+    @property
+    def interface_index(self):
+        return self._npts_per_domain - 1
+
+    @property
+    def x(self):
+        return np.r_[self._left.x, self._right.x[1:]]
+
+    def _embedded_interface_row(self, derivative, side):
+        row = np.zeros(self.npts)
+        if side == "left":
+            row[: self._npts_per_domain] = derivative[-1, :]
+        else:
+            row[self.interface_index :] = derivative[0, :]
+        return row
+
+    def matder(self, order):
+        """Return a global derivative matrix with an averaged interface row."""
+        if order not in self._matder:
+            left = self._left.matder(order)
+            right = self._right.matder(order)
+            derivative = np.zeros((self.npts, self.npts))
+            derivative[: self._npts_per_domain, : self._npts_per_domain] = left
+            derivative[self.interface_index :, self.interface_index :] = right
+            derivative[self.interface_index, :] = 0.5 * (
+                self._embedded_interface_row(left, "left") + self._embedded_interface_row(right, "right")
+            )
+            self._matder[order] = derivative
+        return self._matder[order]
+
+    def interface_derivative_jumps(self, maxorder=3):
+        """Return rows representing left-minus-right derivative jumps."""
+        jumps = []
+        for order in range(1, maxorder + 1):
+            left = self._left.matder(order)
+            right = self._right.matder(order)
+            jumps.append(
+                self._embedded_interface_row(left, "left")
+                - self._embedded_interface_row(right, "right")
+            )
+        return jumps

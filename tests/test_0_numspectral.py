@@ -18,6 +18,16 @@ def test_cheb_initx():
     assert SpOp.x[-1] == 10.0
 
 
+def test_multidomain_cheb_interface_and_derivatives():
+    SpOp = ns.MultiDomainChebCollocation(16)
+    assert SpOp.npts == 31
+    assert SpOp.x[SpOp.interface_index] == 0.0
+
+    f = np.exp(SpOp.x)
+    assert np.allclose(SpOp.matder(1) @ f, f, rtol=1e-10, atol=1e-10)
+    assert np.allclose(SpOp.interface_derivative_jumps(3) @ f, 0.0, atol=1e-10)
+
+
 def test_affine_mapping_derivatives():
     mapping = AffineMapping(0.0, 10.0)
     assert mapping.dxi_dx() == -0.2
