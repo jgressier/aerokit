@@ -27,6 +27,7 @@ nav:
     - aero.MassFlow: examples/aero.MassFlow.ipynb
     - aero.ShockWave: examples/aero.ShockWave.ipynb
     - common.numspectral: examples/common.numspectral.ipynb
+    - common.semiinfinite_mappings: examples/common.semiinfinite_mappings.ipynb
     - stability.OrrSommerfeld: examples/stability.OrrSommerfeld.ipynb
     - instance.riemann: examples/instance.riemann.ipynb
   - Change log: changelog.md
@@ -48,11 +49,10 @@ plugins:
       default_handler: python
       handlers:
         python:
-          rendering:
+          options:
             show_root_heading: false
             show_source: true
             show_category_heading: true
-          selection:
             #docstring_style: "restructured-text" # default is "google"
             filters:
               - "!^_"  # exclude all members starting with _
