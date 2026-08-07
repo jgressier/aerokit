@@ -11,13 +11,13 @@ from aerokit.common.mapping import AffineMapping
 class ChebCollocation:
     """Chebyshev collocation"""
 
-    def __init__(self, npts: int, xmin=None, xmax=None):
+    def __init__(self, npts: int, xmin=None, xmax=None, mapping=None):
         self._npts = npts
         self._max_Dorder = 0
         # default is -1 to 1 (reverse original xi distribution)
         self._xmin = -1.0 if xmin is None else xmin
         self._xmax = 1.0 if xmax is None else xmax
-        self._mapping = AffineMapping(self._xmin, self._xmax)
+        self._mapping = AffineMapping(self._xmin, self._xmax) if mapping is None else mapping
 
     @property
     def npts(self):

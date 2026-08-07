@@ -98,6 +98,60 @@ class AffineMapping(Mapping):
         )
 
 
+class CenterClusteredMapping(Mapping):
+    """Map ``[-1, 1]`` onto an interval with nodes concentrated at its centre.
+
+    ``strength=0`` is the identity.  Values closer to one move the usual
+    Chebyshev endpoint clustering towards ``x=0``.
+    """
+
+    def __init__(self, xmin=-1.0, xmax=1.0, strength=0.95):
+        if not xmin < xmax:
+            raise ValueError("xmin must be less than xmax")
+        if not 0.0 <= strength < 1.0:
+            raise ValueError("strength must be in [0, 1)")
+        self.xmin = xmin
+        self.xmax = xmax
+        self.strength = strength
+
+    def xi_to_x(self, xi):
+        xi = np.asarray(xi)
+        coordinate = -((1.0 - self.strength) * xi + self.strength * xi**3)
+        return 0.5 * (self.xmax + self.xmin) + 0.5 * (self.xmax - self.xmin) * coordinate
+
+    def x_to_xi(self, x):
+        x = np.asarray(x, dtype=float)
+        coordinate = (2.0 * x - self.xmax - self.xmin) / (self.xmax - self.xmin)
+        xi = -coordinate.copy()
+        for _ in range(20):
+            residual = -((1.0 - self.strength) * xi + self.strength * xi**3) - coordinate
+            xi -= residual / (-((1.0 - self.strength) + 3.0 * self.strength * xi**2))
+        return xi
+
+    def _derivatives(self, xi):
+        scale = 0.5 * (self.xmax - self.xmin)
+        slope = -scale * ((1.0 - self.strength) + 3.0 * self.strength * xi**2)
+        curvature = -scale * 6.0 * self.strength * xi
+        third = -scale * 6.0 * self.strength
+        return slope, curvature, third
+
+    def dxi_dx(self, xi):
+        slope, _, _ = self._derivatives(xi)
+        return 1.0 / slope
+
+    def d2xi_dx2(self, xi):
+        slope, curvature, _ = self._derivatives(xi)
+        return -curvature / slope**3
+
+    def d3xi_dx3(self, xi):
+        slope, curvature, third = self._derivatives(xi)
+        return (3.0 * curvature**2 - slope * third) / slope**5
+
+    def d4xi_dx4(self, xi):
+        slope, curvature, third = self._derivatives(xi)
+        return (10.0 * slope * curvature * third - 15.0 * curvature**3) / slope**7
+
+
 class SemiInfiniteRationalMapping(Mapping):
     """Map [-1, 1) to [0, infinity) with a rational transformation."""
 

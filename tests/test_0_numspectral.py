@@ -1,5 +1,10 @@
 import aerokit.common.numspectral as ns
-from aerokit.common.mapping import AffineMapping, SemiInfiniteAlgebraicMapping, SemiInfiniteRationalMapping
+from aerokit.common.mapping import (
+    AffineMapping,
+    CenterClusteredMapping,
+    SemiInfiniteAlgebraicMapping,
+    SemiInfiniteRationalMapping,
+)
 import numpy as np
 import pytest
 
@@ -34,6 +39,19 @@ def test_affine_mapping_derivatives():
     assert mapping.d2xi_dx2() == 0.0
     assert mapping.d3xi_dx3() == 0.0
     assert mapping.d4xi_dx4() == 0.0
+
+
+def test_center_clustered_mapping():
+    mapping = CenterClusteredMapping(-2.0, 2.0)
+    operator = ns.ChebCollocation(41, mapping=mapping)
+    assert np.allclose(mapping.x_to_xi(mapping.xi_to_x(operator.xi)), operator.xi)
+    assert operator.x[0] == -2.0
+    assert operator.x[-1] == 2.0
+    center = operator.npts // 2
+    assert operator.x[center + 1] - operator.x[center] < operator.x[1] - operator.x[0]
+
+    f = np.exp(operator.x)
+    assert np.allclose(operator.matder(1) @ f, f, rtol=1.0e-9, atol=1.0e-9)
 
 
 @pytest.mark.parametrize(

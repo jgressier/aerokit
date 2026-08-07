@@ -21,6 +21,7 @@ pip show aerokit
 #### new
 
 - `common.numspectral.MultiDomainChebCollocation`: two Chebyshev subdomains joined at an internal interface (used in`examples/stability/tanh_mixing_layer.py`)t
+- `common.mapping`: coordinate-mapping framework for spectral collocation, including additional centre-clustered mappings
 
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
@@ -31,9 +32,7 @@ pip show aerokit
 - `instance.SWinteraction`: new instance modeling two shocks interaction and solve downstream slip line equilibrium
 - `aero.plot.Geom` class (for flow-solutions jupyterbook)
 - `common.mapping`: coordinate-mapping framework for spectral collocation, including affine and semi-infinite rational/algebraic mappings
-- `common.numspectral.MultiDomainChebCollocation`: two Chebyshev subdomains joined at an internal interface
 - `stability.NS.NSaxi`: inviscid compressible axisymmetric Navier--Stokes temporal stability operator (with example)
-- `examples/stability/tanh_mixing_layer.py`: temporal Orr--Sommerfeld analysis of a hyperbolic-tangent mixing layer, comparing mono- and multi-domain discretizations, eigenfunctions, and Richardson convergence
 
 #### changed
 
