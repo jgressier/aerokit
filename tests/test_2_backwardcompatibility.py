@@ -30,5 +30,5 @@ def test_riemann():
 
 def test_nozzle():
     x = np.linspace(0.0, 6.0, 100)
-    noz = oldNoz.nozzle(x, 2.0 - np.sin(x))
+    oldNoz.nozzle(x, 2.0 - np.sin(x))
     assert True  # if no error

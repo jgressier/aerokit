@@ -4,7 +4,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import aerokit.aero.Isentropic as Is
 
 # Grandeurs d'entrée
 P0 = 227.00e2
@@ -122,7 +121,6 @@ def main(lambda_min,lambda_max,pi_c_min,pi_c_max,Tt4_min,Tt4_max):
     lambda_array = np.linspace(lambda_min,lambda_max, num=nb_valeurs)
     pi_c_array = np.linspace(pi_c_min,pi_c_max, num=nb_valeurs)
     Tt4_array = np.linspace(Tt4_min,Tt4_max, num=nb_valeurs)
-    taux_meca_array = np.linspace(0.2,0.8, num=nb_valeurs)
     results = [[0]*nb_valeurs for i in range(5)]
     for i in range(0,lambda_array.size) :
         result = calculs(lambda_array[i],pi_c_base,Tt4_base,m,taux_meca)
@@ -229,6 +227,5 @@ def calculs_tau_optimum(lambda_, pi_c, Tt4, m):
     print(tau_lambda)
     print(Tt13)
     #return [Fspe, mk_spe, eta_th, eta_prop, eta]
-
 
 

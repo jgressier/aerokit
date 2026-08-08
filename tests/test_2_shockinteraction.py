@@ -3,14 +3,14 @@ import pytest
 
 
 def test_wronginit():
-    with pytest.raises(ValueError) as e_info:
-        Pb = SWI.ShockInteraction(.5, 40., -45.)
-    with pytest.raises(ValueError) as e_info:
-        Pb = SWI.ShockInteraction(2., 10., -45.)
-    with pytest.raises(ValueError) as e_info:
-        Pb = SWI.ShockInteraction(2., 30., -15.)
-    with pytest.raises(ValueError) as e_info:
-        Pb = SWI.ShockInteraction(2., -40., 40.)
+    with pytest.raises(ValueError):
+        SWI.ShockInteraction(.5, 40., -45.)
+    with pytest.raises(ValueError):
+        SWI.ShockInteraction(2., 10., -45.)
+    with pytest.raises(ValueError):
+        SWI.ShockInteraction(2., 30., -15.)
+    with pytest.raises(ValueError):
+        SWI.ShockInteraction(2., -40., 40.)
 
 def test_init():
     Pb = SWI.ShockInteraction(2., 35., -40.)

@@ -130,7 +130,6 @@ def animate_spectrum(k_values, spectra, selected_spectra):
     real_min, real_max = np.min(all_omega.real), np.max(all_omega.real)
     imag_min, imag_max = np.min(all_omega.imag), np.max(all_omega.imag)
     real_pad = max(1.0, 0.05 * (real_max - real_min))
-    imag_pad = max(1.0, 0.05 * (imag_max - imag_min))
 
     fig, axis = plt.subplots(figsize=(6, 5))
     spectrum, = axis.plot([], [], "o", alpha=0.35, label="Spectrum")
@@ -138,7 +137,6 @@ def animate_spectrum(k_values, spectra, selected_spectra):
     axis.axhline(0.0, color="k", linewidth=0.8)
     axis.set(
         # xlim=(real_min - real_pad, real_max + real_pad),
-        # ylim=(imag_min - imag_pad, imag_max + imag_pad),
         xlim=(-2, 20),
         ylim=(-2, 2),
         xlabel=r"$\Re(\omega)$",

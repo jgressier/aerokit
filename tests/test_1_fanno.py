@@ -1,5 +1,4 @@
 import aerokit.aero.Fanno as fan
-import numpy as np
 import pytest
 
 

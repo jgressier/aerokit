@@ -4,7 +4,6 @@
 
 import numpy as np
 import aerokit.common.defaultgas as defg  # relative import is deprecated by doctest
-import aerokit.aero.degree as deg
 import aerokit.aero.Supersonic as sup
 
 import matplotlib.pyplot as plt
@@ -25,23 +24,16 @@ def plot_theta_pressure(
     linestyle='-',
     **kwargs
 ):
-    """
-    Plot isentropic polar curve in deviation / pressure ratio axes
+    """Plot an isentropic polar in deviation--pressure-ratio coordinates.
 
-            Long comment
-
-            :param mach:       upstream Mach number
-    :param gamma:      specific heat ratio, default from aerokit.common.defaultgas
-    :param npts:       number of computed points, curve accuracy
-    :param thet_init:  upstream angle (shift the curve by this angle), default 0.
-    :param p_init:     reference pressure (shift the curve by this ratio), default 1.
-    :param curve:      choose which curve to plot (left, right or both)
-            :return:
-
-            :Example:
-
-            .. seealso::
-            .. note::
+    Args:
+        mach: Upstream Mach number.
+        dev_range: Deviation-angle range.
+        gamma: Specific-heat ratio.
+        npts: Number of points on each branch.
+        thet_init: Upstream angle offset.
+        p_init: Pressure-ratio offset.
+        curve: Branch to plot.
     """
 
     dev = np.linspace(dev_range[0], dev_range[1], npts + 1)
