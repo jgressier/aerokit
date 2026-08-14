@@ -15,7 +15,7 @@ from scipy.optimize import newton
 
 
 def Ps_ratio(Mn, gamma=defg._gamma):
-    """Computes static pressure ratio across a shockwave
+    """Computes static pressure ratio across a shockwave from normal component of Mach number
 
     Args:
       Mn: upstream normal Mach number in shock reference frame
@@ -44,38 +44,42 @@ def Mn_Ps_ratio(Pratio: float, gamma=defg._gamma):
 
 def Rho_ratio(Mn, gamma=defg._gamma):
     """
+    Computes density ratio across a shockwave from normal component of Mach number
 
     Args:
       Mn: normal Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:
+        density ratio accross a shock
 
     """
     return ((gamma + 1.0) * Mn ** 2) / (2.0 + (gamma - 1.0) * Mn ** 2)
 
 
 def Ts_ratio(Mn, gamma=defg._gamma):
-    """
+    """Computes temperature ratio across a shockwave from normal component of Mach number
 
     Args:
       Mn: normal Mach number
       gamma:  (Default value = defg._gamma)
 
     Returns:
+      temperature ratio across a shock
 
     """
     return Ps_ratio(Mn, gamma) / Rho_ratio(Mn, gamma)
 
 
 def downstream_Mn(Mn, gamma=defg._gamma):
-    """
+    """Computes downstream normal Mach number from upstream normal Mach number
 
     Args:
       Mn: param gamma:  (Default value = defg._gamma)
       gamma:  (Default value = defg._gamma)
 
     Returns:
+      downstream normal Mach number
 
     """
     return np.sqrt((1.0 + 0.5 * (gamma - 1.0) * Mn ** 2) / (gamma * Mn ** 2 - 0.5 * (gamma - 1.0)))
@@ -95,7 +99,7 @@ def Pt_ratio(Mn, gamma=defg._gamma):
 
 
 def Mn_Pt_ratio(ptratio, gamma=defg._gamma):
-    """
+    """Computes normal Mach number from total pressure ratio across a shockwave
 
     Args:
       ptratio:
@@ -144,7 +148,7 @@ def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
 
 
 def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
-    """
+    """Compute deflection angle from upstream Mach number and static pressure ratio
 
     Args:
       Mach: param Pratio:
@@ -158,7 +162,7 @@ def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
 
 
 def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
-    """
+    """Compute downstream Mach number from upstream Mach number and static pressure ratio
 
     Args:
       Mach: param Pratio:
@@ -176,7 +180,7 @@ def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
 
 
 def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
-    """
+    """Computes deflection angle (weak solution) from upstream Mach number and shock angle
 
     Args:
       Mach: param deflection:
@@ -203,6 +207,7 @@ def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
 
 def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
     """
+      computes the shock angle (strong solution) from Mach and deviation
 
     Args:
       Mach: param deflection:
@@ -210,6 +215,7 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
       deflection:
 
     Returns:
+      Shock angle (strong solution)
 
     """
     ka = (1.0 + 0.5 * (gamma + 1.0) * Mach ** 2) * degree.tan(deflection)
@@ -271,7 +277,7 @@ def dev_Max(Mach, gamma=defg._gamma):
 
 
 def dev_MaxMinf(gamma=defg._gamma):
-  """_summary_
+  """compute maximum deviation whatever Mach number (infinite)
 
   Args:
       gamma (_type_, optional): ratio of specific heats. Defaults to defg._gamma.
