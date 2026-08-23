@@ -14,7 +14,7 @@ from aerokit.aero.plot import shockpolar
 
 # Problem parameters
 M0 = 2.8
-wall_deviation = 18.0
+wall_deviation = 15.0
 
 # Incident shock: state 0 -> state 1.
 sigma01 = sw.weaksigma_Mach_deflection(M0, wall_deviation)

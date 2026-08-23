@@ -107,7 +107,7 @@ def point_on_horizontal(angle, y):
 
 bottom_start = point_on_horizontal(sigma01, y_bottom)
 top_start = point_on_horizontal(sigma02, y_top)
-x_end = 3.25
+x_end = 2.2
 bottom_transmitted_angle = interaction[1].angle + sigma13
 top_transmitted_angle = interaction[2].angle + sigma24
 bottom_end = interaction_point + np.array([
@@ -131,13 +131,44 @@ ax_geom.plot(*zip(interaction_point, top_end), **shock_style)
 ax_geom.plot(*zip(interaction_point, slip_end), color="tab:green", lw=1.8, ls="--")
 ax_geom.plot(*interaction_point, "ko", ms=5)
 
+# Compression-corner walls that generate the two incident shocks.
+x_left = -0.75
+x_wall_end = 3.
+y_min, y_max = -1.15, 1.15
+bottom_wall_end = bottom_start + np.array([
+    x_wall_end - bottom_start[0],
+    (x_wall_end - bottom_start[0]) * np.tan(np.deg2rad(bottom_deviation)),
+])
+top_wall_end = top_start + np.array([
+    x_wall_end - top_start[0],
+    (x_wall_end - top_start[0]) * np.tan(np.deg2rad(top_deviation)),
+])
+wall_style = {"color": "black", "lw": 3.0, "solid_capstyle": "round"}
+
+# Shade the solid side of each wall; the unshaded region is the flow passage.
+wall_fill = {"facecolor": "0.75", "edgecolor": "0.55", "hatch": "///", "alpha": 0.55, "zorder": 0}
+ax_geom.fill(
+    [x_left, x_wall_end, bottom_wall_end[0], bottom_start[0], x_left],
+    [y_min, y_min, bottom_wall_end[1], bottom_start[1], y_bottom],
+    **wall_fill,
+)
+ax_geom.fill(
+    [x_left, x_wall_end, top_wall_end[0], top_start[0], x_left],
+    [y_max, y_max, top_wall_end[1], top_start[1], y_top],
+    **wall_fill,
+)
+ax_geom.plot([x_left, bottom_start[0]], [y_bottom, y_bottom], **wall_style)
+ax_geom.plot(*zip(bottom_start, bottom_wall_end), **wall_style)
+ax_geom.plot([x_left, top_start[0]], [y_top, y_top], **wall_style)
+ax_geom.plot(*zip(top_start, top_wall_end), **wall_style)
+
 # Region labels are deliberately placed away from shock lines.
 region_labels = [
     ("0", (-0.05, 0.0)),
     ("1", (0.75, -0.62)),
     ("2", (0.75, 0.62)),
-    ("3", (2.10, -0.28)),
-    ("4", (2.10, 0.18)),
+    ("3", (2.20, -0.28)),
+    ("4", (2.20, 0.18)),
 ]
 for label, position in region_labels:
     ax_geom.text(
@@ -146,26 +177,36 @@ for label, position in region_labels:
     )
 
 angle_labels = [
-    (rf"$\sigma_{{01}}={sigma01:.1f}^\circ$", (0.35, -0.30)),
-    (rf"$\sigma_{{02}}={sigma02:.1f}^\circ$", (0.35, 0.30)),
-    (rf"$\sigma_{{13}}={sigma13:.1f}^\circ$", (2.45, -0.82)),
-    (rf"$\sigma_{{24}}={sigma24:.1f}^\circ$", (2.45, 0.78)),
+    (rf"$\sigma_{{01}}={sigma01:.1f}^\circ$", (0.3, -0.35), "center", "center"),
+    (rf"$\sigma_{{02}}={sigma02:.1f}^\circ$", (0.3, 0.40), "center", "center"),
+    (
+        rf"$\sigma_{{13}}={sigma13:.1f}^\circ$",
+        bottom_end + np.array([0.08, 0.08 * np.tan(np.deg2rad(bottom_transmitted_angle))]),
+        "left",
+        "top",
+    ),
+    (
+        rf"$\sigma_{{24}}={sigma24:.1f}^\circ$",
+        top_end + np.array([0.08, 0.08 * np.tan(np.deg2rad(top_transmitted_angle))]),
+        "left",
+        "bottom",
+    ),
 ]
-for label, position in angle_labels:
+for label, position, horizontal_alignment, vertical_alignment in angle_labels:
     ax_geom.text(
-        *position, label, ha="center", va="center",
+        *position, label, ha=horizontal_alignment, va=vertical_alignment,
         bbox={"boxstyle": "round,pad=0.15", "fc": "white", "ec": "none", "alpha": 0.85},
     )
 
 ax_geom.annotate(
-    rf"slip line, $\theta={theta_downstream:.1f}^\circ$",
+    "slip line\n" + rf"$\theta={theta_downstream:.1f}^\circ$",
     slip_end,
-    xytext=(-115, -24),
+    xytext=(5, 0),
     textcoords="offset points",
     color="tab:green",
 )
-ax_geom.set_xlim(-0.4, 3.4)
-ax_geom.set_ylim(-1.15, 1.15)
+ax_geom.set_xlim(x_left, 3.)
+ax_geom.set_ylim(y_min, y_max)
 ax_geom.set_aspect("equal", adjustable="box")
 ax_geom.set_xlabel("x")
 ax_geom.set_ylabel("y")
