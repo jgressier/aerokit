@@ -66,6 +66,7 @@ def plot_theta_pressure(
     color='k',
     linestyle='-',
     ax=plt,
+    sigma_range=None,
     **kwargs
 ):
     """Plot a shock polar in deviation--pressure-ratio coordinates.
@@ -77,9 +78,18 @@ def plot_theta_pressure(
         thet_init: Upstream angle offset.
         p_init: Pressure-ratio offset.
         curve: Branch to plot.
+        sigma_range: Optional ``(sigma_start, sigma_end)`` shock-angle interval
+            in degrees. By default, the complete polar from the Mach angle to
+            the normal shock is drawn.
     """
 
-    sig = np.linspace(deg.asin(1.0 / mach), 90.0, npts + 1)
+    if sigma_range is None:
+        sigma_start, sigma_end = deg.asin(1.0 / mach), 90.0
+    else:
+        if len(sigma_range) != 2:
+            raise ValueError("sigma_range must contain exactly two angles")
+        sigma_start, sigma_end = sigma_range
+    sig = np.linspace(sigma_start, sigma_end, npts + 1)
     dev = sw.deflection_Mach_sigma(mach, sig, gamma)
     ps = p_init * sw.Ps_ratio(mach * deg.sin(sig), gamma)  # pressure ratio only depends on normal Mach number
     if curve in ['right', 'both']:

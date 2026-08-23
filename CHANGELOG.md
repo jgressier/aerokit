@@ -16,6 +16,12 @@ pip show aerokit
 
 ## Versions
 
+### Unreleased
+
+#### changed
+
+- `aero.plot.shockpolar.plot_theta_pressure`: add the optional `sigma_range=(sigma_start, sigma_end)` argument to draw only a prescribed shock-angle interval of a pressure polar.
+
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new

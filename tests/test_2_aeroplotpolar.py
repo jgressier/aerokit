@@ -58,6 +58,15 @@ def test_shockpolar_extrema_and_sonic_markers():
     plt.close(fig)
 
 
+def test_shockpolar_pressure_sigma_range():
+    fig, axis = plt.subplots()
+    shp.plot_theta_pressure(2.0, sigma_range=(70.0, 90.0), npts=4, ax=axis)
+    assert len(axis.lines[0].get_xdata()) == 5
+    np.testing.assert_allclose(axis.lines[0].get_xdata()[-1], 0.0, atol=1.0e-12)
+    np.testing.assert_allclose(axis.lines[0].get_ydata()[-1], sw.Ps_ratio(2.0))
+    plt.close(fig)
+
+
 def test_shockpolar_sigma_extrema_and_sonic_markers():
     fig, axis = plt.subplots()
     shp.plot_theta_sigma(2.0, npts=4, curve="both", devmax=True, sonic=True, ax=axis)
