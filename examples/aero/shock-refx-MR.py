@@ -12,6 +12,7 @@ import numpy as np
 from scipy import optimize
 
 from aerokit.aero import ShockWave as sw
+from aerokit.aero import degree as deg
 from aerokit.aero import model2D as m2d
 from aerokit.aero.plot import shockpolar
 
@@ -134,7 +135,7 @@ y_min, y_max = -0.15, 1.15
 corner = np.array([0.0, y_bottom])
 triple_height = 0.78
 triple_point = np.array([
-    triple_height / np.tan(np.deg2rad(sigma01)),
+    triple_height / deg.tan(sigma01),
     triple_height,
 ])
 
@@ -146,7 +147,7 @@ stem_height = y_top - triple_point[1]
 #   dx/dy = 0            at the wall (a vertical tangent).
 stem_y = np.linspace(triple_point[1], y_top, 80)
 stem_dy = stem_y - triple_point[1]
-stem_cotangent = 1.0 / np.tan(np.deg2rad(stem_global_angle))
+stem_cotangent = 1.0 / deg.tan(stem_global_angle)
 stem_x = (
     triple_point[0]
     + stem_cotangent * stem_dy
@@ -154,17 +155,17 @@ stem_x = (
 )
 stem_wall = np.array([stem_x[-1], stem_y[-1]])
 
-wall_slope = np.tan(np.deg2rad(wall_deviation))
+wall_slope = deg.tan(wall_deviation)
 bottom_wall_end = np.array([x_right, wall_slope * x_right])
 reflected_global_angle = state[1].angle + sigma12
 downstream_dx = 0.3
 reflected_end = triple_point + np.array([
     downstream_dx,
-    downstream_dx * np.tan(np.deg2rad(reflected_global_angle)),
+    downstream_dx * deg.tan(reflected_global_angle),
 ])
 slip_end = triple_point + np.array([
     downstream_dx,
-    downstream_dx * np.tan(np.deg2rad(theta_downstream)),
+    downstream_dx * deg.tan(theta_downstream),
 ])
 
 # Walls and solid shading.
@@ -193,10 +194,10 @@ ax_geom.plot(*zip(triple_point, slip_end), color="tab:green", lw=1.8, ls="--")
 ax_geom.plot(*triple_point, "ko", ms=5)
 
 region_labels = [
-    ("0", (0.05, 0.68)),
+    ("0", (0.05, 0.6)),
     ("1", (0.50, 0.35)),
     ("2", (1.12, 0.67)),
-    ("3", tuple(triple_point + np.array([0.1, 0.1]))),
+    ("3", tuple(triple_point + np.array([0.06, 0.06]))),
 ]
 for label, position in region_labels:
     ax_geom.text(
@@ -222,9 +223,9 @@ for label, position, horizontal_alignment, vertical_alignment in angle_labels:
     )
 
 ax_geom.annotate(
-    "Mach-stem tangent at triple point:\n"
-    + rf"$\sigma_{{03}}={sigma03:.3f}^\circ$",
-    (stem_x[len(stem_x) // 2], stem_y[len(stem_y) // 2]),
+    "Mach-stem tangent:\n"
+    + rf"$\sigma_{{03}}={sigma03:.1f}^\circ$",
+    (stem_x[0], stem_y[0]),
     xytext=(-10, 0),
     textcoords="offset points",
     color="tab:red",

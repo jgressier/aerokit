@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from aerokit.aero import ShockWave as sw
+from aerokit.aero import degree as deg
 from aerokit.aero.plot import shockpolar
 from aerokit.instance.SWinteraction import ShockInteraction
 
@@ -100,7 +101,7 @@ y_bottom, y_top = -1.0, 1.0
 def point_on_horizontal(angle, y):
     """Intersection of a line through the interaction point with a given y."""
     return np.array([
-        interaction_point[0] + (y - interaction_point[1]) / np.tan(np.deg2rad(angle)),
+        interaction_point[0] + (y - interaction_point[1]) / deg.tan(angle),
         y,
     ])
 
@@ -112,15 +113,15 @@ bottom_transmitted_angle = interaction[1].angle + sigma13
 top_transmitted_angle = interaction[2].angle + sigma24
 bottom_end = interaction_point + np.array([
     x_end - interaction_point[0],
-    (x_end - interaction_point[0]) * np.tan(np.deg2rad(bottom_transmitted_angle)),
+    (x_end - interaction_point[0]) * deg.tan(bottom_transmitted_angle),
 ])
 top_end = interaction_point + np.array([
     x_end - interaction_point[0],
-    (x_end - interaction_point[0]) * np.tan(np.deg2rad(top_transmitted_angle)),
+    (x_end - interaction_point[0]) * deg.tan(top_transmitted_angle),
 ])
 slip_end = interaction_point + np.array([
     x_end - interaction_point[0],
-    (x_end - interaction_point[0]) * np.tan(np.deg2rad(theta_downstream)),
+    (x_end - interaction_point[0]) * deg.tan(theta_downstream),
 ])
 
 shock_style = {"color": "tab:red", "lw": 2.5}
@@ -137,11 +138,11 @@ x_wall_end = 3.
 y_min, y_max = -1.15, 1.15
 bottom_wall_end = bottom_start + np.array([
     x_wall_end - bottom_start[0],
-    (x_wall_end - bottom_start[0]) * np.tan(np.deg2rad(bottom_deviation)),
+    (x_wall_end - bottom_start[0]) * deg.tan(bottom_deviation),
 ])
 top_wall_end = top_start + np.array([
     x_wall_end - top_start[0],
-    (x_wall_end - top_start[0]) * np.tan(np.deg2rad(top_deviation)),
+    (x_wall_end - top_start[0]) * deg.tan(top_deviation),
 ])
 wall_style = {"color": "black", "lw": 3.0, "solid_capstyle": "round"}
 
@@ -181,13 +182,13 @@ angle_labels = [
     (rf"$\sigma_{{02}}={sigma02:.1f}^\circ$", (0.3, 0.40), "center", "center"),
     (
         rf"$\sigma_{{13}}={sigma13:.1f}^\circ$",
-        bottom_end + np.array([0.08, 0.08 * np.tan(np.deg2rad(bottom_transmitted_angle))]),
+        bottom_end + np.array([0.08, 0.08 * deg.tan(bottom_transmitted_angle)]),
         "left",
         "top",
     ),
     (
         rf"$\sigma_{{24}}={sigma24:.1f}^\circ$",
-        top_end + np.array([0.08, 0.08 * np.tan(np.deg2rad(top_transmitted_angle))]),
+        top_end + np.array([0.08, 0.08 * deg.tan(top_transmitted_angle)]),
         "left",
         "bottom",
     ),

@@ -15,6 +15,7 @@ import numpy as np
 from scipy import optimize
 
 from aerokit.aero import ShockWave as sw
+from aerokit.aero import degree as deg
 from aerokit.aero import model2D as m2d
 from aerokit.aero.plot import shockpolar
 
@@ -220,7 +221,7 @@ triple_top = np.array([x_triple, 0.16])
 def shock_origin(point, shock_angle, wall_y):
     """Return the wall point joined to ``point`` by a shock at ``shock_angle``."""
     return np.array([
-        point[0] + (wall_y - point[1]) / np.tan(np.deg2rad(shock_angle)),
+        point[0] + (wall_y - point[1]) / deg.tan(shock_angle),
         wall_y,
     ])
 
@@ -231,11 +232,11 @@ top_corner = shock_origin(triple_top, sigma02, y_top)
 # Compression walls and shaded solid material.
 bottom_wall_end = np.array([
     x_right,
-    y_bottom + (x_right - bottom_corner[0]) * np.tan(np.deg2rad(bottom_deviation)),
+    y_bottom + (x_right - bottom_corner[0]) * deg.tan(bottom_deviation),
 ])
 top_wall_end = np.array([
     x_right,
-    y_top + (x_right - top_corner[0]) * np.tan(np.deg2rad(top_deviation)),
+    y_top + (x_right - top_corner[0]) * deg.tan(top_deviation),
 ])
 wall_fill = {"facecolor": "0.75", "edgecolor": "0.55", "hatch": "///", "alpha": 0.55, "zorder": 0}
 ax_geom.fill(
@@ -260,11 +261,11 @@ top_transmitted_angle = state[2].angle + sigma24
 reflected_dx = 0.25
 bottom_transmitted_end = triple_bottom + np.array([
     reflected_dx,
-    reflected_dx * np.tan(np.deg2rad(bottom_transmitted_angle)),
+    reflected_dx * deg.tan(bottom_transmitted_angle),
 ])
 top_transmitted_end = triple_top + np.array([
     reflected_dx,
-    reflected_dx * np.tan(np.deg2rad(top_transmitted_angle)),
+    reflected_dx * deg.tan(top_transmitted_angle),
 ])
 shock_style = {"color": "tab:red", "lw": 2.5}
 ax_geom.plot(*zip(bottom_corner, triple_bottom), **shock_style)
@@ -296,7 +297,7 @@ x_slip_end = 2.30
 for triple, theta in ((triple_bottom, state[3].angle), (triple_top, state[4].angle)):
     slip_end = triple + np.array([
         x_slip_end - x_triple,
-        (x_slip_end - x_triple) * np.tan(np.deg2rad(theta)),
+        (x_slip_end - x_triple) * deg.tan(theta),
     ])
     ax_geom.plot(*zip(triple, slip_end), color="tab:green", lw=1.7, ls="--")
 

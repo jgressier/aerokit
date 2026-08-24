@@ -81,10 +81,10 @@ x_left, x_right = -0.2, 2.
 y_bottom, y_top = 0.0, 1.0
 y_min, y_max = -0.15, 1.15
 corner = np.array([0.0, y_bottom])
-reflection = np.array([1.0 / np.tan(np.deg2rad(sigma01)), y_top])
+reflection = np.array([1.0 / deg.tan(sigma01), y_top])
 reflected_angle = wall_deviation - sigma12
-wall_slope = np.tan(np.deg2rad(wall_deviation))
-reflected_slope = np.tan(np.deg2rad(reflected_angle))
+wall_slope = deg.tan(wall_deviation)
+reflected_slope = deg.tan(reflected_angle)
 x_reflected_end = (
     reflection[1] - reflected_slope * reflection[0]
 ) / (wall_slope - reflected_slope)
