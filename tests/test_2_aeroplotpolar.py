@@ -67,6 +67,17 @@ def test_shockpolar_pressure_sigma_range():
     plt.close(fig)
 
 
+def test_shockpolar_plot_state():
+    fig, axis = plt.subplots()
+    state = m2d.State2DMach(2.0, angle=3.0, p=2.0)
+    line, annotation = shp.plot_state(state, label="1", color="tab:blue", ax=axis)
+
+    np.testing.assert_allclose(line.get_xdata(), [3.0])
+    np.testing.assert_allclose(line.get_ydata(), [2.0])
+    assert annotation.get_text() == "1"
+    plt.close(fig)
+
+
 def test_shockpolar_sigma_extrema_and_sonic_markers():
     fig, axis = plt.subplots()
     shp.plot_theta_sigma(2.0, npts=4, curve="both", devmax=True, sonic=True, ax=axis)

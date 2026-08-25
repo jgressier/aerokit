@@ -12,12 +12,13 @@ points; the straight segments drawn here use the locally computed angles.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import optimize
 
 from aerokit.aero import ShockWave as sw
 from aerokit.aero import degree as deg
 from aerokit.aero import model2D as m2d
 from aerokit.aero.plot import shockpolar
+from aerokit.aero.plot.geom import Geom
+from aerokit.instance.SWinteraction import ShockInteraction
 
 
 # A regular weak/weak interaction exists in shock-inter.py.  These stronger,
@@ -45,38 +46,12 @@ polar_gap = detachment_state_bottom.angle - detachment_state_top.angle
 if polar_gap <= 0.0:
     raise RuntimeError("this case still admits a regular shock-polar intersection")
 
-def triple_point_solution(incident_state, incident_deviation):
-    """Intersect a reflected weak polar with the strong state-0 polar."""
-    turning_limit = sw.dev_Max(incident_state.Mach)
-    epsilon = 1.0e-5
-    if incident_deviation > 0.0:
-        theta_left = incident_deviation - turning_limit + epsilon
-        theta_right = incident_deviation - epsilon
-    else:
-        theta_left = incident_deviation + epsilon
-        theta_right = incident_deviation + turning_limit - epsilon
-
-    def pressure_mismatch(theta):
-        reflected = incident_state.weakshock_deviation(theta - incident_deviation)
-        stem = state[0].strongshock_deviation(theta)
-        return reflected.p - stem.p
-
-    theta = optimize.brentq(pressure_mismatch, theta_left, theta_right)
-    reflected_state = incident_state.weakshock_deviation(theta - incident_deviation)
-    stem_state = state[0].strongshock_deviation(theta)
-    reflected_sigma = sw.weaksigma_Mach_deflection(
-        incident_state.Mach, theta - incident_deviation
-    )
-    stem_sigma = sw.strongsigma_Mach_deflection(M0, theta)
-    return reflected_state, stem_state, reflected_sigma, stem_sigma
-
-
-state[3], stem_state_03, sigma13, sigma03 = triple_point_solution(
-    state[1], bottom_deviation
-)
-state[4], stem_state_04, sigma24, sigma04 = triple_point_solution(
-    state[2], top_deviation
-)
+triple_03 = ShockInteraction.solve_triple_point(state[0], state[1])
+triple_04 = ShockInteraction.solve_triple_point(state[0], state[2])
+state[3], stem_state_03 = triple_03.reflected_state, triple_03.stem_state
+state[4], stem_state_04 = triple_04.reflected_state, triple_04.stem_state
+sigma13, sigma03 = triple_03.sigma_reflected, triple_03.sigma_stem
+sigma24, sigma04 = triple_04.sigma_reflected, triple_04.sigma_stem
 
 print(f"bottom incident shock: sigma01 = {sigma01:.3f} deg")
 print(f"top incident shock:    sigma02 = {sigma02:.3f} deg")
@@ -157,33 +132,22 @@ point_colors = ["black", "tab:blue", "tab:orange", "tab:blue", "tab:orange"]
 point_markers = ["o", "o", "o", "X", "+"]
 label_offsets = [(-6, -15), (10, -8), (-17, -8), (10, 10), (-20, 10)]
 for number, color, marker, offset in zip(range(5), point_colors, point_markers, label_offsets):
-    q = state[number]
-    ax_polar.plot(q.angle, q.p, marker=marker, color=color, ms=8)
-    ax_polar.annotate(
-        str(number),
-        (q.angle, q.p),
-        xytext=offset,
-        textcoords="offset points",
-        color=color,
-        fontweight="bold",
-        bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": color, "alpha": 0.9},
-        arrowprops={"arrowstyle": "-", "color": color, "lw": 0.8},
+    shockpolar.plot_state(
+        state[number], label=str(number), marker=marker, color=color, offset=offset, ax=ax_polar
     )
 
 for label, triple_state, offset in (
     ("03", stem_state_03, (10, -28)),
     ("04", stem_state_04, (-28, -28)),
 ):
-    ax_polar.plot(triple_state.angle, triple_state.p, "D", color="tab:red", ms=6)
-    ax_polar.annotate(
-        label,
-        (triple_state.angle, triple_state.p),
-        xytext=offset,
-        textcoords="offset points",
+    shockpolar.plot_state(
+        triple_state,
+        label=label,
+        marker="D",
         color="tab:red",
-        fontweight="bold",
-        bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": "tab:red", "alpha": 0.9},
-        arrowprops={"arrowstyle": "-", "color": "tab:red", "lw": 0.8},
+        markersize=6,
+        offset=offset,
+        ax=ax_polar,
     )
 
 gap_pressure = 0.5 * (detachment_state_bottom.p + detachment_state_top.p)
@@ -238,22 +202,19 @@ top_wall_end = np.array([
     x_right,
     y_top + (x_right - top_corner[0]) * deg.tan(top_deviation),
 ])
-wall_fill = {"facecolor": "0.75", "edgecolor": "0.55", "hatch": "///", "alpha": 0.55, "zorder": 0}
-ax_geom.fill(
-    [x_left, x_right, bottom_wall_end[0], bottom_corner[0], x_left],
-    [y_min, y_min, bottom_wall_end[1], bottom_corner[1], y_bottom],
-    **wall_fill,
+ax_geom.set(xlim=(x_left, x_right), ylim=(y_min, y_max))
+geometry = Geom()
+geometry.add_wall(
+    (x_left, bottom_corner[0], bottom_wall_end[0]),
+    (y_bottom, bottom_corner[1], bottom_wall_end[1]),
+    location="bottom",
 )
-ax_geom.fill(
-    [x_left, x_right, top_wall_end[0], top_corner[0], x_left],
-    [y_max, y_max, top_wall_end[1], top_corner[1], y_top],
-    **wall_fill,
+geometry.add_wall(
+    (x_left, top_corner[0], top_wall_end[0]),
+    (y_top, top_corner[1], top_wall_end[1]),
+    location="top",
 )
-wall_style = {"color": "black", "lw": 3.0, "solid_capstyle": "round"}
-ax_geom.plot([x_left, bottom_corner[0]], [y_bottom, y_bottom], **wall_style)
-ax_geom.plot(*zip(bottom_corner, bottom_wall_end), **wall_style)
-ax_geom.plot([x_left, top_corner[0]], [y_top, y_top], **wall_style)
-ax_geom.plot(*zip(top_corner, top_wall_end), **wall_style)
+geometry.plot(ax=ax_geom)
 
 # Incident shocks, triple-point reflected shocks, and the Mach disk.
 bottom_transmitted_angle = state[1].angle + sigma13

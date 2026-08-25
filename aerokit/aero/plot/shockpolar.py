@@ -112,3 +112,54 @@ def plot_theta_pressure(
             ax.plot(thet_init + thet, p_init * ps, 'ko', markerfacecolor='white')
         if curve in ['left', 'both']:
             ax.plot(thet_init - thet, p_init * ps, 'ko', markerfacecolor='white')
+
+
+def plot_state(
+    state,
+    label=None,
+    ax=plt,
+    marker='o',
+    color='k',
+    markersize=8,
+    offset=(6, 5),
+    annotation_kwargs=None,
+    **plot_kwargs
+):
+    """Plot and optionally annotate a flow state on a pressure polar.
+
+    Args:
+        state: Object exposing ``angle`` and ``p`` attributes.
+        label: Optional annotation text.
+        ax: Matplotlib axes or pyplot-compatible object.
+        marker: State marker.
+        color: Marker and default annotation color.
+        markersize: Marker size.
+        offset: Annotation offset in display points.
+        annotation_kwargs: Optional overrides passed to ``annotate``.
+        **plot_kwargs: Additional keyword arguments passed to ``plot``.
+
+    Returns:
+        ``(line, annotation)``; annotation is ``None`` when no label is given.
+    """
+    line, = ax.plot(
+        state.angle,
+        state.p,
+        marker=marker,
+        color=color,
+        markersize=markersize,
+        **plot_kwargs
+    )
+    annotation = None
+    if label is not None:
+        annotation_style = {
+            'xytext': offset,
+            'textcoords': 'offset points',
+            'color': color,
+            'fontweight': 'bold',
+            'bbox': {'boxstyle': 'round,pad=0.2', 'fc': 'white', 'ec': color, 'alpha': 0.9},
+            'arrowprops': {'arrowstyle': '-', 'color': color, 'lw': 0.8},
+        }
+        if annotation_kwargs is not None:
+            annotation_style.update(annotation_kwargs)
+        annotation = ax.annotate(label, (state.angle, state.p), **annotation_style)
+    return line, annotation

@@ -1,4 +1,5 @@
 import aerokit.instance.SWinteraction as SWI
+import aerokit.aero.model2D as m2d
 import pytest
 
 
@@ -44,6 +45,18 @@ def test_weakstrong():
     assert Pb.sigma02 == pytest.approx(89.33539)
     #Pb.plot_angle_pressure()
     #SWI.plotsw.plt.show()
+
+
+@pytest.mark.parametrize("incident_deviation", [20.0, -15.0])
+def test_triple_point(incident_deviation):
+    upstream = m2d.State2DMach(2.3)
+    incident = upstream.weakshock_deviation(incident_deviation)
+    triple = SWI.ShockInteraction.solve_triple_point(upstream, incident)
+
+    assert triple.root_result.converged
+    assert triple.reflected_state.angle == pytest.approx(triple.stem_state.angle)
+    assert triple.reflected_state.p == pytest.approx(triple.stem_state.p)
+    assert triple.theta == pytest.approx(triple.reflected_state.angle)
 
 #@pytest.mark.xfail # newton fails, secant ok
 @pytest.mark.parametrize("M0, sig1, sig2", [(2., 35., -40), (3., 30., -45), (4., 50., -20)])

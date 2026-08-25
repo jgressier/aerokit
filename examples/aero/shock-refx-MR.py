@@ -9,12 +9,13 @@ from state 0 (the Mach stem).
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import optimize
 
 from aerokit.aero import ShockWave as sw
 from aerokit.aero import degree as deg
 from aerokit.aero import model2D as m2d
+from aerokit.aero.plot.geom import Geom
 from aerokit.aero.plot import shockpolar
+from aerokit.instance.SWinteraction import ShockInteraction
 
 
 # Problem parameters: deliberately beyond the regular-reflection limit.
@@ -29,27 +30,14 @@ reflected_devmax = sw.dev_Max(state[1].Mach)
 if reflected_devmax >= wall_deviation:
     raise RuntimeError("this case still admits a regular weak reflection")
 
-# Three-shock construction.  State 1 is compressed by the reflected shock;
-# state 0 is compressed independently by the strong Mach-stem branch.  Across
-# the slip line, the two resulting states must have equal angle and pressure.
-theta_min = wall_deviation - reflected_devmax + 1.0e-5
-theta_max = wall_deviation - 1.0e-5
-
-
-def pressure_mismatch(theta):
-    reflected_state = state[1].weakshock_deviation(theta - wall_deviation)
-    mach_stem_state = state[0].strongshock_deviation(theta)
-    return reflected_state.p - mach_stem_state.p
-
-
-theta_downstream = optimize.brentq(pressure_mismatch, theta_min, theta_max)
-state[2] = state[1].weakshock_deviation(theta_downstream - wall_deviation)
-state[3] = state[0].strongshock_deviation(theta_downstream)
-
-sigma12 = sw.weaksigma_Mach_deflection(
-    state[1].Mach, theta_downstream - wall_deviation
-)
-sigma03 = sw.strongsigma_Mach_deflection(M0, theta_downstream)
+# Three-shock construction. Across the slip line, the reflected and Mach-stem
+# states have equal pressure and flow angle.
+triple = ShockInteraction.solve_triple_point(state[0], state[1])
+theta_downstream = triple.theta
+state[2] = triple.reflected_state
+state[3] = triple.stem_state
+sigma12 = triple.sigma_reflected
+sigma03 = triple.sigma_stem
 
 pressure_error = abs(state[2].p - state[3].p)
 angle_error = abs(state[2].angle - state[3].angle)
@@ -100,17 +88,8 @@ colors = ["black", "tab:blue", "tab:blue", "tab:red"]
 markers = ["o", "o", "X", "+"]
 offsets = [(-6, -15), (10, -8), (12, 10), (12, -18)]
 for number, color, marker, offset in zip(range(4), colors, markers, offsets):
-    q = state[number]
-    ax_polar.plot(q.angle, q.p, marker=marker, color=color, ms=8)
-    ax_polar.annotate(
-        str(number),
-        (q.angle, q.p),
-        xytext=offset,
-        textcoords="offset points",
-        color=color,
-        fontweight="bold",
-        bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": color, "alpha": 0.9},
-        arrowprops={"arrowstyle": "-", "color": color, "lw": 0.8},
+    shockpolar.plot_state(
+        state[number], label=str(number), marker=marker, color=color, offset=offset, ax=ax_polar
     )
 
 ax_polar.axvline(0.0, color="tab:red", ls=":", lw=1.2)
@@ -169,21 +148,15 @@ slip_end = triple_point + np.array([
 ])
 
 # Walls and solid shading.
-wall_fill = {"facecolor": "0.75", "edgecolor": "0.55", "hatch": "///", "alpha": 0.55, "zorder": 0}
-ax_geom.fill(
-    [x_left, x_right, x_right, x_left],
-    [y_top, y_top, y_max, y_max],
-    **wall_fill,
+ax_geom.set(xlim=(x_left, x_right), ylim=(y_min, y_max))
+geometry = Geom()
+geometry.add_wall((x_left, x_right), (y_top, y_top), location="top")
+geometry.add_wall(
+    (x_left, corner[0], bottom_wall_end[0]),
+    (y_bottom, corner[1], bottom_wall_end[1]),
+    location="bottom",
 )
-ax_geom.fill(
-    [x_left, x_right, bottom_wall_end[0], corner[0], x_left],
-    [y_min, y_min, bottom_wall_end[1], corner[1], y_bottom],
-    **wall_fill,
-)
-wall_style = {"color": "black", "lw": 3.0, "solid_capstyle": "round"}
-ax_geom.plot([x_left, x_right], [y_top, y_top], **wall_style)
-ax_geom.plot([x_left, corner[0]], [y_bottom, y_bottom], **wall_style)
-ax_geom.plot(*zip(corner, bottom_wall_end), **wall_style)
+geometry.plot(ax=ax_geom)
 
 # Incident shock, reflected shock, Mach stem, and slip line.
 shock_style = {"color": "tab:red", "lw": 2.5}

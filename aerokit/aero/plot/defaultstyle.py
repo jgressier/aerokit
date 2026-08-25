@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 sty_shock = {'color': 'red', 'linewidth': 3}
 sty_carac = {'color': 'orange', 'linewidth': 2}
 sty_wall = {'color': 'black', 'linewidth': 3}
+sty_wall_fill = {'facecolor': '0.75', 'edgecolor': '0.55', 'hatch': '///', 'alpha': 0.55, 'zorder': 0}
 sty_flow = {'color': 'green', 'linewidth': 3}
 sty_text = {'fontsize': 14}
 

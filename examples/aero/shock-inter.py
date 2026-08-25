@@ -11,6 +11,7 @@ import numpy as np
 from aerokit.aero import ShockWave as sw
 from aerokit.aero import degree as deg
 from aerokit.aero.plot import shockpolar
+from aerokit.aero.plot.geom import Geom
 from aerokit.instance.SWinteraction import ShockInteraction
 
 
@@ -73,17 +74,13 @@ colors = ["black", "tab:blue", "tab:orange", "tab:blue", "tab:orange"]
 markers = ["o", "o", "o", "X", "+"]
 label_offsets = [(-6, -12), (10, -7), (-15, -7), (0, 15), (0, -22)]
 for number, color, marker in zip(range(5), colors, markers):
-    state = interaction[number]
-    ax.plot(state.angle, state.p, marker=marker, color=color, markersize=8)
-    ax.annotate(
-        str(number),
-        (state.angle, state.p),
-        xytext=label_offsets[number],
-        textcoords="offset points",
+    shockpolar.plot_state(
+        interaction[number],
+        label=str(number),
+        marker=marker,
         color=color,
-        fontweight="bold",
-        bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": color, "alpha": 0.9},
-        arrowprops={"arrowstyle": "-", "color": color, "lw": 0.8},
+        offset=label_offsets[number],
+        ax=ax,
     )
 
 ax.set_xlabel(r"flow deviation $\theta$ (deg)")
@@ -144,24 +141,19 @@ top_wall_end = top_start + np.array([
     x_wall_end - top_start[0],
     (x_wall_end - top_start[0]) * deg.tan(top_deviation),
 ])
-wall_style = {"color": "black", "lw": 3.0, "solid_capstyle": "round"}
-
-# Shade the solid side of each wall; the unshaded region is the flow passage.
-wall_fill = {"facecolor": "0.75", "edgecolor": "0.55", "hatch": "///", "alpha": 0.55, "zorder": 0}
-ax_geom.fill(
-    [x_left, x_wall_end, bottom_wall_end[0], bottom_start[0], x_left],
-    [y_min, y_min, bottom_wall_end[1], bottom_start[1], y_bottom],
-    **wall_fill,
+ax_geom.set(xlim=(x_left, 3.0), ylim=(y_min, y_max))
+geometry = Geom()
+geometry.add_wall(
+    (x_left, bottom_start[0], bottom_wall_end[0]),
+    (y_bottom, bottom_start[1], bottom_wall_end[1]),
+    location="bottom",
 )
-ax_geom.fill(
-    [x_left, x_wall_end, top_wall_end[0], top_start[0], x_left],
-    [y_max, y_max, top_wall_end[1], top_start[1], y_top],
-    **wall_fill,
+geometry.add_wall(
+    (x_left, top_start[0], top_wall_end[0]),
+    (y_top, top_start[1], top_wall_end[1]),
+    location="top",
 )
-ax_geom.plot([x_left, bottom_start[0]], [y_bottom, y_bottom], **wall_style)
-ax_geom.plot(*zip(bottom_start, bottom_wall_end), **wall_style)
-ax_geom.plot([x_left, top_start[0]], [y_top, y_top], **wall_style)
-ax_geom.plot(*zip(top_start, top_wall_end), **wall_style)
+geometry.plot(ax=ax_geom)
 
 # Region labels are deliberately placed away from shock lines.
 region_labels = [

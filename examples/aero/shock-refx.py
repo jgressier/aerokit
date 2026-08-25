@@ -10,6 +10,8 @@ import numpy as np
 
 from aerokit.aero import ShockWave as sw
 from aerokit.aero import degree as deg
+from aerokit.aero import model2D as m2d
+from aerokit.aero.plot.geom import Geom
 from aerokit.aero.plot import shockpolar
 
 
@@ -19,18 +21,16 @@ wall_deviation = 15.0
 
 # Incident shock: state 0 -> state 1.
 sigma01 = sw.weaksigma_Mach_deflection(M0, wall_deviation)
-Mn0 = M0 * deg.sin(sigma01)
-p1_p0 = sw.Ps_ratio(Mn0)
-Mn1 = sw.downstream_Mn(Mn0)
-M1 = Mn1 / deg.sin(sigma01 - wall_deviation)
+state = {0: m2d.State2DMach(M0)}
+state[1] = state[0].weakshock_deviation(wall_deviation)
+M1 = state[1].Mach
+p1_p0 = state[1].p
 
 # Reflected shock: state 1 -> state 2.  It turns the flow back to zero degrees.
 sigma12 = sw.weaksigma_Mach_deflection(M1, wall_deviation)
-Mn1 = M1 * deg.sin(sigma12)
-p2_p1 = sw.Ps_ratio(Mn1)
-Mn2 = sw.downstream_Mn(Mn1)
-M2 = Mn2 / deg.sin(sigma12 - wall_deviation)
-p2_p0 = p1_p0 * p2_p1
+state[2] = state[1].weakshock_deviation(-wall_deviation)
+M2 = state[2].Mach
+p2_p0 = state[2].p
 
 print(f"incident shock:  sigma01 = {sigma01:.3f} deg, M1 = {M1:.3f}")
 print(f"reflected shock: sigma12 = {sigma12:.3f} deg, M2 = {M2:.3f}")
@@ -52,22 +52,11 @@ shockpolar.plot_theta_pressure(
     ax=ax,
 )
 
-states = {
-    "0": (0.0, 1.0),
-    "1": (wall_deviation, p1_p0),
-    "2": (0.0, p2_p0),
-}
 label_offsets = {"0": (-6, -15), "1": (10, -8), "2": (8, 8)}
-for label, (theta, pressure) in states.items():
-    ax.plot(theta, pressure, "o", markersize=7)
-    ax.annotate(
-        label,
-        (theta, pressure),
-        xytext=label_offsets[label],
-        textcoords="offset points",
-        fontweight="bold",
-        bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": "0.3", "alpha": 0.9},
-        arrowprops={"arrowstyle": "-", "color": "0.3", "lw": 0.8},
+for number in range(3):
+    label = str(number)
+    shockpolar.plot_state(
+        state[number], label=label, offset=label_offsets[label], markersize=7, ax=ax
     )
 
 ax.set_xlabel(r"flow deviation $\theta$ (deg)")
@@ -91,21 +80,15 @@ x_reflected_end = (
 reflected_end = np.array([x_reflected_end, wall_slope * x_reflected_end])
 bottom_wall_end = np.array([x_right, wall_slope * x_right])
 
-wall_fill = {"facecolor": "0.75", "edgecolor": "0.55", "hatch": "///", "alpha": 0.55, "zorder": 0}
-ax_geom.fill(
-    [x_left, x_right, x_right, x_left],
-    [y_top, y_top, y_max, y_max],
-    **wall_fill,
+ax_geom.set(xlim=(x_left, x_right), ylim=(y_min, y_max))
+geometry = Geom()
+geometry.add_wall((x_left, x_right), (y_top, y_top), location="top")
+geometry.add_wall(
+    (x_left, corner[0], bottom_wall_end[0]),
+    (y_bottom, corner[1], bottom_wall_end[1]),
+    location="bottom",
 )
-ax_geom.fill(
-    [x_left, x_right, bottom_wall_end[0], corner[0], x_left],
-    [y_min, y_min, bottom_wall_end[1], corner[1], y_bottom],
-    **wall_fill,
-)
-wall_style = {"color": "black", "lw": 3.0, "solid_capstyle": "round"}
-ax_geom.plot([x_left, x_right], [y_top, y_top], **wall_style)
-ax_geom.plot([x_left, corner[0]], [y_bottom, y_bottom], **wall_style)
-ax_geom.plot(*zip(corner, bottom_wall_end), **wall_style)
+geometry.plot(ax=ax_geom)
 
 shock_style = {"color": "tab:red", "lw": 2.5}
 ax_geom.plot(*zip(corner, reflection), **shock_style)
