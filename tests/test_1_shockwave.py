@@ -50,6 +50,18 @@ def test_shockwave_Mn1_involutive_numpy():
     np.testing.assert_allclose(m, sw.downstream_Mn(sw.downstream_Mn(m)))
 
 
+def test_downstream_Mach_normal_shock():
+    assert sw.downstream_Mach(2.0, 90.0) == pytest.approx(sw.downstream_Mn(2.0))
+
+
+def test_downstream_Mach_oblique_shock_array():
+    mach = np.array([2.0, 3.0])
+    sigma = np.array([40.0, 35.0])
+    deviation = sw.deflection_Mach_sigma(mach, sigma)
+    expected = sw.downstream_Mn(mach * degree.sin(sigma)) / degree.sin(sigma - deviation)
+    np.testing.assert_allclose(sw.downstream_Mach(mach, sigma), expected)
+
+
 def test_Mn_Ps():
     assert sw.Ps_ratio(2.0) == pytest.approx(4.5)
     assert sw.Mn_Ps_ratio(sw.Ps_ratio(3.0)) == pytest.approx(3.0)
