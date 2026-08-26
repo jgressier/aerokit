@@ -24,7 +24,6 @@ npoints_mach = 500
 debug = "--debug" in sys.argv
 debug_mesh_row_skip = 20
 debug_mesh_column_skip = 10
-figure4_mach_max = 5.0
 figure6_mach_max = 6.0
 gamma = 1.4
 mach_values = np.array([
@@ -119,9 +118,14 @@ for mach in mach_values:
         sw.sigma_Sonic(mach, gamma) - deg.asin(1.0 / mach)
     )
     label_index = np.abs(sigma - label_sigma).argmin()
+    tangent_angle = deg.atan2(
+        sigma[label_index + 1] - sigma[label_index - 1],
+        deviation[label_index + 1] - deviation[label_index - 1],
+    )
     ax_full.text(
         deviation[label_index], sigma[label_index], rf"$M_0={mach:g}$",
-        ha="left", va="top", fontsize=7, rotation=-25,
+        ha="left", va="top", fontsize=7, rotation=tangent_angle,
+        rotation_mode="anchor", transform_rotates_text=True,
         bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.75, "pad": 1.0},
     )
 
@@ -340,7 +344,7 @@ strong_compression_ratio = shock_to_isentropic_ratio(
     mach_mesh, strong_sigma_mesh, strong_deviation_mesh
 )
 
-sigma_levels = (10.0, 15.0, 20.0, 30.0, 45.0, 60.0, 75.0, 85.0, 90.0)
+sigma_levels = (10.0, 15.0, 20.0, 25., 30.0, 35., 40., 45.0, 60.0, 75.0, 85.0, 90.0)
 
 
 def plot_deviation_mach_map(
@@ -387,7 +391,8 @@ def plot_deviation_mach_map(
         color="tab:green", linestyle="-.", linewidth=2.0,
         label="isentropic-compression admissibility limit",
     )
-    ax.set_xlim(0.0, 50.0)
+    figure4_mach_max = 4.0
+    ax.set_xlim(0.0, 40.0)
     ax.set_ylim(mesh_mach[0], figure4_mach_max)
     set_axes_style(
         ax, r"deviation $\Delta\theta$ (deg)", r"upstream Mach number $M_0$"
