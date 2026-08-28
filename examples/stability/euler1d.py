@@ -1,6 +1,4 @@
 import numpy as np
-from scipy.linalg import eig, norm
-from scipy.sparse.linalg import eigs
 from aerokit.aero.model1D import state
 from aerokit.stability.Euler import Euler1D
 
@@ -35,7 +33,6 @@ vects = np.empty_like(vects0)
 for i in range(nsel):
     omega[i], vects[:, i] = model.converge_eigenpair(omega0[i], vects0[:, i], niter=5)
     print(omega[i], np.abs(omega[i] - omega[0]) / np.abs(omega[i]))
-# print([norm(B @ v[:,i]-M @ v[:,i]) for i in order[:10]])
 
 # --- PLOT ---
 import matplotlib.pyplot as plt

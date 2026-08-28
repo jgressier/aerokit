@@ -23,21 +23,13 @@ def plot_theta_sigma(
     ax=plt,
     **kwargs
 ):
-    """
-    Plot shock polar curve in deviation / shock angle axes
+    """Plot a shock polar in deviation--shock-angle coordinates.
 
-            Long comment
-
-            :param mach:       upstream Mach number
-    :param gamma:      specific heat ratio, default from aerokit.common.defaultgas
-    :param npts:       number of computed points, curve accuracy
-    :param curve:      choose which curve to plot (left, right or both)
-            :return:
-
-            :Example:
-
-            .. seealso::
-            .. note::
+    Args:
+        mach: Upstream Mach number.
+        gamma: Specific-heat ratio.
+        npts: Number of points on each branch.
+        curve: Branch to plot.
     """
 
     sig = np.linspace(deg.asin(1.0 / mach), 90.0, npts + 1)
@@ -76,23 +68,15 @@ def plot_theta_pressure(
     ax=plt,
     **kwargs
 ):
-    """
-    Plot shock polar curve in deviation / pressure ratio axes
+    """Plot a shock polar in deviation--pressure-ratio coordinates.
 
-            Long comment
-
-            :param mach:       upstream Mach number
-    :param gamma:      specific heat ratio, default from aerokit.common.defaultgas
-    :param npts:       number of computed points, curve accuracy
-    :param thet_init:  upstream angle (shift the curve by this angle), default 0.
-    :param p_init:     reference pressure (shift the curve by this ratio), default 1.
-    :param curve:      choose which curve to plot (left, right or both)
-            :return:
-
-            :Example:
-
-            .. seealso::
-            .. note::
+    Args:
+        mach: Upstream Mach number.
+        gamma: Specific-heat ratio.
+        npts: Number of points on each branch.
+        thet_init: Upstream angle offset.
+        p_init: Pressure-ratio offset.
+        curve: Branch to plot.
     """
 
     sig = np.linspace(deg.asin(1.0 / mach), 90.0, npts + 1)

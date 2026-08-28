@@ -5,7 +5,6 @@
 
 import numpy as np
 from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
-import aerokit.aero.Isentropic as Is
 import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
 import aerokit.aero.model2D as M2D

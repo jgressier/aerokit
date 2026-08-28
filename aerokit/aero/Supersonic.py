@@ -29,22 +29,14 @@ from scipy.optimize import newton
 
 
 def PrandtlMeyer_Mach(Mach, gamma=defg._gamma):
-    """
-    Computes Prandtl-Meyer (or Busemann) function from Mach number
+    """Compute the Prandtl--Meyer (Busemann) angle from Mach number.
 
-    Long comment
+    Args:
+        Mach: Local Mach number.
+        gamma: Specific-heat ratio.
 
-    :param Mach:  local Mach number
-    :param gamma: specific heat ratio, default from aerokit.common.defaultgas
-    :return:      result omega (degree)
-
-    :Example:
-
-    >>> PrandtlMeyer_Mach(2.) # with default gamma 1.4
-    26.379760813416446
-
-    .. seealso::
-    .. note:: available for scalar or array (numpy) computations
+    Returns:
+        Prandtl--Meyer angle in degrees, for scalar or array inputs.
     """
     g = gamma
     gm1 = gamma - 1.0

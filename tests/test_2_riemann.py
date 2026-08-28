@@ -1,6 +1,5 @@
 import aerokit.instance.riemann as riem
 import aerokit.aero.unsteady1D as uq
-import numpy as np
 import pytest
 
 
