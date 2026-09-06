@@ -15,6 +15,8 @@ def test_geom_draws_multiple_boundaries_and_solid_side():
 
     assert len(lines) == 2
     assert len(axis.patches) == 1
+    assert axis.patches[0].get_hatch() == "///"
+    assert axis.patches[0].get_facecolor()[-1] == pytest.approx(0.55)
     assert lower_wall.angle(1.5) == pytest.approx(np.degrees(np.arctan(0.5)))
     plt.close(fig)
 
@@ -33,3 +35,15 @@ def test_wall_rejects_ambiguous_or_invalid_definitions():
         Wall(lambda x: x, lambda y: y)
     with pytest.raises(ValueError, match="location"):
         Wall((0.0, 1.0), (0.0, 1.0), location="inside")
+
+
+def test_wall_accepts_fill_style_overrides():
+    fig, axis = plt.subplots()
+    axis.set(xlim=(0.0, 1.0), ylim=(-1.0, 1.0))
+    wall = Wall((0.0, 1.0), (0.0, 0.0), location="bottom",
+                fill_style={"facecolor": "red", "hatch": None})
+    wall.plot(ax=axis)
+
+    assert axis.patches[0].get_hatch() is None
+    np.testing.assert_allclose(axis.patches[0].get_facecolor()[:3], (1.0, 0.0, 0.0))
+    plt.close(fig)

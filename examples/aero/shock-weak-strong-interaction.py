@@ -8,6 +8,7 @@ import numpy as np
 counter = 0
 
 for M0 in [2., 3., 4., 6, 10.]:
+    # define a range from 10% to 80% max deviation
     dev = np.linspace(.1*sw.dev_Sonic(M0), .8*sw.dev_Sonic(M0), 50)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8,4))

@@ -16,6 +16,16 @@ pip show aerokit
 
 ## Versions
 
+### Unreleased
+
+#### changed
+
+- `aero.ShockWave`: add `downstream_Mach` to compute the downstream Mach number directly from upstream Mach number and shock angle.
+- `aero.plot.shockpolar.plot_theta_pressure`: add the optional `sigma_range=(sigma_start, sigma_end)` argument to draw only a prescribed shock-angle interval of a pressure polar.
+- `instance.SWinteraction.ShockInteraction`: add a bracketed three-shock polar solver returning the balanced reflected and Mach-stem states at a triple point.
+- `aero.plot.shockpolar`: add `plot_state` for consistently plotting and annotating `State2DMach` objects on pressure polars.
+- `aero.plot.geom.Wall`: add configurable hatched solid-side fills through `fill_style`; shock-interaction examples now use `Geom` for their walls.
+
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new
