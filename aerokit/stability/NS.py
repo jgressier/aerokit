@@ -1,17 +1,17 @@
 """
-    The ``NS`` module
-    =========================
- 
-    Provides local compressible stability equations 
- 
-    :Example:
+The ``NS`` module
+=========================
 
-    >>> import aerokit.stability.NS as NS
+Provides local compressible stability equations
 
-    Available functions
-    -------------------
- 
-	.. note:: 
+:Example:
+
+>>> import aerokit.stability.NS as NS
+
+Available functions
+-------------------
+
+    .. note::
 """
 
 from typing import Union
@@ -24,7 +24,7 @@ class NSaxi(LinOperator):
 
     req_keys = ["kx", "m", "rho", "P", "Ux", "gamma"]
 
-    def __init__(self, n, rmin=0., rmax=None, basestate={}, mapping=None) -> None:
+    def __init__(self, n, rmin=0.0, rmax=None, basestate={}, mapping=None) -> None:
         super().__init__(n, xmin=rmin, xmax=rmax)
         self._mapping = mapping
         if mapping is not None:
@@ -61,42 +61,55 @@ class NSaxi(LinOperator):
         D = self._radial_matder(1)
         n = self.dim
         N = self.dim * self.nvar
+        irho = slice(0, n)
+        iux = slice(n, 2 * n)
+        iur = slice(2 * n, 3 * n)
+        iut = slice(3 * n, 4 * n)
+        irT = slice(4 * n, N)
         if not np.isclose(self.r[0], 0.0):
             raise ValueError("NSaxi requires the radial grid to start at the axis (r = 0)")
-        rcorr =  np.maximum(self.r, self.r[1]/10.)  # alias for cylindrical coordinates and corrected to avoid zero
+        rcorr = np.maximum(
+            self.r, self.r[1] / 10.0
+        )  # alias for cylindrical coordinates and corrected to avoid zero
         # parameters
         kx, m = self._basestate['kx'], self._basestate['m']
         gam = self._basestate['gamma']
         # base state and derivatives
-        rho, Ux, P = self._basestate['rho'], self._basestate['Ux'], self._basestate['P']
-        drho, dUx, dT = (D @ rho, D @ Ux, D @ (P/rho))
+        rho, Ux, P = (self._basestate[var] for var in ['rho', 'Ux', 'P'])
+        # Compute base-flow gradients with the operator differentiation matrix.
+        drho = D @ rho
+        dUx = D @ Ux
+        dT = D @ (P / rho)
         # order is rho, ux, ur, utheta, rT
         self._At = np.eye(N)
         # B0
-        #self._B0 = np.zeros((N, N))
-        self._B0 = 1j*kx*np.diag(np.tile(Ux, self.nvar)) # i*kx*Ux on diagonal
+        # self._B0 = np.zeros((N, N))
+        self._B0 = 1j * kx * np.diag(np.tile(Ux, self.nvar))  # i*kx*Ux on diagonal
         # continuity
-        self._B0[0:n, n:2*n] += 1j*kx*np.diag(rho)
-        self._B0[0:n, 2*n:3*n] += np.diag(drho + rho/rcorr)
-        self._B0[0:n, 3*n:4*n] += 1j*m*np.diag(rho/rcorr)
+        self._B0[irho, iux] += 1j * kx * np.diag(rho)
+        self._B0[irho, iur] += np.diag(drho + rho / rcorr)
+        self._B0[irho, iut] += 1j * m * np.diag(rho / rcorr)
         # momentum ux
-        self._B0[n:2*n, 0:n] += 1j*kx*np.diag(P/rho**2)
-        self._B0[n:2*n, 2*n:3*n] += np.diag(dUx)
-        self._B0[n:2*n, 4*n:N] += 1j*kx*np.eye(n)
-        self._B0[2*n:3*n, 0:n] = np.diag(dT) 
-        self._B0[2*n:3*n, 4*n:N] = np.diag(drho/rho)
-        self._B0[3*n:4*n, 0:n] = 1j*m*np.diag(P/rho**2/rcorr) 
-        self._B0[3*n:4*n, 4*n:N] = 1j*m*np.diag(1./rcorr)
-        self._B0[4*n:N, n:2*n] += 1j*kx*(gam-1)*np.diag(P/rho)
-        self._B0[4*n:N, 2*n:3*n] += np.diag(dT + (gam-1)*P/rho/rcorr)
-        self._B0[4*n:N, 3*n:4*n] += 1j*m*(gam-1)*np.diag(P/rho/rcorr)
+        self._B0[iux, irho] += 1j * kx * np.diag(P / rho**2)
+        self._B0[iux, iur] += np.diag(dUx)
+        self._B0[iux, irT] += 1j * kx * np.eye(n)
+        # momentum ur
+        self._B0[iur, irho] = np.diag(dT / rho)
+        self._B0[iur, irT] = np.diag(drho / rho)
+        # momentum utheta
+        self._B0[iut, irho] = 1j * m * np.diag(P / rho**2 / rcorr)
+        self._B0[iut, irT] = 1j * m * np.diag(1.0 / rcorr)
+        # temperature
+        self._B0[irT, iux] += 1j * kx * (gam - 1) * np.diag(P / rho)
+        self._B0[irT, iur] += np.diag(dT + (gam - 1) * P / rho / rcorr)
+        self._B0[irT, iut] += 1j * m * (gam - 1) * np.diag(P / rho / rcorr)
         # B1
-        #self._B1 = np.diag(np.tile(q.u, self.nvar)) @ np.kron(np.eye(self.nvar), D)
+        # self._B1 = np.diag(np.tile(q.u, self.nvar)) @ np.kron(np.eye(self.nvar), D)
         self._B1 = np.zeros((N, N))
-        self._B1[0:n, 2*n:3*n] = np.diag(rho) @ D
-        self._B1[2*n:3*n, 0:n] = np.diag(P/rho**2) @ D
-        self._B1[2*n:3*n, 4*n:N] = D
-        self._B1[4*n:N, 2*n:3*n] = np.diag((gam-1)*P/rho) @ D
+        self._B1[irho, iur] = np.diag(rho) @ D
+        self._B1[iur, irho] = np.diag(P / rho**2) @ D
+        self._B1[iur, irT] = D
+        self._B1[irT, iur] = np.diag((gam - 1) * P / rho) @ D
         #
         self._B = -self._B1 - self._B0
         self.compute_BC()
@@ -134,7 +147,7 @@ class NSaxi(LinOperator):
             self._clear_row(iut)
             self._B[iut, iur : iur + n] = 1j * sign_m * D[0, :]
             self._B[iut, iut : iut + n] = D[0, :]
-        else: # m >= 2
+        else:  # m >= 2
             # All perturbation components vanish as r**(|m|-1) or faster.
             for irow in (irho, iux, iur, iut, irT):
                 self._clear_row(irow)
@@ -142,9 +155,9 @@ class NSaxi(LinOperator):
 
     def setBC_far(self):
         n = self.dim
-        Dn = self._radial_matder(1)[-1,:]
+        Dn = self._radial_matder(1)[-1, :]
         for ivar in range(self.nvar):
-            irow = (ivar + 1)*n - 1
+            irow = (ivar + 1) * n - 1
             self._clear_row(irow)
             self._B[irow, irow] = 1.0
 
