@@ -16,12 +16,17 @@ pip show aerokit
 
 ## Versions
 
-### [1.3.x](https://pypi.org/project/aerokit/) (2026-08-xx)
+### [1.4.x](https://pypi.org/project/aerokit/) (2026-10-xx)
 
 #### new
 
-- `common.numspectral.MultiDomainChebCollocation`: two Chebyshev subdomains joined at an internal interface (used in`examples/stability/tanh_mixing_layer.py`)t
+- `common.numspectral.MultiDomainChebCollocation`: two Chebyshev subdomains joined at an internal interface 
 - `common.mapping`: coordinate-mapping framework for spectral collocation, including additional centre-clustered mappings
+
+#### fixed
+
+- preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
+- bug fix in pressure computation in `aero.model1D.state_isentropic_Mach`
 
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 

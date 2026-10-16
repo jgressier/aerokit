@@ -10,8 +10,9 @@
 __pycache__/
 *.pyc
 
-# pyenv
+# pyenv or virtualenv
 .python-version
+.venv/
 
 # Unit test / coverage reports
 build/

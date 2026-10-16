@@ -183,7 +183,7 @@ class State2DMach(__state):
                               p=self.p * sw.Ps_ratio(Mn0, self._gamma), gamma=self._gamma)
 
     def shock_sigma(self, sigma):
-        deviation = sw.deflection_Mach_sigma(self.Mach, sigma)
+        deviation = sw.deflection_Mach_sigma(self.Mach, sigma, self._gamma)
         Mn0 = self.Mach * deg.sin(sigma)
         M1 = abs(sw.downstream_Mn(Mn0, self._gamma) / deg.sin(sigma - deviation))
         return self.__class__(M1, self.angle + deviation,
