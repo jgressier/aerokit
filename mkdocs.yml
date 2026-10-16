@@ -29,6 +29,7 @@ nav:
     - aero.Isentropic: userguide/aero.Isentropic.md
     - aero.MassFlow: userguide/aero.MassFlow.md
     - aero.ShockWave:  userguide/aero.ShockWave.md
+    - common.numspectral: userguide/common.numspectral.md
   - Examples: 
     - List of examples: examples.md
     - aero.Isentropic: examples/aero.Isentropic.ipynb

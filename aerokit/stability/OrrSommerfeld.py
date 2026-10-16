@@ -41,7 +41,7 @@ class OrrSommerfeldModel(LinOperator):
 
     req_keys = ["alpha", "Reynolds", "uprofile"]
 
-    def __init__(self, n, xmin=None, xmax=None, basestate=None) -> None:
+    def __init__(self, n, xmin=None, xmax=None, basestate=None, diffop=None) -> None:
         """Initialization of OrrSommerfeld model
 
         Args:
@@ -50,7 +50,7 @@ class OrrSommerfeldModel(LinOperator):
             xmax (_type_, optional): _description_. Defaults to None.
             basestate (_type_, optional): _description_. Defaults to None.
         """
-        super().__init__(n, xmin, xmax)
+        super().__init__(n, xmin, xmax, diffop=diffop)
         self._BC_dict = {"wall": self.setBC_wall}
         if basestate is not None:
             self.set_basestate(basestate)
@@ -99,6 +99,20 @@ class OrrSommerfeldModel(LinOperator):
         self._BC_dict[self._BC_type[1]["type"]](
             n - 1, n - 2
         )  # caution: function must write 2 BC at n-2 and n-1
+        if hasattr(self._diffop, "interface_derivative_jumps"):
+            self.setBC_connection()
+
+    def setBC_connection(self):
+        """Enforce derivative continuity at a shared Chebyshev interface.
+
+        Continuity of ``v`` is built into the shared interface degree of
+        freedom.  The remaining three rows impose continuity of ``v'``,
+        ``v''`` and ``v'''``, as required by the fourth-order equation.
+        """
+        interface = self._diffop.interface_index
+        for irow, jump in zip(range(interface - 1, interface + 2), self._diffop.interface_derivative_jumps()):
+            self._At[irow, :] = 0.0
+            self._B[irow, :] = jump
 
     def setBC_wall(self, istate, irow):
         n = self.dim

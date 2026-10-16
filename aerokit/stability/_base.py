@@ -10,8 +10,8 @@ class LinOperator:
     _harmonic_time_coef = -1j
     _BC_dict = {}
 
-    def __init__(self, n=100, xmin=None, xmax=None) -> None:
-        self._diffop = ns.ChebCollocation(n, xmin, xmax)
+    def __init__(self, n=100, xmin=None, xmax=None, diffop=None) -> None:
+        self._diffop = ns.ChebCollocation(n, xmin, xmax) if diffop is None else diffop
         self._basestate = None
         self._B = None
         self._BC_type = None
@@ -52,9 +52,21 @@ class LinOperator:
             self.compute_operators()
         return self._B, self._At
 
-    def solve_eig(self):
+    def solve_eig(self, finite_only=False, beta_rtol=1.0e-8):
+        """Solve the generalized eigenvalue problem.
+
+        Set ``finite_only`` to discard infinite eigenvalues introduced by
+        algebraic boundary conditions.
+        """
         B, Id = self.get_RHS_time_matrices()
-        self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef * Id)
+        if finite_only:
+            alpha_beta, vects = scilin.eig(B, self._harmonic_time_coef * Id, homogeneous_eigvals=True)
+            alpha, beta = alpha_beta
+            finite = np.abs(beta) > beta_rtol * np.max(np.abs(beta))
+            self._vals = alpha[finite] / beta[finite]
+            self._vects = vects[:, finite]
+        else:
+            self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef * Id)
         return self._vals, self._vects
 
     def select_and_sort(self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real", verbose=True):
