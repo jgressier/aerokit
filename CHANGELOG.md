@@ -16,6 +16,19 @@ pip show aerokit
 
 ## Versions
 
+### [1.4.0](https://pypi.org/project/aerokit/) (2026-10-17)
+
+#### new
+
+- `aero.ShockWave`: add `downstream_Mach` directly from upstream Mach number and shock angle.
+- `aero.plot.shockpolar`: `sigma_range=(sigma_start, sigma_end)` option
+- `aero.plot.geom.Wall`: to plot physical domain and walls
+  
+#### fixed
+
+- preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
+- bug fix in pressure computation in `aero.model1D.state_isentropic_Mach`
+
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new

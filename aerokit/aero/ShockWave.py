@@ -147,6 +147,24 @@ def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
     return sigma - np.degrees(np.arctan2(np.tan(sigrad), Rho_ratio(Mn, gamma)))
 
 
+def downstream_Mach(Mach, sigma, gamma=defg._gamma):
+    """Compute the Mach number downstream of an oblique shock.
+
+    Args:
+      Mach: upstream Mach number
+      sigma: shock angle in degrees
+      gamma: specific-heat ratio
+
+    Returns:
+      downstream Mach number
+
+    ``Mach`` and ``sigma`` may be scalars or NumPy-compatible arrays.
+    """
+    deviation = deflection_Mach_sigma(Mach, sigma, gamma)
+    normal_mach = Mach * degree.sin(sigma)
+    return downstream_Mn(normal_mach, gamma) / degree.sin(sigma - deviation)
+
+
 def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
     """Compute deflection angle from upstream Mach number and static pressure ratio
 

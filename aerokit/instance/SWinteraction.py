@@ -3,6 +3,8 @@
     local Rankine Hugoniot equations 
 """
 
+from dataclasses import dataclass
+
 import numpy as np
 from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
 import aerokit.aero.degree as deg
@@ -10,6 +12,18 @@ import aerokit.aero.ShockWave as sw
 import aerokit.aero.model2D as M2D
 import aerokit.aero.plot.shockpolar as plotsw
 from scipy import optimize
+
+
+@dataclass(frozen=True)
+class TriplePointSolution:
+    """Balanced states and shock angles at a three-shock intersection."""
+
+    theta: float
+    reflected_state: M2D.State2DMach
+    stem_state: M2D.State2DMach
+    sigma_reflected: float
+    sigma_stem: float
+    root_result: object
 
 
 class ShockInteraction:
@@ -65,6 +79,72 @@ class ShockInteraction:
     def check34balanced(self, tol=1.0e-6):
         return (abs(self[3].p - self[4].p) / self[0].p < tol) and (abs(self[3].angle - self[4].angle) < tol)
 
+    @staticmethod
+    def solve_triple_point(upstream_state, incident_state, epsilon=1.0e-5):
+        """Intersect a reflected weak polar with an upstream strong polar.
+
+        The root is bracketed on the physically admissible reflected-shock
+        branch, between the incident-flow angle and its maximum attached
+        turning.  The returned reflected and stem states have equal pressure
+        and flow angle but may have different density and Mach number across
+        the slip line.
+
+        Args:
+            upstream_state: State ahead of the incident shock and Mach stem.
+            incident_state: State immediately behind the incident shock.
+            epsilon: Angular distance in degrees kept from polar endpoints.
+
+        Returns:
+            A :class:`TriplePointSolution`.
+
+        Raises:
+            ValueError: If the states have no bracketed triple-point solution.
+        """
+        incident_deviation = incident_state.angle - upstream_state.angle
+        if incident_deviation == 0.0:
+            raise ValueError("incident and upstream flow angles must differ")
+
+        turning_limit = incident_state.devmax()
+        if incident_deviation > 0.0:
+            theta_left = incident_state.angle - turning_limit + epsilon
+            theta_right = incident_state.angle - epsilon
+        else:
+            theta_left = incident_state.angle + epsilon
+            theta_right = incident_state.angle + turning_limit - epsilon
+
+        def pressure_mismatch(theta):
+            reflected = incident_state.weakshock_deviation(theta - incident_state.angle)
+            stem = upstream_state.strongshock_deviation(theta - upstream_state.angle)
+            return reflected.p - stem.p
+
+        mismatch_left = pressure_mismatch(theta_left)
+        mismatch_right = pressure_mismatch(theta_right)
+        if mismatch_left * mismatch_right > 0.0:
+            raise ValueError("reflected and strong polars have no bracketed intersection")
+
+        root_result = optimize.root_scalar(
+            pressure_mismatch,
+            bracket=(theta_left, theta_right),
+            method="brentq",
+        )
+        theta = root_result.root
+        reflected_state = incident_state.weakshock_deviation(theta - incident_state.angle)
+        stem_state = upstream_state.strongshock_deviation(theta - upstream_state.angle)
+        sigma_reflected = sw.weaksigma_Mach_deflection(
+            incident_state.Mach, theta - incident_state.angle
+        )
+        sigma_stem = sw.strongsigma_Mach_deflection(
+            upstream_state.Mach, theta - upstream_state.angle
+        )
+        return TriplePointSolution(
+            theta=theta,
+            reflected_state=reflected_state,
+            stem_state=stem_state,
+            sigma_reflected=sigma_reflected,
+            sigma_stem=sigma_stem,
+            root_result=root_result,
+        )
+
     def solve(self, verbose=False):
         """solve the interaction of shocks using intersection points
         in the p/angle diagram
@@ -116,7 +196,7 @@ class ShockInteraction:
         else:
             self._state[3] = self[0].strongshock_deviation(theta - self[0].angle)
             self._state[1] = self[3].copy()
-            self._sigma01 = sw.deflection_Mach_sigma(self.M0, theta-self[0].angle)
+            self._sigma01 = sw.strongsigma_Mach_deflection(self.M0, theta-self[0].angle)
         if self[2].Mach > 1:
             self._state[4] = self[2].weakshock_deviation(theta - self[2].angle)
         else:

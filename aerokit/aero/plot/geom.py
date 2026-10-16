@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import aerokit.aero.degree as deg
-from aerokit.aero.plot.defaultstyle import sty_wall
+from aerokit.aero.plot.defaultstyle import sty_wall, sty_wall_fill
 
 
 class Wall:
@@ -17,7 +17,7 @@ class Wall:
 
     _locations = {"top", "bottom", "left", "right"}
 
-    def __init__(self, x, y, location=None, npts=101, **style):
+    def __init__(self, x, y, location=None, npts=101, fill_style=None, **style):
         if callable(x) and callable(y):
             raise ValueError("only one of x and y may be callable")
         if location is not None and location not in self._locations:
@@ -27,6 +27,7 @@ class Wall:
         self.location = location
         self.npts = npts
         self.style = {**sty_wall, **style}
+        self.fill_style = {**sty_wall_fill, **({} if fill_style is None else fill_style)}
 
     def _samples(self, values):
         values = np.asarray(values)
@@ -63,7 +64,8 @@ class Wall:
         ax = plt.gca() if ax is None else ax
         if fill and self.location is not None:
             self._fill(ax)
-        return ax.plot(self.x, self.y, zorder=101, **self.style)
+        style = {'zorder': 3, **self.style}
+        return ax.plot(self.x, self.y, **style)
 
     def _fill(self, ax):
         xmin, xmax = ax.get_xlim()
@@ -80,7 +82,7 @@ class Wall:
         else:  # right
             x = np.r_[self.x, xmax, xmax]
             y = np.r_[self.y, self.y[-1], self.y[0]]
-        ax.fill(x, y, facecolor="lightgray", edgecolor="none", zorder=100)
+        return ax.fill(x, y, **self.fill_style)
 
 
 class Geom:
@@ -89,9 +91,9 @@ class Geom:
     def __init__(self, walls=None):
         self.walls = [] if walls is None else list(walls)
 
-    def add_wall(self, x, y, location=None, npts=101, **style):
+    def add_wall(self, x, y, location=None, npts=101, fill_style=None, **style):
         """Create, store, and return a boundary wall."""
-        wall = Wall(x, y, location=location, npts=npts, **style)
+        wall = Wall(x, y, location=location, npts=npts, fill_style=fill_style, **style)
         self.walls.append(wall)
         return wall
 
