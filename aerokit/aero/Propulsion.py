@@ -3,7 +3,7 @@
 """
 import aerokit.aero.Isentropic as Is
 import aerokit.aero.MassFlow as mf
-import aerokit.IterativeSolve as ITS
+import aerokit.aero.IterativeSolve as ITS
 
 
 def ThrustFunction(Mach, gamma=1.4):
