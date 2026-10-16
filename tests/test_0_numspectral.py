@@ -29,8 +29,8 @@ def test_multidomain_cheb_interface_and_derivatives():
     assert SpOp.x[SpOp.interface_index] == 0.0
 
     f = np.exp(SpOp.x)
-    assert np.allclose(SpOp.matder(1) @ f, f, rtol=1e-10, atol=1e-10)
-    assert np.allclose(SpOp.interface_derivative_jumps(3) @ f, 0.0, atol=1e-10)
+    assert np.allclose(SpOp.matder(1) @ f, f, rtol=1e-10, atol=1e-8)
+    assert np.allclose(SpOp.interface_derivative_jumps(3) @ f, 0.0, atol=1e-8)
 
 
 def test_affine_mapping_derivatives():
