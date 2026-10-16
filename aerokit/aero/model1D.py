@@ -94,21 +94,21 @@ class State1d(__state):
 
     def state_isentropic_Mach(self, Mach):
         """return state defined by Mach number through isoenergetic isentropic transformation"""
-        ps = self.rTtot() / Is.PtPs_Mach(Mach, self._gamma)
+        ps = self.Ptot() / Is.PtPs_Mach(Mach, self._gamma)
         rts = self.rTtot() / Is.TtTs_Mach(Mach, self._gamma)
-        return State1d(rho=ps / rts, u=Mach * np.sqrt(self._gamma * rts), p=ps)
+        return State1d(rho=ps / rts, u=Mach * np.sqrt(self._gamma * rts), p=ps, gamma=self._gamma)
 
     def compute_from_pt_rtt_M(self, pt, rtt, M):
         ps = pt / Is.PtPs_Mach(M, self._gamma)
         rts = rtt / Is.TtTs_Mach(M, self._gamma)
-        self.__init__(rho=ps / rts, u=M * np.sqrt(self._gamma * rts), p=ps)
+        self.__init__(rho=ps / rts, u=M * np.sqrt(self._gamma * rts), p=ps, gamma=self._gamma)
 
     def compute_from_pt_rtt_u(self, pt, rtt, u):
         gam = self._gamma
         gsgmu = gam / (gam - 1.0)
         a2 = gam * rtt - 0.5 * (gam - 1.0) * u ** 2
         ps = pt / (1.0 + 0.5 * u ** 2 / (gsgmu * rtt - 0.5 * u ** 2)) ** gsgmu
-        self.__init__(rho=gam * ps / a2, u=u, p=ps)
+        self.__init__(rho=gam * ps / a2, u=u, p=ps, gamma=gam)
 
     def compute_from_pt_rtt_p(self, pt, rtt, p):
         """Init state from Ptot r.Ttot and Ps (velocity sign is arbitrary and positive)
@@ -120,7 +120,7 @@ class State1d(__state):
         """
         M = Is.Mach_PtPs(pt / p, self._gamma)
         rts = rtt / Is.TtTs_Mach(M, self._gamma)
-        self.__init__(rho=p / rts, u=M * np.sqrt(self._gamma * rts), p=p)
+        self.__init__(rho=p / rts, u=M * np.sqrt(self._gamma * rts), p=p, gamma=self._gamma)
 
     def __getitem__(self, i):
         if not all(isinstance(value, np.ndarray) for value in (self.rho, self.u, self.p)):
