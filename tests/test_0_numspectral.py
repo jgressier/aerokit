@@ -33,6 +33,23 @@ def test_multidomain_cheb_interface_and_derivatives():
     assert np.allclose(SpOp.interface_derivative_jumps(3) @ f, 0.0, atol=1e-8)
 
 
+def test_multidomain_embedded_interface_rows():
+    """
+    Check the global placement and averaging convention at the shared node.
+    """
+    grid = ns.MultiDomainChebCollocation(8, xmin=-2.0, interface=0.5, xmax=3.0)
+    left = grid._left.matder(1)
+    right = grid._right.matder(1)
+    left_row = grid._embedded_interface_row(left, "left")
+    right_row = grid._embedded_interface_row(right, "right")
+
+    assert np.allclose(left_row[: grid._npts_per_domain], left[-1])
+    assert np.allclose(left_row[grid._npts_per_domain :], 0.0)
+    assert np.allclose(right_row[: grid.interface_index], 0.0)
+    assert np.allclose(right_row[grid.interface_index :], right[0])
+    assert np.allclose(grid.matder(1)[grid.interface_index], 0.5 * (left_row + right_row))
+
+
 def test_affine_mapping_derivatives():
     mapping = AffineMapping(0.0, 10.0)
     assert mapping.dxi_dx() == -0.2

@@ -1,4 +1,5 @@
-"""Chebyshev collocation grids and spectral differentiation matrices.
+"""
+Chebyshev collocation grids and spectral differentiation matrices.
 
 The operators differentiate values sampled at Chebyshev--Lobatto points.  A
 mapping converts the reference coordinate to the requested physical coordinate
@@ -14,7 +15,8 @@ from aerokit.common.mapping import AffineMapping
 
 
 class ChebCollocation:
-    """Chebyshev--Lobatto collocation grid on a mapped one-dimensional domain.
+    """
+    Chebyshev--Lobatto collocation grid on a mapped one-dimensional domain.
 
     Parameters
     ----------
@@ -82,7 +84,8 @@ class ChebCollocation:
         return fx
 
     def fit_to_gauss(self, x, f):
-        """Fit data in a Chebyshev basis and evaluate it at collocation points.
+        """
+        Fit data in a Chebyshev basis and evaluate it at collocation points.
 
         The least-squares fit is useful when data are available away from the
         collocation grid.  It is not a Gaussian quadrature operation despite
@@ -105,7 +108,8 @@ class ChebCollocation:
 
 
     def matder(self, order: int):
-        """Return the ``order``-th physical-coordinate differentiation matrix.
+        """
+        Return the ``order``-th physical-coordinate differentiation matrix.
 
         The matrix is cached after its first construction.  For a vector
         ``f`` sampled at ``self.x``, ``matder(order) @ f`` approximates
@@ -117,7 +121,8 @@ class ChebCollocation:
         return self._mapping.transform_derivative_matrices(self._matder)[:, :, order - 1]
 
     def compute_matder(self, maxorder):
-        """Compute and cache reference differentiation matrices up to an order.
+        """
+        Compute and cache reference differentiation matrices up to an order.
 
         The internally stored matrices differentiate with respect to the
         Chebyshev reference coordinate.  :meth:`matder` applies the mapping's
@@ -163,7 +168,8 @@ class ChebCollocation:
 
 
 class MultiDomainChebCollocation:
-    """Two Chebyshev subdomains joined at an internal interface.
+    """
+    Two Chebyshev subdomains joined at an internal interface.
 
     The interface node is shared, giving a grid on ``[xmin, interface]`` and
     ``[interface, xmax]`` that is clustered at both outer boundaries and at
@@ -206,7 +212,8 @@ class MultiDomainChebCollocation:
         return np.r_[self._left.x, self._right.x[1:]]
 
     def _embedded_interface_row(self, derivative, side):
-        """Embed a local one-sided interface row in global-column ordering.
+        """
+        Embed a local one-sided interface row in global-column ordering.
 
         ``derivative`` is an ``npts x npts`` local derivative matrix.  Since
         the local grids are ordered from left to right, row ``-1`` is the
@@ -237,7 +244,8 @@ class MultiDomainChebCollocation:
         return row
 
     def matder(self, order):
-        """Return a global derivative matrix with an averaged interface row.
+        """
+        Return a global derivative matrix with an averaged interface row.
 
         Away from the interface, the matrix contains independent left and
         right Chebyshev blocks.  At the shared interface it contains
@@ -263,7 +271,8 @@ class MultiDomainChebCollocation:
         return self._matder[order]
 
     def interface_derivative_jumps(self, maxorder=3):
-        """Return left-minus-right derivative-jump rows at the interface.
+        """
+        Return left-minus-right derivative-jump rows at the interface.
 
         Element ``order - 1`` of the returned list is a global row ``J_m``
         such that ``J_m @ f`` equals
