@@ -16,6 +16,13 @@ pip show aerokit
 
 ## Versions
 
+### Unreleased
+
+#### fixed
+
+- preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
+- bug fix in pressure computation in `aero.model1D.state_isentropic_Mach`
+
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new
