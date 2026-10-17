@@ -28,7 +28,8 @@ from aerokit.common import defaultgas as defg  # relative import is deprecated b
 
 
 def TtTs_Mach(Mach, gamma=defg._gamma):
-    """Computes Tt/Ts ratio from Mach number
+    """
+    Computes Tt/Ts ratio from Mach number
 
     Args:
       Mach: local Mach number (either scalar or numpy array)
@@ -46,7 +47,8 @@ def TtTs_Mach(Mach, gamma=defg._gamma):
 
 
 def PtPs_Mach(Mach, gamma=defg._gamma):
-    """Computes Pt/Ps ratio from Mach number
+    """
+    Computes Pt/Ps ratio from Mach number
 
                 Long comment
 
@@ -68,7 +70,8 @@ def PtPs_Mach(Mach, gamma=defg._gamma):
 
 
 def Mach_TtTs(TtTs, gamma=defg._gamma):
-    """Computes Mach number from Tt/Ts ratio
+    """
+    Computes Mach number from Tt/Ts ratio
 
     Args:
       TtTs: local Total over Static temperature ratio (either scalar or numpy array)
@@ -82,7 +85,8 @@ def Mach_TtTs(TtTs, gamma=defg._gamma):
 
 
 def Mach_PtPs(PtPs, gamma=defg._gamma):
-    """Computes Mach number from Pt/Ps ratio
+    """
+    Computes Mach number from Pt/Ps ratio
 
     Args:
       PtPs: local Total over Static pressure ratio (either scalar or numpy array)
@@ -96,7 +100,8 @@ def Mach_PtPs(PtPs, gamma=defg._gamma):
 
 
 def Velocity_MachTt(Mach, Tt, r=defg._r, gamma=defg._gamma):
-    """Computes velocity from
+    """
+    Computes velocity from
 
     Args:
       Mach: Mach number

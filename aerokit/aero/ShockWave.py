@@ -1,4 +1,5 @@
-"""@package ShockWave
+"""
+@package ShockWave
   local Rankine Hugoniot equations for shock waves
 """
 
@@ -15,7 +16,8 @@ from scipy.optimize import newton
 
 
 def Ps_ratio(Mn, gamma=defg._gamma):
-    """Computes static pressure ratio across a shockwave from normal component of Mach number
+    """
+    Computes static pressure ratio across a shockwave from normal component of Mach number
 
     Args:
       Mn: upstream normal Mach number in shock reference frame
@@ -29,7 +31,8 @@ def Ps_ratio(Mn, gamma=defg._gamma):
 
 
 def Mn_Ps_ratio(Pratio: float, gamma=defg._gamma):
-    """Computes normal Mach number from static pressure ratio across a shockwave
+    """
+    Computes normal Mach number from static pressure ratio across a shockwave
 
     Args:
       Pratio: static pressure ratio
@@ -58,7 +61,8 @@ def Rho_ratio(Mn, gamma=defg._gamma):
 
 
 def Ts_ratio(Mn, gamma=defg._gamma):
-    """Computes temperature ratio across a shockwave from normal component of Mach number
+    """
+    Computes temperature ratio across a shockwave from normal component of Mach number
 
     Args:
       Mn: normal Mach number
@@ -72,7 +76,8 @@ def Ts_ratio(Mn, gamma=defg._gamma):
 
 
 def downstream_Mn(Mn, gamma=defg._gamma):
-    """Computes downstream normal Mach number from upstream normal Mach number
+    """
+    Computes downstream normal Mach number from upstream normal Mach number
 
     Args:
       Mn: param gamma:  (Default value = defg._gamma)
@@ -86,7 +91,8 @@ def downstream_Mn(Mn, gamma=defg._gamma):
 
 
 def Pt_ratio(Mn, gamma=defg._gamma):
-    """Total pressure ration through shock wave
+    """
+    Total pressure ration through shock wave
 
     Args:
       Mn: upstream relative normal Mach number to param
@@ -99,7 +105,8 @@ def Pt_ratio(Mn, gamma=defg._gamma):
 
 
 def Mn_Pt_ratio(ptratio, gamma=defg._gamma):
-    """Computes normal Mach number from total pressure ratio across a shockwave
+    """
+    Computes normal Mach number from total pressure ratio across a shockwave
 
     Args:
       ptratio:
@@ -148,7 +155,8 @@ def deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma):
 
 
 def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
-    """Compute deflection angle from upstream Mach number and static pressure ratio
+    """
+    Compute deflection angle from upstream Mach number and static pressure ratio
 
     Args:
       Mach: param Pratio:
@@ -162,7 +170,8 @@ def deflection_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
 
 
 def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
-    """Compute downstream Mach number from upstream Mach number and static pressure ratio
+    """
+    Compute downstream Mach number from upstream Mach number and static pressure ratio
 
     Args:
       Mach: param Pratio:
@@ -180,7 +189,8 @@ def downstreamMach_Mach_ShockPsratio(Mach, Pratio, gamma=defg._gamma):
 
 
 def weaksigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
-    """Computes deflection angle (weak solution) from upstream Mach number and shock angle
+    """
+    Computes deflection angle (weak solution) from upstream Mach number and shock angle
 
     Args:
       Mach: param deflection:
@@ -233,7 +243,8 @@ def strongsigma_Mach_deflection(Mach, deflection, gamma=defg._gamma):
 
 
 def sigma_Mach_deflection(Mach, deflection, init=None, gamma=defg._gamma):
-    """computes the shock angle from upstream Mach number and deflection angle
+    """
+    computes the shock angle from upstream Mach number and deflection angle
 
     Args:
       Mach: param deflection:
@@ -264,7 +275,8 @@ def sigma_Mach_deflection(Mach, deflection, init=None, gamma=defg._gamma):
 
 
 def dev_Max(Mach, gamma=defg._gamma):
-    """computes the maximum deviation (always subsonic downstream flow), separation of weak/strong shock
+    """
+    computes the maximum deviation (always subsonic downstream flow), separation of weak/strong shock
 
     Args:
       Mach: param gamma:  (Default value = defg._gamma)
@@ -277,7 +289,8 @@ def dev_Max(Mach, gamma=defg._gamma):
 
 
 def dev_MaxMinf(gamma=defg._gamma):
-  """compute maximum deviation whatever Mach number (infinite)
+  """
+  compute maximum deviation whatever Mach number (infinite)
 
   Args:
       gamma (_type_, optional): ratio of specific heats. Defaults to defg._gamma.
@@ -289,7 +302,8 @@ def dev_MaxMinf(gamma=defg._gamma):
 
 
 def dev_Sonic(Mach, gamma=defg._gamma):
-    """computes the deviation angle for a downstream SONIC Mach number
+    """
+    computes the deviation angle for a downstream SONIC Mach number
 
     Args:
       Mach: upstream Mach number
@@ -302,7 +316,8 @@ def dev_Sonic(Mach, gamma=defg._gamma):
 
 
 def Mach_DevMax(dev, gamma=defg._gamma):
-    """computes the deviation angle for a downstream SONIC Mach number
+    """
+    computes the deviation angle for a downstream SONIC Mach number
 
     Args:
       Mach: upstream Mach number
@@ -315,7 +330,8 @@ def Mach_DevMax(dev, gamma=defg._gamma):
 
 
 def Mach_DevSonic(dev, gamma=defg._gamma):
-    """computes the deviation angle for a downstream SONIC Mach number
+    """
+    computes the deviation angle for a downstream SONIC Mach number
 
     Args:
       Mach: upstream Mach number
@@ -328,7 +344,8 @@ def Mach_DevSonic(dev, gamma=defg._gamma):
 
 
 def sigma_DevMax(Mach, gamma=defg._gamma):
-    """computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
+    """
+    computes the shock angle at maximum deviation (always subsonic downstream flow), separation of weak/strong shock
 
     Args:
       Mach: upstream Mach number
@@ -354,7 +371,8 @@ def sigma_DevMax(Mach, gamma=defg._gamma):
 
 
 def sigma_Sonic(Mach, gamma=defg._gamma):
-    """computes the shock angle for a downstream SONIC Mach number
+    """
+    computes the shock angle for a downstream SONIC Mach number
 
     Args:
       Mach: upstream Mach number
@@ -386,7 +404,8 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
     """
 
     def rhs(phi, data):
-        """RHS for conical equations (2 equations)
+        """
+        RHS for conical equations (2 equations)
 
         Args:
           phi: angle (coordinate of the ODE)
@@ -438,7 +457,8 @@ def conical_deflection_Mach_sigma(Mach, sigma, gamma=defg._gamma, tol=1.0e-6):
 
 
 def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
-    """computes shock angle sigma from upstream Mach number and wall deflection
+    """
+    computes shock angle sigma from upstream Mach number and wall deflection
 
     Args:
       Mach: param deflection:
@@ -457,7 +477,8 @@ def conical_sigma_Mach_walldeflection(Mach, deflection, gamma=defg._gamma):
 
 
 def conical_Mach_walldeflection_sigma(deflection, sigma, gamma=defg._gamma):
-    """computes upstream Mach number from wall deflection and shock angle sigma
+    """
+    computes upstream Mach number from wall deflection and shock angle sigma
 
     Args:
       Mach: param deflection:

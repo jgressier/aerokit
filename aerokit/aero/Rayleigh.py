@@ -1,4 +1,5 @@
-"""@package Rayleigh
+"""
+@package Rayleigh
 @brief functions to compute Rayleigh (heating) transformation in subsonic/supersonic ducts
 """
 
@@ -6,7 +7,8 @@ import numpy as np
 
 
 def maxTiratio_Mach(Mach, gamma=1.4):
-    """computes maximum heating ratio parameter for a given Mach number state
+    """
+    computes maximum heating ratio parameter for a given Mach number state
     This maximum value makes the flow reach a sonic state
     """
     return 1.0 / Ti_Ticri(Mach, gamma=gamma)

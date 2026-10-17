@@ -38,7 +38,8 @@ class Euler1D(LinOperator):
         self.nvar = 3
 
     def compute_operators(self):
-        """compute operators for linearized
+        """
+        compute operators for linearized
         given primitive variables P, linearized operator is
         At dP/dt + Bx dP/dt + B0 P = 0
         """
@@ -113,7 +114,8 @@ class Euler1D(LinOperator):
             self._B[i * n + n - 1, i * n : (i + 1) * n] -= D[n - 1, :]
 
     def setBC_RH(self, istate: int, irow: Union[int, None] = None, **kwargs):
-        """Apply linerized Rankine Hugoniot equations from constant upstream value.
+        """
+        Apply linerized Rankine Hugoniot equations from constant upstream value.
 
         There are 3 equations but 4 unknows (3 downstream perturbations and shock velocity or position).
         Substituting the shock velocity s reduces the boundary equations to 2.

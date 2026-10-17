@@ -1,4 +1,5 @@
-"""@package shockpolar
+"""
+@package shockpolar
   Plot shock polar curves
 """
 
@@ -24,7 +25,8 @@ def plot_theta_pressure(
     linestyle='-',
     **kwargs
 ):
-    """Plot an isentropic polar in deviation--pressure-ratio coordinates.
+    """
+    Plot an isentropic polar in deviation--pressure-ratio coordinates.
 
     Args:
         mach: Upstream Mach number.

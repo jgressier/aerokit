@@ -34,9 +34,7 @@ def test_multidomain_cheb_interface_and_derivatives():
 
 
 def test_multidomain_embedded_interface_rows():
-    """
-    Check the global placement and averaging convention at the shared node.
-    """
+    """Check global placement and averaging at the shared node."""
     grid = ns.MultiDomainChebCollocation(8, xmin=-2.0, interface=0.5, xmax=3.0)
     left = grid._left.matder(1)
     right = grid._right.matder(1)

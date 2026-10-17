@@ -42,7 +42,8 @@ class OrrSommerfeldModel(LinOperator):
     req_keys = ["alpha", "Reynolds", "uprofile"]
 
     def __init__(self, n, xmin=None, xmax=None, basestate=None, diffop=None) -> None:
-        """Initialization of OrrSommerfeld model
+        """
+        Initialization of OrrSommerfeld model
 
         Args:
             n (_type_): _description_
@@ -70,7 +71,8 @@ class OrrSommerfeldModel(LinOperator):
         super().set_basestate(state)
 
     def compute_operators(self):
-        """compute operators for linearized
+        """
+        compute operators for linearized
         given primitive variables P, linearized operator is
         At dv/dt = B v
         where the unknown v is the transverse velocity perturbation
@@ -103,7 +105,8 @@ class OrrSommerfeldModel(LinOperator):
             self.setBC_connection()
 
     def setBC_connection(self):
-        """Enforce derivative continuity at a shared Chebyshev interface.
+        """
+        Enforce derivative continuity at a shared Chebyshev interface.
 
         Continuity of ``v`` is built into the shared interface degree of
         freedom.  The remaining three rows impose continuity of ``v'``,

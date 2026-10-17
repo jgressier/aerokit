@@ -29,7 +29,8 @@ from scipy.optimize import newton
 
 
 def PrandtlMeyer_Mach(Mach, gamma=defg._gamma):
-    """Compute the Prandtl--Meyer (Busemann) angle from Mach number.
+    """
+    Compute the Prandtl--Meyer (Busemann) angle from Mach number.
 
     Args:
         Mach: Local Mach number.

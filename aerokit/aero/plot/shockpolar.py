@@ -1,4 +1,5 @@
-"""@package shockpolar
+"""
+@package shockpolar
   Plot shock polar curves
 """
 
@@ -23,7 +24,8 @@ def plot_theta_sigma(
     ax=plt,
     **kwargs
 ):
-    """Plot a shock polar in deviation--shock-angle coordinates.
+    """
+    Plot a shock polar in deviation--shock-angle coordinates.
 
     Args:
         mach: Upstream Mach number.
@@ -68,7 +70,8 @@ def plot_theta_pressure(
     ax=plt,
     **kwargs
 ):
-    """Plot a shock polar in deviation--pressure-ratio coordinates.
+    """
+    Plot a shock polar in deviation--pressure-ratio coordinates.
 
     Args:
         mach: Upstream Mach number.

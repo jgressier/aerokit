@@ -1,4 +1,5 @@
-""" 
+"""
+
 	The ``inflow`` module
 	=========================
  
@@ -83,7 +84,8 @@ class inflow_pb:
         return p * (1.0 + 0.5 * ustar ** 2 / (gsgmu * rtt0 - 0.5 * ustar ** 2)) ** gsgmu
 
     def _pstar_estimate_expansion(self, pt0):
-        """exact solution for 2 expansion waves (for uniform gamma only)
+        """
+        exact solution for 2 expansion waves (for uniform gamma only)
 
         ..note: from Toro, page 128
         """
