@@ -16,6 +16,24 @@ pip show aerokit
 
 ## Versions
 
+### [1.5.0](https://pypi.org/project/aerokit/) (unreleased)
+
+#### new
+
+- `aero.ShockWave.downstream_Mach`: downstream Mach number for an oblique shock from its upstream Mach number and shock angle.
+- `instance.SWinteraction.ShockInteraction.solve_triple_point`: bracketed three-shock intersection solver returning balanced reflected and Mach-stem states.
+- `aero.plot.shockpolar.plot_state`: plot and annotate flow states on pressure polars.
+
+#### changed
+
+- `aero.plot.shockpolar.plot_theta_pressure`: optional `sigma_range` restricts a plotted polar to a shock-angle interval.
+- `aero.plot.geom.Wall`: configurable filled-wall style for physical-domain plots.
+- Shock-polar examples are grouped under `examples/aero/polars` and extended with reflection and interaction cases.
+
+#### fixed
+
+- `instance.SWinteraction`: use the strong-shock angle when an interaction creates a Mach stem.
+
 ### [1.4.0](https://pypi.org/project/aerokit/) (2026-10-17)
 
 #### new
@@ -23,12 +41,6 @@ pip show aerokit
 - `common.numspectral.MultiDomainChebCollocation`: two Chebyshev subdomains joined at an internal interface 
 - `common.mapping`: coordinate-mapping framework for spectral collocation, including additional centre-clustered mappings
 
-#### new
-
-- `aero.ShockWave`: add `downstream_Mach` directly from upstream Mach number and shock angle.
-- `aero.plot.shockpolar`: `sigma_range=(sigma_start, sigma_end)` option
-- `aero.plot.geom.Wall`: to plot physical domain and walls
-  
 #### fixed
 
 - preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
