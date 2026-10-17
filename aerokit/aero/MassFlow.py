@@ -1,4 +1,5 @@
-"""@package MassFlow
+"""
+@package MassFlow
   Massflow for compressible flow
 """
 

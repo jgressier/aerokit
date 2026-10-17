@@ -1,4 +1,5 @@
-"""@package Propulsion
+"""
+@package Propulsion
   thrust flow function
 """
 import aerokit.aero.Isentropic as Is

@@ -99,7 +99,8 @@ class AffineMapping(Mapping):
 
 
 class CenterClusteredMapping(Mapping):
-    """Map ``[-1, 1]`` onto an interval with nodes concentrated at its centre.
+    """
+    Map ``[-1, 1]`` onto an interval with nodes concentrated at its centre.
 
     ``strength=0`` is the identity.  Values closer to one move the usual
     Chebyshev endpoint clustering towards ``x=0``.

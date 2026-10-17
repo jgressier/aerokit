@@ -36,9 +36,11 @@ class ChebCollocation:
     default :class:`~aerokit.common.mapping.AffineMapping` reverses it, so
     ``x`` is increasing from ``xmin`` to ``xmax``.  ``matder(order)`` acts on
     samples ordered as ``x`` and returns a physical-coordinate derivative.
+
     """
 
     def __init__(self, npts: int, xmin=None, xmax=None, mapping=None):
+        """Initialize a collocation grid and its coordinate mapping."""
         self._npts = npts
         self._max_Dorder = 0
         # default is -1 to 1 (reverse original xi distribution)
@@ -48,21 +50,25 @@ class ChebCollocation:
 
     @property
     def npts(self):
+        """Return the number of collocation points, including endpoints."""
         return self._npts
 
     @lazyprop
     def xi(self):
+        """Return Chebyshev--Lobatto reference nodes in decreasing order."""
         th = np.arange(self.npts) * np.pi / (self.npts - 1)
         return np.cos(th)
 
     @lazyprop
     def x(self):
+        """Return collocation points in physical-coordinate order."""
         return self._mapping.xi_to_x(self.xi)
 
     def extrapol(self, fk, x):
         """
-        Compute the polynomial interpolant of the data (xk, fk) to new x,
-        where xk are the Chebyshev nodes.
+        Evaluate the collocation polynomial at physical coordinates.
+
+        The input values ``fk`` are defined at the Chebyshev nodes.
 
         Parameters
         ----------
@@ -77,6 +83,7 @@ class ChebCollocation:
         numpy.ndarray
             Interpolated values at ``x``.  Evaluation outside the grid range
             is polynomial extrapolation and can be ill-conditioned.
+
         """
         VdMxi = chebyshev.chebvander(self.xi, self._npts-1)
         coefs = np.linalg.solve(VdMxi, fk)
@@ -100,6 +107,7 @@ class ChebCollocation:
         -------
         numpy.ndarray
             Fitted values in ``self.x`` order.
+
         """
         VdM = chebyshev.chebvander(self._mapping.x_to_xi(x), self._npts-1)
         coefs = np.linalg.lstsq(VdM, f, rcond=None)[0]
@@ -190,6 +198,7 @@ class MultiDomainChebCollocation:
     """
 
     def __init__(self, npts, xmin=-1.0, interface=0.0, xmax=1.0):
+        """Initialize two affine subdomains with a shared interface node."""
         if npts < 4:
             raise ValueError("each subdomain requires at least four points")
         if not xmin < interface < xmax:
@@ -201,14 +210,17 @@ class MultiDomainChebCollocation:
 
     @property
     def npts(self):
+        """Return the number of global points after sharing the interface."""
         return 2 * self._npts_per_domain - 1
 
     @property
     def interface_index(self):
+        """Return the global index of the shared interface point."""
         return self._npts_per_domain - 1
 
     @property
     def x(self):
+        """Return the increasing global grid with one interface point."""
         return np.r_[self._left.x, self._right.x[1:]]
 
     def _embedded_interface_row(self, derivative, side):
@@ -235,6 +247,7 @@ class MultiDomainChebCollocation:
             A row of length :attr:`npts`, ready for a global matrix product.
             It represents either ``D^-_Gamma`` or ``D^+_Gamma``; it is not an
             averaged row and it imposes no condition by itself.
+
         """
         row = np.zeros(self.npts)
         if side == "left":

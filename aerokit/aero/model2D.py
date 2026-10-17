@@ -1,4 +1,5 @@
-"""@package model2D
+"""
+@package model2D
   representation of 2D flows
 """
 

@@ -1,4 +1,5 @@
-"""@package SW interaction
+"""
+@package SW interaction
     2D planar Shock waves interaction using 
     local Rankine Hugoniot equations 
 """
@@ -13,7 +14,8 @@ from scipy import optimize
 
 
 class ShockInteraction:
-    """Class to define and compute shock interaction
+    """
+    Class to define and compute shock interaction
     upstream flow is 0 ; 1 and 2 are respective bottom and top downstream states
 
     Args:
@@ -66,7 +68,8 @@ class ShockInteraction:
         return (abs(self[3].p - self[4].p) / self[0].p < tol) and (abs(self[3].angle - self[4].angle) < tol)
 
     def solve(self, verbose=False):
-        """solve the interaction of shocks using intersection points
+        """
+        solve the interaction of shocks using intersection points
         in the p/angle diagram
 
         Returns:

@@ -1,4 +1,5 @@
-"""@package model1D
+"""
+@package model1D
   representation of 1D flows
 """
 
@@ -111,7 +112,8 @@ class State1d(__state):
         self.__init__(rho=gam * ps / a2, u=u, p=ps, gamma=gam)
 
     def compute_from_pt_rtt_p(self, pt, rtt, p):
-        """Init state from Ptot r.Ttot and Ps (velocity sign is arbitrary and positive)
+        """
+        Init state from Ptot r.Ttot and Ps (velocity sign is arbitrary and positive)
 
         Args:
                 pt ([float]): [description]

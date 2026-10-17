@@ -53,7 +53,8 @@ class LinOperator:
         return self._B, self._At
 
     def solve_eig(self, finite_only=False, beta_rtol=1.0e-8):
-        """Solve the generalized eigenvalue problem.
+        """
+        Solve the generalized eigenvalue problem.
 
         Set ``finite_only`` to discard infinite eigenvalues introduced by
         algebraic boundary conditions.
@@ -86,7 +87,8 @@ class LinOperator:
         return vals, vects, order
 
     def converge_eigenpair(self, omega, eigenmode, niter=10):
-        """apply a Rayleigh quotient iteration convergence process to an estimate of eigenvalue, eigenmode
+        """
+        apply a Rayleigh quotient iteration convergence process to an estimate of eigenvalue, eigenmode
         of the (B- M*j*omega)*eigenmode = 0 stability problem
 
         Args:

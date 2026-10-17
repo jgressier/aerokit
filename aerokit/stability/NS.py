@@ -54,7 +54,8 @@ class NSaxi(LinOperator):
         return derivatives[::-1, ::-1, order - 1]
 
     def compute_operators(self):
-        """compute operators for linearized
+        """
+        compute operators for linearized
         given primitive variables P, linearized operator is
         At dP/dt + B1 dP/dr + B0 P = 0
         """
