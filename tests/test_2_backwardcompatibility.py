@@ -1,12 +1,20 @@
+import importlib
+import warnings
+
 import aerokit.aero.Isentropic as Is
 import aerokit.aero.ShockWave as sw
 import aerokit.aero.riemann as oldRiem
-import aerokit.instance.riemann as Riem
 import aerokit.aero.nozzle as oldNoz
-import aerokit.instance.nozzle as Noz
 import aerokit.aero.unsteady1D as uq
 import numpy as np
-import pytest
+
+
+def test_deprecated_aero_instance_modules_warn():
+    for module in (oldRiem, oldNoz):
+        with warnings.catch_warnings(record=True) as recorded:
+            warnings.simplefilter("always", DeprecationWarning)
+            importlib.reload(module)
+        assert any(item.category is DeprecationWarning for item in recorded)
 
 
 def test_stagnation_i2t():
@@ -25,7 +33,7 @@ def test_riemann():
     pbriem = oldRiem.riemann_pb(
         uq.unsteady_state(1.0, -10.0, 100.0), uq.unsteady_state(1.0, -20.0, 1000.0)
     )
-    assert True
+    assert pbriem.pstar() > 0.0
 
 
 def test_nozzle():

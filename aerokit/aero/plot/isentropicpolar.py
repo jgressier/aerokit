@@ -1,4 +1,5 @@
-"""@package shockpolar
+"""
+@package shockpolar
   Plot shock polar curves
 """
 
@@ -7,7 +8,6 @@ import aerokit.common.defaultgas as defg  # relative import is deprecated by doc
 import aerokit.aero.Supersonic as sup
 
 import matplotlib.pyplot as plt
-from aerokit.aero.plot.defaultstyle import *
 
 
 def plot_theta_pressure(
@@ -24,7 +24,8 @@ def plot_theta_pressure(
     linestyle='-',
     **kwargs
 ):
-    """Plot an isentropic polar in deviation--pressure-ratio coordinates.
+    """
+    Plot an isentropic polar in deviation--pressure-ratio coordinates.
 
     Args:
         mach: Upstream Mach number.

@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
-import aerokit.aero.plot.shockpolar as shp
 import aerokit.instance.SWinteraction as SWI
 import numpy as np
 
@@ -32,11 +31,11 @@ for M0 in [2., 3., 4., 6, 10.]:
     #ax1.set_ylim(-95., 95.)
     ax1.set_title(f"M0={M0}")
 
-    id = 40
-    swi = SWI.ShockInteraction(M0, sig1[id], -90.)
+    index = 40
+    swi = SWI.ShockInteraction(M0, sig1[index], -90.)
     sol = swi.solve(verbose=True)
     swi.plot_angle_pressure(ax=ax2)
-    ax2.set_title(f"$\\theta$={dev[id]:.1f}° - $\sigma_1$={sig1[id]:.1f}°")
+    ax2.set_title(rf"$\theta$={dev[index]:.1f}° - $\sigma_1$={sig1[index]:.1f}°")
 
     print(f"save weakstrong-M0={M0}.png")
     plt.savefig(f"weakstrong-M0={M0}.png")

@@ -1,12 +1,10 @@
-"""@package SW interaction
+"""
+@package SW interaction
     2D planar Shock waves interaction using 
     local Rankine Hugoniot equations 
 """
 
 from dataclasses import dataclass
-
-import numpy as np
-from aerokit.common import defaultgas as defg  # relative import is deprecated by doctest
 import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
 import aerokit.aero.model2D as M2D
@@ -27,7 +25,8 @@ class TriplePointSolution:
 
 
 class ShockInteraction:
-    """Class to define and compute shock interaction
+    """
+    Class to define and compute shock interaction
     upstream flow is 0 ; 1 and 2 are respective bottom and top downstream states
 
     Args:
@@ -146,7 +145,8 @@ class ShockInteraction:
         )
 
     def solve(self, verbose=False):
-        """solve the interaction of shocks using intersection points
+        """
+        solve the interaction of shocks using intersection points
         in the p/angle diagram
 
         Returns:

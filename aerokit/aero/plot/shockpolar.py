@@ -1,4 +1,5 @@
-"""@package shockpolar
+"""
+@package shockpolar
   Plot shock polar curves
 """
 
@@ -8,7 +9,9 @@ import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
 
 import matplotlib.pyplot as plt
-from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma, set_grid  # noqa: F401
+from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma, set_grid
+
+__all__ = ["figure_theta_pressure", "figure_theta_sigma", "set_grid"]
 
 
 def plot_theta_sigma(
@@ -23,7 +26,8 @@ def plot_theta_sigma(
     ax=plt,
     **kwargs
 ):
-    """Plot a shock polar in deviation--shock-angle coordinates.
+    """
+    Plot a shock polar in deviation--shock-angle coordinates.
 
     Args:
         mach: Upstream Mach number.
@@ -69,7 +73,8 @@ def plot_theta_pressure(
     sigma_range=None,
     **kwargs
 ):
-    """Plot a shock polar in deviation--pressure-ratio coordinates.
+    """
+    Plot a shock polar in deviation--pressure-ratio coordinates.
 
     Args:
         mach: Upstream Mach number.

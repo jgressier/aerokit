@@ -4,6 +4,7 @@
 .DS_Store
 *.swp
 *.swo
+tmp/
 
 # python compiled files
 # Byte-compiled / optimized / DLL files

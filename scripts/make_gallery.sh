@@ -9,6 +9,6 @@ fi
 mkdir -p gallery
 cd gallery
 for fic in ../examples/*.py ; do
-  echo run $fic
-  ${PYTHON:-python} $fic
+  echo "run $fic"
+  ${PYTHON:-python} "$fic"
 done

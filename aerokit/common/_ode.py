@@ -1,7 +1,6 @@
 # from Numerical Methods in Engineering With Python
 
 import numpy as np
-from math import sqrt
 
 
 def RK4(F, x, y, xStop, h):
@@ -66,7 +65,7 @@ def RKF45(F, x, y, xStop, h, tol=1.0e-6):
     X.append(x)
     Y.append(y)
     stopper = 0  # Integration stopper(0 = off, 1 = on)
-    for i in range(10000):
+    for _ in range(10000):
         dy, e = _rkf45(F, x, y, h)
         # Accept integration step if error e is within tolerance
         if e <= tol:

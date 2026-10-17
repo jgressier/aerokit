@@ -10,8 +10,8 @@ class LinOperator:
     _harmonic_time_coef = -1j
     _BC_dict = {}
 
-    def __init__(self, n=100, xmin=None, xmax=None) -> None:
-        self._diffop = ns.ChebCollocation(n, xmin, xmax)
+    def __init__(self, n=100, xmin=None, xmax=None, diffop=None) -> None:
+        self._diffop = ns.ChebCollocation(n, xmin, xmax) if diffop is None else diffop
         self._basestate = None
         self._B = None
         self._BC_type = None
@@ -52,9 +52,22 @@ class LinOperator:
             self.compute_operators()
         return self._B, self._At
 
-    def solve_eig(self):
+    def solve_eig(self, finite_only=False, beta_rtol=1.0e-8):
+        """
+        Solve the generalized eigenvalue problem.
+
+        Set ``finite_only`` to discard infinite eigenvalues introduced by
+        algebraic boundary conditions.
+        """
         B, Id = self.get_RHS_time_matrices()
-        self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef * Id)
+        if finite_only:
+            alpha_beta, vects = scilin.eig(B, self._harmonic_time_coef * Id, homogeneous_eigvals=True)
+            alpha, beta = alpha_beta
+            finite = np.abs(beta) > beta_rtol * np.max(np.abs(beta))
+            self._vals = alpha[finite] / beta[finite]
+            self._vects = vects[:, finite]
+        else:
+            self._vals, self._vects = scilin.eig(B, self._harmonic_time_coef * Id)
         return self._vals, self._vects
 
     def select_and_sort(self, realmin=0.0, realmax=1.0e99, imagmin=-1e10, imagmax=1e10, sort="real", verbose=True):
@@ -74,7 +87,8 @@ class LinOperator:
         return vals, vects, order
 
     def converge_eigenpair(self, omega, eigenmode, niter=10):
-        """apply a Rayleigh quotient iteration convergence process to an estimate of eigenvalue, eigenmode
+        """
+        apply a Rayleigh quotient iteration convergence process to an estimate of eigenvalue, eigenmode
         of the (B- M*j*omega)*eigenmode = 0 stability problem
 
         Args:
@@ -86,7 +100,7 @@ class LinOperator:
         new_eigm = eigenmode / nplin.norm(eigenmode)
         # print(omega, np.vdot(new_eigm, B @ new_eigm)/np.vdot(new_eigm, M @ new_eigm))
         new_omega = omega
-        for i in range(niter):
+        for _ in range(niter):
             # # since matrix becomes singular with convergence, lstsqr is prefered
             # w, *_ = nplin.lstsq(B-new_omega*M, new_eigm, rcond=None)
             try:
@@ -96,7 +110,9 @@ class LinOperator:
                 # print(i, nplin.norm((B-new_omega*M)@ new_eigm), new_omega)
             except nplin.LinAlgError as err:
                 if "Singular matrix" in str(err):
-                    exit
+                    # Exact convergence makes B - omega*M singular: there is
+                    # no correction to solve for, so keep the last eigenpair.
+                    break
                 else:
                     raise
         return new_omega, new_eigm

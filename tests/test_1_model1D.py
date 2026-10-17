@@ -37,7 +37,7 @@ def test_init_qgam():
 
 def test_item_requires_array_state():
     with pytest.raises(TypeError, match="numpy ndarray"):
-        m1d.State1d(rho=1.0, u=0.0, p=1.0)[0]
+        _ = m1d.State1d(rho=1.0, u=0.0, p=1.0)[0]
 
 
 def test_init_Mneg():
