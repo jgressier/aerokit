@@ -96,7 +96,7 @@ def main():
     )
     npts_per_domain = (args.npts + 1) // 2
     multi = MultiDomainChebCollocation(npts_per_domain, xmin=-2.0, interface=0.0, xmax=2.0)
-    model, omega, modes, profile = spectrum(
+    _, omega, modes, profile = spectrum(
         mono, args.alpha, args.reynolds, args.uavg, args.delta_u, args.thickness
     )
     _, omega_multi, modes_multi, _ = spectrum(

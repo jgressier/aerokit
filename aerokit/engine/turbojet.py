@@ -57,8 +57,6 @@ class turbojet_opt(gg.base):
 
     def update(self):
         gg.base.update(self)
-        gh  = self.gam_hot
-        cph = gh*self.r_hot/(gh-1.)
         self.Pt9 = np.maximum(self.Pt45 * self.xi_nozzle, self.P0)
         self.M9  = Is.Mach_PtPs(self.Pt9/self.P0, gamma=self.gam_hot)
         self.V9  = Is.Velocity_MachTi(self.M9, self.Tt45, r=self.r_hot, gamma=self.gam_hot)

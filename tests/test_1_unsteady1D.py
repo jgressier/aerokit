@@ -1,5 +1,4 @@
 import aerokit.aero.unsteady1D as uq
-import aerokit.aero.Isentropic as Is
 import pytest
 
 

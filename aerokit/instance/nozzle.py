@@ -105,7 +105,7 @@ def Ms_from_AsAc_NPR(AsAc, NPR):
             .. seealso::
             .. note:: NOT available for array (numpy) computations
     """
-    NPR0, NPRsw, NPR1, Msub, Msh, Msup = _NPR_Ms_list(AsAc)
+    NPR0, NPRsw, _, _, _, Msup = _NPR_Ms_list(AsAc)
     if NPR < NPR0:
         Ms = Is.Mach_PtPs(NPR)
     elif NPR > NPRsw:
@@ -136,7 +136,7 @@ def Madapt_from_AsAc_NPR(AsAc, NPR):
             .. seealso::
             .. note:: NOT available for array (numpy) computations
     """
-    NPR0, NPRsw, NPR1, Msub, Msh, Msup = _NPR_Ms_list(AsAc)
+    NPR0, NPRsw, NPR1, _, _, Msup = _NPR_Ms_list(AsAc)
     if NPR < NPR0:
         Ms = Is.Mach_PtPs(NPR)
     elif NPR > NPR1:  # under expanded flow

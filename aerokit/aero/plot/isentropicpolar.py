@@ -8,7 +8,6 @@ import aerokit.common.defaultgas as defg  # relative import is deprecated by doc
 import aerokit.aero.Supersonic as sup
 
 import matplotlib.pyplot as plt
-from aerokit.aero.plot.defaultstyle import *
 
 
 def plot_theta_pressure(

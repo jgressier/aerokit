@@ -9,7 +9,9 @@ import aerokit.aero.degree as deg
 import aerokit.aero.ShockWave as sw
 
 import matplotlib.pyplot as plt
-from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma, set_grid  # noqa: F401
+from aerokit.aero.plot.defaultstyle import figure_theta_pressure, figure_theta_sigma, set_grid
+
+__all__ = ["figure_theta_pressure", "figure_theta_sigma", "set_grid"]
 
 
 def plot_theta_sigma(

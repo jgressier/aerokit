@@ -488,7 +488,8 @@ def conical_Mach_walldeflection_sigma(deflection, sigma, gamma=defg._gamma):
     Returns:
 
     """
-    assert sigma > deflection
+    if sigma <= deflection:
+        raise ValueError("shock angle sigma must exceed wall deflection")
 
     def local_def(mach):
         """internal wrapping function to iterative solve"""

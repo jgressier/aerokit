@@ -14,17 +14,15 @@ Available functions
     .. note::
 """
 
-from typing import Union
 import numpy as np
 from aerokit.stability._base import LinOperator
-from aerokit.common.mapping import Mapping
 
 
 class NSaxi(LinOperator):
 
     req_keys = ["kx", "m", "rho", "P", "Ux", "gamma"]
 
-    def __init__(self, n, rmin=0.0, rmax=None, basestate={}, mapping=None) -> None:
+    def __init__(self, n, rmin=0.0, rmax=None, basestate=None, mapping=None) -> None:
         super().__init__(n, xmin=rmin, xmax=rmax)
         self._mapping = mapping
         if mapping is not None:
@@ -156,7 +154,6 @@ class NSaxi(LinOperator):
 
     def setBC_far(self):
         n = self.dim
-        Dn = self._radial_matder(1)[-1, :]
         for ivar in range(self.nvar):
             irow = (ivar + 1) * n - 1
             self._clear_row(irow)

@@ -136,19 +136,20 @@ class CenterClusteredMapping(Mapping):
         third = -scale * 6.0 * self.strength
         return slope, curvature, third
 
-    def dxi_dx(self, xi):
+    def dxi_dx(self, xi):  # pylint: disable=arguments-differ
+        # AffineMapping accepts an omitted xi because its derivatives are constant.
         slope, _, _ = self._derivatives(xi)
         return 1.0 / slope
 
-    def d2xi_dx2(self, xi):
+    def d2xi_dx2(self, xi):  # pylint: disable=arguments-differ
         slope, curvature, _ = self._derivatives(xi)
         return -curvature / slope**3
 
-    def d3xi_dx3(self, xi):
+    def d3xi_dx3(self, xi):  # pylint: disable=arguments-differ
         slope, curvature, third = self._derivatives(xi)
         return (3.0 * curvature**2 - slope * third) / slope**5
 
-    def d4xi_dx4(self, xi):
+    def d4xi_dx4(self, xi):  # pylint: disable=arguments-differ
         slope, curvature, third = self._derivatives(xi)
         return (10.0 * slope * curvature * third - 15.0 * curvature**3) / slope**7
 

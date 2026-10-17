@@ -27,7 +27,8 @@ class ShockModel(Euler1D):
     def __init__(self, n, length, M1=None, M0=None, dM0dx=None) -> None:
         super().__init__(n, xmin=0.0, xmax=length)
         if M1 is None:
-            assert M0 is not None, "at least one Mach number should be given"
+            if M0 is None:
+                raise ValueError("at least one Mach number should be given")
             M1 = sw.downstream_Mn(M0)
         print(f"Initialize Shock impact model with M1={M1:.4f}")
         rttot = 8.35e4
@@ -108,8 +109,8 @@ plt.plot(vals0.real, vals0.imag, "ob", markersize=5, alpha=0.3)
 plt.plot(vals.real, vals.imag, "or", markersize=3, alpha=0.6)
 for i, v in enumerate(vals[order[:20]]):
     plt.text(v.real, v.imag, str(i))
-plt.xlabel("$\omega_r$")
-plt.ylabel("$\omega_i$")
+plt.xlabel(r"$\omega_r$")
+plt.ylabel(r"$\omega_i$")
 plt.grid()
 # plt.gca().yaxis.label.set(rotation='horizontal', ha='right');
 plt.title("Spectrum")

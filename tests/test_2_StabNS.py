@@ -11,6 +11,13 @@ def test_nsaxi_semi_infinite_mapping():
     assert np.all(np.isfinite(operator._radial_matder(1)))
 
 
+def test_nsaxi_default_basestate_is_none_and_not_shared():
+    left = NSaxi(8)
+    right = NSaxi(8)
+    assert left._basestate is None
+    assert right._basestate is None
+
+
 def _operator_with_axis_bc(m):
     n = 10
     state = {

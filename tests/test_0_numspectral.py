@@ -23,6 +23,11 @@ def test_cheb_initx():
     assert SpOp.x[-1] == 10.0
 
 
+def test_cheb_matder_rejects_nonpositive_order():
+    with pytest.raises(ValueError, match="at least one"):
+        ns.ChebCollocation(8).matder(0)
+
+
 def test_multidomain_cheb_interface_and_derivatives():
     SpOp = ns.MultiDomainChebCollocation(16)
     assert SpOp.npts == 31

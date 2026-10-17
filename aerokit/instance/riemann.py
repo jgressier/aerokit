@@ -16,7 +16,6 @@
   
 """
 
-import math
 import numpy as np
 from scipy.optimize import newton
 import aerokit.aero.unsteady1D as uq

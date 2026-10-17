@@ -100,7 +100,7 @@ class LinOperator:
         new_eigm = eigenmode / nplin.norm(eigenmode)
         # print(omega, np.vdot(new_eigm, B @ new_eigm)/np.vdot(new_eigm, M @ new_eigm))
         new_omega = omega
-        for i in range(niter):
+        for _ in range(niter):
             # # since matrix becomes singular with convergence, lstsqr is prefered
             # w, *_ = nplin.lstsq(B-new_omega*M, new_eigm, rcond=None)
             try:
@@ -110,7 +110,9 @@ class LinOperator:
                 # print(i, nplin.norm((B-new_omega*M)@ new_eigm), new_omega)
             except nplin.LinAlgError as err:
                 if "Singular matrix" in str(err):
-                    exit
+                    # Exact convergence makes B - omega*M singular: there is
+                    # no correction to solve for, so keep the last eigenpair.
+                    break
                 else:
                     raise
         return new_omega, new_eigm

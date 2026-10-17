@@ -123,7 +123,8 @@ class ChebCollocation:
         ``f`` sampled at ``self.x``, ``matder(order) @ f`` approximates
         ``d**order f / dx**order`` at the same points.
         """
-        assert order >= 1
+        if order < 1:
+            raise ValueError("derivative order must be at least one")
         if order > self._max_Dorder:
             self.compute_matder(order)
         return self._mapping.transform_derivative_matrices(self._matder)[:, :, order - 1]
