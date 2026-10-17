@@ -24,7 +24,8 @@ from aerokit.aero import ShockWave as sw
 
 
 def NPR_choked_subsonic(AsAc):
-    """Compute Nozzle Pressure Ratio to get a choked but subsonic regime in a nozzle with As/Ac diffuser
+    """
+    Compute Nozzle Pressure Ratio to get a choked but subsonic regime in a nozzle with As/Ac diffuser
 
     Args:
             AsAc ([real]): ratio of exit over throat surfaces
@@ -35,7 +36,8 @@ def NPR_choked_subsonic(AsAc):
 
 
 def NPR_choked_supersonic(AsAc):
-    """Compute Nozzle Pressure Ratio to get a choked supersonic regime in a nozzle with As/Ac diffuser
+    """
+    Compute Nozzle Pressure Ratio to get a choked supersonic regime in a nozzle with As/Ac diffuser
 
     Args:
             AsAc ([real]): ratio of exit over throat surfaces
@@ -46,7 +48,8 @@ def NPR_choked_supersonic(AsAc):
 
 
 def NPR_shock_at_exit(AsAc):
-    """Compute Nozzle Pressure Ratio to get a choked, supersonic regime but shock at exit in a nozzle with As/Ac diffuser
+    """
+    Compute Nozzle Pressure Ratio to get a choked, supersonic regime but shock at exit in a nozzle with As/Ac diffuser
 
     Args:
             AsAc ([real]): ratio of exit over throat surfaces
@@ -102,7 +105,7 @@ def Ms_from_AsAc_NPR(AsAc, NPR):
             .. seealso::
             .. note:: NOT available for array (numpy) computations
     """
-    NPR0, NPRsw, NPR1, Msub, Msh, Msup = _NPR_Ms_list(AsAc)
+    NPR0, NPRsw, _, _, _, Msup = _NPR_Ms_list(AsAc)
     if NPR < NPR0:
         Ms = Is.Mach_PtPs(NPR)
     elif NPR > NPRsw:
@@ -133,7 +136,7 @@ def Madapt_from_AsAc_NPR(AsAc, NPR):
             .. seealso::
             .. note:: NOT available for array (numpy) computations
     """
-    NPR0, NPRsw, NPR1, Msub, Msh, Msup = _NPR_Ms_list(AsAc)
+    NPR0, NPRsw, NPR1, _, _, Msup = _NPR_Ms_list(AsAc)
     if NPR < NPR0:
         Ms = Is.Mach_PtPs(NPR)
     elif NPR > NPR1:  # under expanded flow
@@ -148,7 +151,8 @@ def Madapt_from_AsAc_NPR(AsAc, NPR):
 
 
 class nozzle:
-    """Define a nozzle
+    """
+    Define a nozzle
 
     :param x: coordinate for section, not really used for now
     :param section: array of section law
@@ -179,7 +183,8 @@ class nozzle:
         return
 
     def set_NPR(self, NPR):
-        """Define Nozzle Pressure Ratio (inlet Ptot over outlet Ps) for this case
+        """
+        Define Nozzle Pressure Ratio (inlet Ptot over outlet Ps) for this case
                 Define Nozzle pressure ratio and compute Mach number, Ptot and Ps according to nozzle regime
         :param NPR: NPR value (>1)
 

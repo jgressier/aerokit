@@ -14,6 +14,14 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+
 nav:
   - Home: index.md
   - User Guide:
@@ -21,6 +29,7 @@ nav:
     - aero.Isentropic: userguide/aero.Isentropic.md
     - aero.MassFlow: userguide/aero.MassFlow.md
     - aero.ShockWave:  userguide/aero.ShockWave.md
+    - common.numspectral: userguide/common.numspectral.md
   - Examples: 
     - List of examples: examples.md
     - aero.Isentropic: examples/aero.Isentropic.ipynb

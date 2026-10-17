@@ -30,7 +30,8 @@ class Euler1D(LinOperator):
             "RH": self.setBC_RH,
         }
         if basestate is not None:
-            assert isinstance(basestate, m1d.state)
+            if not isinstance(basestate, m1d.state):
+                raise TypeError("basestate must be a model1D.state")
             self.set_basestate(basestate)
 
     def set_basestate(self, state):
@@ -38,7 +39,8 @@ class Euler1D(LinOperator):
         self.nvar = 3
 
     def compute_operators(self):
-        """compute operators for linearized
+        """
+        compute operators for linearized
         given primitive variables P, linearized operator is
         At dP/dt + Bx dP/dt + B0 P = 0
         """
@@ -46,7 +48,8 @@ class Euler1D(LinOperator):
         n = self.dim
         N = self.dim * self.nvar
         q = self._basestate
-        assert isinstance(q, m1d.state)
+        if not isinstance(q, m1d.state):
+            raise TypeError("basestate must be a model1D.state")
         # order is rho, u, p
         self._At = np.eye(N)
         # Bx
@@ -72,7 +75,8 @@ class Euler1D(LinOperator):
         if self._BC_type is None:
             raise ValueError("BC have not been set: use self.set_BC(Ltype, Rtype)")
         if self._BC_type[0]["type"] == "per":
-            assert self._BC_type[1]["type"] == "per"
+            if self._BC_type[1]["type"] != "per":
+                raise ValueError("periodic boundary conditions must be set on both sides")
             self.setBC_per()
         else:
             bcdict = self._BC_type[0]
@@ -113,7 +117,8 @@ class Euler1D(LinOperator):
             self._B[i * n + n - 1, i * n : (i + 1) * n] -= D[n - 1, :]
 
     def setBC_RH(self, istate: int, irow: Union[int, None] = None, **kwargs):
-        """Apply linerized Rankine Hugoniot equations from constant upstream value.
+        """
+        Apply linerized Rankine Hugoniot equations from constant upstream value.
 
         There are 3 equations but 4 unknows (3 downstream perturbations and shock velocity or position).
         Substituting the shock velocity s reduces the boundary equations to 2.
@@ -139,7 +144,8 @@ class Euler1D(LinOperator):
         self._B = np.block([[self._B, np.zeros((3 * n, 1))], [np.zeros((1, 3 * n)), np.zeros((1, 1))]])
         # --- base state ---
         q = self._basestate
-        assert isinstance(q, m1d.state)
+        if not isinstance(q, m1d.state):
+            raise TypeError("basestate must be a model1D.state")
         dq = m1d.state(rho=D @ q.rho, u=D @ q.u, p=D @ q.p)
         q1 = q[istate]
         dq1 = dq[istate]

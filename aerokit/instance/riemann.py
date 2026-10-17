@@ -1,4 +1,5 @@
-""" 
+"""
+
 	The ``riemann`` module
 	=========================
  
@@ -15,7 +16,6 @@
   
 """
 
-import math
 import numpy as np
 from scipy.optimize import newton
 import aerokit.aero.unsteady1D as uq
@@ -165,7 +165,8 @@ class riemann_pb:
         return 0.5 * (self._qR.u + self._qL.u + self._delta_uR(p) - self._delta_uL(p))
 
     def _pstar_estimate_expansion(self):
-        """exact solution for 2 expansion waves (for uniform gamma only)
+        """
+        exact solution for 2 expansion waves (for uniform gamma only)
 
         ..note: from Toro, page 128
         """

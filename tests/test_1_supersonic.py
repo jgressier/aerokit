@@ -1,5 +1,4 @@
 import aerokit.aero.Supersonic as sup
-import numpy as np
 import pytest
 
 

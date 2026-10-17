@@ -1,11 +1,12 @@
-"""@package MassFlow
+"""
+@package MassFlow
   Massflow for compressible flow
 """
 
 import numpy as np
 
 # from . import IterativeSolve
-from scipy.optimize import fsolve, newton
+from scipy.optimize import newton
 from ..common import defaultgas as defg
 
 # internal initialization (estimated) Mach for Sigma->Mach computations

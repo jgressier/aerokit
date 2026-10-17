@@ -16,6 +16,18 @@ pip show aerokit
 
 ## Versions
 
+### [1.4.0](https://pypi.org/project/aerokit/) (2026-10-17)
+
+#### new
+
+- `common.numspectral.MultiDomainChebCollocation`: two Chebyshev subdomains joined at an internal interface 
+- `common.mapping`: coordinate-mapping framework for spectral collocation, including additional centre-clustered mappings
+
+#### fixed
+
+- preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
+- bug fix in pressure computation in `aero.model1D.state_isentropic_Mach`
+
 ### [1.3.0](https://pypi.org/project/aerokit/) (2026-08-06)
 
 #### new
@@ -30,6 +42,7 @@ pip show aerokit
 #### changed
 
 - `common.numspectral.ChebCollocation`: differentiation matrices are computed on the reference Chebyshev interval; physical derivatives are obtained through the selected mapping.
+- `stability.OrrSommerfeld`: supports a supplied differentiation operator; multi-domain interface conditions enforce continuity of the first three derivatives.
 - `stability.OrrSommerfeld` and eigenvalue-selection utilities: small API and documentation improvements.
 
 #### breaking changes
@@ -40,6 +53,7 @@ pip show aerokit
 
 - `aero.ShockWave`: handle negative deviation and right branches of polar
 - `stability.NS.NSaxi`: cylindrical terms and axis regularity boundary conditions now depend on the azimuthal mode number.
+- `stability` generalized eigensolvers can filter numerically spurious infinite eigenvalues from singular mass matrices.
 - Documentation and CI configuration updated for current Python and documentation.
 
 ### [1.2.1](https://pypi.org/project/aerokit/) (2023-12-10)

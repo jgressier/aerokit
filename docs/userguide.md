@@ -4,6 +4,12 @@ The `aerokit` package mainly consists in `aerokit.aero` module for various gas f
 
 Most implemented functions use normalized properties.
 
+## `aerokit.common` module
+
+- [`numspectral`](userguide/common.numspectral.md): Chebyshev collocation,
+  coordinate mappings, and two-domain interface constraints for spectral
+  stability and boundary-value problems.
+
 ## `aerokit.aero` module
 
 - `Isentropic`: isentropic functions for compressible ideal flows (total quantities)

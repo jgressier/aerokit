@@ -1,5 +1,10 @@
 import aerokit.common.numspectral as ns
-from aerokit.common.mapping import AffineMapping, SemiInfiniteAlgebraicMapping, SemiInfiniteRationalMapping
+from aerokit.common.mapping import (
+    AffineMapping,
+    CenterClusteredMapping,
+    SemiInfiniteAlgebraicMapping,
+    SemiInfiniteRationalMapping,
+)
 import numpy as np
 import pytest
 
@@ -18,12 +23,55 @@ def test_cheb_initx():
     assert SpOp.x[-1] == 10.0
 
 
+def test_cheb_matder_rejects_nonpositive_order():
+    with pytest.raises(ValueError, match="at least one"):
+        ns.ChebCollocation(8).matder(0)
+
+
+def test_multidomain_cheb_interface_and_derivatives():
+    SpOp = ns.MultiDomainChebCollocation(16)
+    assert SpOp.npts == 31
+    assert SpOp.x[SpOp.interface_index] == 0.0
+
+    f = np.exp(SpOp.x)
+    assert np.allclose(SpOp.matder(1) @ f, f, rtol=1e-10, atol=1e-8)
+    assert np.allclose(SpOp.interface_derivative_jumps(3) @ f, 0.0, atol=1e-8)
+
+
+def test_multidomain_embedded_interface_rows():
+    """Check global placement and averaging at the shared node."""
+    grid = ns.MultiDomainChebCollocation(8, xmin=-2.0, interface=0.5, xmax=3.0)
+    left = grid._left.matder(1)
+    right = grid._right.matder(1)
+    left_row = grid._embedded_interface_row(left, "left")
+    right_row = grid._embedded_interface_row(right, "right")
+
+    assert np.allclose(left_row[: grid._npts_per_domain], left[-1])
+    assert np.allclose(left_row[grid._npts_per_domain :], 0.0)
+    assert np.allclose(right_row[: grid.interface_index], 0.0)
+    assert np.allclose(right_row[grid.interface_index :], right[0])
+    assert np.allclose(grid.matder(1)[grid.interface_index], 0.5 * (left_row + right_row))
+
+
 def test_affine_mapping_derivatives():
     mapping = AffineMapping(0.0, 10.0)
     assert mapping.dxi_dx() == -0.2
     assert mapping.d2xi_dx2() == 0.0
     assert mapping.d3xi_dx3() == 0.0
     assert mapping.d4xi_dx4() == 0.0
+
+
+def test_center_clustered_mapping():
+    mapping = CenterClusteredMapping(-2.0, 2.0)
+    operator = ns.ChebCollocation(41, mapping=mapping)
+    assert np.allclose(mapping.x_to_xi(mapping.xi_to_x(operator.xi)), operator.xi)
+    assert operator.x[0] == -2.0
+    assert operator.x[-1] == 2.0
+    center = operator.npts // 2
+    assert operator.x[center + 1] - operator.x[center] < operator.x[1] - operator.x[0]
+
+    f = np.exp(operator.x)
+    assert np.allclose(operator.matder(1) @ f, f, rtol=1.0e-9, atol=1.0e-9)
 
 
 @pytest.mark.parametrize(

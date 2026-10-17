@@ -50,6 +50,15 @@ def test_weakshock_consistency():
     Q2 = Q0.weakshock_deviation(Q1.angle)
     assert Q2.p == pytest.approx(Q1.p)
 
+
+def test_shock_sigma_uses_state_gamma():
+    Q0 = M2P.State2DMach(Mach=2.0, rho=1.0, p=1.0, gamma=1.3)
+    Q1 = Q0.shock_sigma(35.0)
+    Q2 = Q0.weakshock_deviation(Q1.angle)
+    assert Q1.angle == pytest.approx(6.012784094505367)
+    assert Q1.Mach == pytest.approx(1.8074064243100176)
+    assert Q2.p == pytest.approx(Q1.p)
+
 def test_stronghock():
     Q0 = M2P.State2DMach(Mach=2.)
     Q1p = Q0.shock_sigma(35.)

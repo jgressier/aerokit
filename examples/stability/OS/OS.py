@@ -1,5 +1,3 @@
-import numpy as np
-from scipy.linalg import eig
 import aerokit.stability.OrrSommerfeld as OS
 
 # --- MAIN ---
@@ -31,8 +29,8 @@ plt.plot(vals0.real, vals0.imag, "ob", markersize=5, alpha=0.3)
 plt.plot(vals.real, vals.imag, "or", markersize=3, alpha=0.9)
 for i, v in enumerate(vals[order[:20]]):
     plt.text(v.real, v.imag, str(i))
-plt.xlabel("$\omega_r$")
-plt.ylabel("$\omega_i$")
+plt.xlabel(r"$\omega_r$")
+plt.ylabel(r"$\omega_i$")
 plt.grid()
 # plt.gca().yaxis.label.set(rotation='horizontal', ha='right');
 plt.title("Spectrum")

@@ -8,7 +8,8 @@ from aerokit.aero.plot.defaultstyle import sty_wall
 
 
 class Wall:
-    """A polyline or single-valued curved boundary.
+    """
+    A polyline or single-valued curved boundary.
 
     One coordinate may be a callable and the other a two-value range or an
     array of sample points.  ``location`` identifies the solid side of the

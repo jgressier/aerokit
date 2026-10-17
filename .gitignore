@@ -4,14 +4,16 @@
 .DS_Store
 *.swp
 *.swo
+tmp/
 
 # python compiled files
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
 
-# pyenv
+# pyenv or virtualenv
 .python-version
+.venv/
 
 # Unit test / coverage reports
 build/

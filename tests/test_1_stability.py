@@ -40,3 +40,17 @@ class Test_mat33:
         self.init()
         vpmax, _ = self.Op.converge_eigenpair(200.0, [1.0, 1.0, 1.0])
         assert vpmax == pytest.approx(3 + np.sqrt(5))
+
+
+def test_rayleigh_exact_eigenpair_exits_on_singular_correction():
+    """An exact eigenpair makes the Rayleigh correction matrix singular."""
+    operator = stab.LinOperator(2)
+    omega_exact = 3.0
+    operator._At = np.eye(2)
+    operator._B = -1j * omega_exact * operator._At
+    initial_mode = np.array([3.0, 4.0])
+
+    omega, mode = operator.converge_eigenpair(omega_exact, initial_mode)
+
+    assert omega == omega_exact
+    assert np.allclose(mode, initial_mode / np.linalg.norm(initial_mode))

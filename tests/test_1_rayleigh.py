@@ -8,8 +8,8 @@ def test_maxTiratio_Mach():
     assert ray.maxTiratio_Mach(0.2, 1.4) == pytest.approx(5.761904761904761)
     assert ray.maxTiratio_Mach(1.2, 1.4) == pytest.approx(1.0217463193006673)
     assert ray.maxTiratio_Mach(20.0, 1.4) == pytest.approx(2.0236689814814817)
-    assert ray.maxTiratio_Mach(0.5, 1.3) == pytest.approx(1.4464285714285716)
-    assert ray.maxTiratio_Mach(2, 1.3) == pytest.approx(1.2604166666666667)
+    assert ray.maxTiratio_Mach(0.5, 1.3) == pytest.approx(1.4714510214772132)
+    assert ray.maxTiratio_Mach(2, 1.3) == pytest.approx(1.3057065217391308)
 
 
 def test_SubMach_TiTicri():

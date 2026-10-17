@@ -37,7 +37,7 @@ def test_init_qgam():
 
 def test_item_requires_array_state():
     with pytest.raises(TypeError, match="numpy ndarray"):
-        m1d.State1d(rho=1.0, u=0.0, p=1.0)[0]
+        _ = m1d.State1d(rho=1.0, u=0.0, p=1.0)[0]
 
 
 def test_init_Mneg():
@@ -79,6 +79,28 @@ def test_new_isentropic_trans():
     assert q2.size == n
     assert np.allclose(q1.rTtot(), q2.rTtot(), rtol=1e-10)
     assert np.allclose(q1.Ptot(), q2.Ptot(), rtol=1e-10)
+
+
+@pytest.mark.parametrize("initializer", ["Mach", "u", "p"])
+def test_nondefault_gamma_is_preserved_by_state_construction(initializer):
+    q = m1d.State1d(1.0, 0.0, 1.0, gamma=1.3)
+    if initializer == "Mach":
+        q.compute_from_pt_rtt_M(pt=4.0, rtt=2.0, M=1.5)
+    elif initializer == "u":
+        q.compute_from_pt_rtt_u(pt=4.0, rtt=2.0, u=0.3)
+    else:
+        q.compute_from_pt_rtt_p(pt=4.0, rtt=2.0, p=1.0)
+    assert q._gamma == 1.3
+    assert q.rTtot() == pytest.approx(2.0)
+    assert q.Ptot() == pytest.approx(4.0)
+
+
+def test_nondefault_gamma_is_preserved_by_isentropic_transformation():
+    q1 = m1d.State1d(1.3, 2.0, 1.0, gamma=1.3)
+    q2 = q1.state_isentropic_Mach(1.5)
+    assert q2._gamma == q1._gamma
+    assert q2.rTtot() == pytest.approx(q1.rTtot())
+    assert q2.Ptot() == pytest.approx(q1.Ptot())
 
 
 def test_new_RH():
