@@ -16,7 +16,7 @@ pip show aerokit
 
 ## Versions
 
-### [1.5.0](https://pypi.org/project/aerokit/) (unreleased)
+### [1.5.0](https://pypi.org/project/aerokit/) (2026-10-18)
 
 #### new
 
@@ -43,6 +43,7 @@ pip show aerokit
 
 #### fixed
 
+- fix bug in `stability.NSaxi` (compressible parallel Euler/NS model)
 - preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
 - bug fix in pressure computation in `aero.model1D.state_isentropic_Mach`
 
