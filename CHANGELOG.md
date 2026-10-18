@@ -16,6 +16,24 @@ pip show aerokit
 
 ## Versions
 
+### [1.5.0](https://pypi.org/project/aerokit/) (2026-10-18)
+
+#### new
+
+- `aero.ShockWave.downstream_Mach`: downstream Mach number for an oblique shock from its upstream Mach number and shock angle.
+- `instance.SWinteraction.ShockInteraction.solve_triple_point`: bracketed three-shock intersection solver returning balanced reflected and Mach-stem states.
+- `aero.plot.shockpolar.plot_state`: plot and annotate flow states on pressure polars.
+
+#### changed
+
+- `aero.plot.shockpolar.plot_theta_pressure`: optional `sigma_range` restricts a plotted polar to a shock-angle interval.
+- `aero.plot.geom.Wall`: configurable filled-wall style for physical-domain plots.
+- Shock-polar examples are grouped under `examples/aero/polars` and extended with reflection and interaction cases.
+
+#### fixed
+
+- `instance.SWinteraction`: use the strong-shock angle when an interaction creates a Mach stem.
+
 ### [1.4.0](https://pypi.org/project/aerokit/) (2026-10-17)
 
 #### new
@@ -25,6 +43,7 @@ pip show aerokit
 
 #### fixed
 
+- fix bug in `stability.NSaxi` (compressible parallel Euler/NS model)
 - preserve default gamma in `aero.Rayleigh`, `aero.model1D`, `aero.model2D`
 - bug fix in pressure computation in `aero.model1D.state_isentropic_Mach`
 
