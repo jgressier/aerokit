@@ -21,6 +21,7 @@ Most implemented functions use normalized properties.
 - `Rayleigh`: Rayleigh 1D flow (energy source)
 - `model1D`: class for 1D compressible state
 - `model2D`: 2D compressible states represented with either velocity components or Mach number and angle (suitable for supersonic flows)
+- `blade`: ideal 2D blade rows, with absolute/relative-frame transformations and simple mass-flow closures for preliminary compressor maps
 - `unsteady1D`: extended class for 1D unsteady computations
 
 ## `aerokit.instance` module
