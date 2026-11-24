@@ -20,11 +20,11 @@ jobs:
 
         exclude:
           - os: ubuntu-latest
-            python-version: ['3.8', '3.9']
+            python-version: '3.8'
+          - os: ubuntu-latest
+            python-version: '3.9'
 
         include:
-          - os: ubuntu-22.04
-            python-version: '3.7'
           - os: ubuntu-24.04
             python-version: '3.8'
           - os: ubuntu-24.04
