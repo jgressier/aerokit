@@ -34,3 +34,19 @@ def test_mach_angle_conversion():
     assert q_components.v == pytest.approx(q.v)
     assert q_components.rho == q.rho
     assert q_components.p == q.p
+
+
+def test_from_pt_rtt_uv():
+    q = m2d.State2d(rho=1.2, u=120.0, v=30.0, p=1.e5, gamma=1.33)
+    rebuilt = m2d.State2d.from_pt_rtt_uv(q.Ptot(), q.rTtot(), q.u, q.v, gamma=q._gamma)
+    assert rebuilt.rho == pytest.approx(q.rho)
+    assert rebuilt.p == pytest.approx(q.p)
+    assert rebuilt.u == q.u
+    assert rebuilt.v == q.v
+    assert rebuilt.Ptot() == pytest.approx(q.Ptot())
+    assert rebuilt.rTtot() == pytest.approx(q.rTtot())
+
+
+def test_from_pt_rtt_uv_rejects_excessive_velocity():
+    with pytest.raises(ValueError, match="available total enthalpy"):
+        m2d.State2d.from_pt_rtt_uv(1.e5, 1.0, 10.0)

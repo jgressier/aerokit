@@ -15,19 +15,18 @@ Python packages for compressible flow computations
 
 ### Features
 
-* Mach dependent functions for isentropic total pressure, temperature and mass flow
-* local Rankine-Hugoniot shock wave equations (or 2d planar shocks) and conical shock waves
-* Fanno equations for momentum losses in a duct
-* Rayleigh equations for heating/cooling in a duct
-* unsteady compressible 1D flows
-* 1D stability equations: Orr-Sommerfeld and linearized compressible inviscid
-* applications:
-  * nozzle flows
-  * (Riemann) shock tube
-  * Channel incompressible flow stability (Poiseuille)
-* degree based trigonometric functions
-* real gaz and kerozen thermo functions
-* Newton iterative solve, ODE integration, Chebyshev spectral discretization
+* Isentropic relations, compressible mass-flow functions, and converging-diverging nozzle flows
+* Normal, oblique, and conical shock relations; shock polars and two-shock interactions
+* Prandtl-Meyer expansions, Fanno flows, and Rayleigh flows
+* One-dimensional unsteady compressible flows, including exact Riemann (shock-tube) solutions and inflow conditions
+* Ideal two-dimensional blade rows and preliminary compressor maps
+* Ideal turbojet and turbofan cycle-performance models
+* Linear-stability tools based on Chebyshev collocation:
+  * incompressible Orr-Sommerfeld analysis of parallel shear flows
+  * linearized one-dimensional compressible Euler equations
+  * local inviscid axisymmetric stability of compressible jets
+* Real-gas and kerosene thermodynamic functions
+* Degree-based trigonometric functions, nonlinear solvers, ODE integration, and spectral-discretization utilities
 
 ### Installation & usage
 

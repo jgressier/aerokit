@@ -19,7 +19,7 @@ Mmax = 4.
 
 Mach = np.log10(np.logspace(Mmin, Mmax, npoints+1))
 
-debr = mf.WeightMassFlow(Mach, gam)
+debr = mf.WeightMassFlow(Mach, gamma=gam)
 sig  = mf.Sigma_Mach(Mach, gam)
 
 fig=plt.figure(1, figsize=(10,8))

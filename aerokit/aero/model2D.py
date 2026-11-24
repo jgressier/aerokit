@@ -49,6 +49,28 @@ class State2d(__state):
         speed = Mach * np.sqrt(gamma * p / rho)
         return cls(rho, speed * deg.cos(angle), speed * deg.sin(angle), p, gamma)
 
+    @classmethod
+    def from_pt_rtt_uv(cls, pt, rtt, u, v=0., gamma=defg._gamma):
+        """Build a state from total pressure, total ``r*T``, and velocity.
+
+        Parameters
+        ----------
+        pt, rtt : float or ndarray
+            Static-pressure-equivalent total pressure and total ``r*T``.
+        u, v : float or ndarray, optional
+            Axial and transverse velocity components.  ``v=0`` constructs the
+            usual zero-swirl inlet state.
+        gamma : float, optional
+            Specific-heat ratio.
+        """
+        kinetic = 0.5 * (u**2 + v**2)
+        rt = rtt - (gamma - 1.0) / gamma * kinetic
+        if np.any(np.asarray(rt) <= 0.0):
+            raise ValueError("velocity exceeds the available total enthalpy")
+        mach = np.sqrt(u**2 + v**2) / np.sqrt(gamma * rt)
+        p = pt / Isentropic.PtPs_Mach(mach, gamma)
+        return cls(rho=p / rt, u=u, v=v, p=p, gamma=gamma)
+
     def to_mach_angle(self):
         """Return the equivalent Mach/angle state."""
         return State2DMach.from_components(self.rho, self.u, self.v, self.p, self._gamma)
